@@ -5,8 +5,8 @@ public record ArticleCommentCount(
     Long commentCount
 ) {
 
-    public static ArticleCommentCount init(Long articleId, Long commentCount) {
-        return new ArticleCommentCount(articleId, commentCount);
+    public static ArticleCommentCount init(Long articleId) {
+        return new ArticleCommentCount(articleId, 1L);
     }
 
 }

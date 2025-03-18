@@ -5,8 +5,8 @@ public record ArticleViewCount(
     Long viewCount
 ) {
 
-    public static ArticleViewCount init(Long articleId, Long viewCount) {
-        return new ArticleViewCount(articleId, viewCount);
+    public static ArticleViewCount init(Long articleId) {
+        return new ArticleViewCount(articleId, 1L);
     }
 
 }

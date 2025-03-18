@@ -5,8 +5,8 @@ public record ArticleLikeCount(
     Long likeCount
 ) {
 
-    public static ArticleLikeCount init(Long articleId, Long likeCount) {
-        return new ArticleLikeCount(articleId, likeCount);
+    public static ArticleLikeCount init(Long articleId) {
+        return new ArticleLikeCount(articleId, 1L);
     }
 
     public ArticleLikeCount increase() {

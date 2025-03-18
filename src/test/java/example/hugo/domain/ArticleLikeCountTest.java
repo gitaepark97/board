@@ -12,14 +12,13 @@ class ArticleLikeCountTest {
     void initArticleLikeCount() {
         // given
         Long articleId = 1L;
-        Long likeCount = 2L;
 
         // when
-        ArticleLikeCount result = new ArticleLikeCount(articleId, likeCount);
+        ArticleLikeCount result = ArticleLikeCount.init(articleId);
 
         // then
-        assertThat(articleId).isEqualTo(articleId);
-        assertThat(likeCount).isEqualTo(likeCount);
+        assertThat(result.articleId()).isEqualTo(articleId);
+        assertThat(result.likeCount()).isEqualTo(1L);
     }
 
     @Test

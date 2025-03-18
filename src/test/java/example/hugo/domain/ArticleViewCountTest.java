@@ -12,14 +12,13 @@ class ArticleViewCountTest {
     void initArticleViewCount() {
         // given
         Long articleId = 1L;
-        Long viewCount = 2L;
 
         // when
-        ArticleViewCount result = ArticleViewCount.init(articleId, viewCount);
+        ArticleViewCount result = ArticleViewCount.init(articleId);
 
         // then
         assertThat(result.articleId()).isEqualTo(articleId);
-        assertThat(result.viewCount()).isEqualTo(viewCount);
+        assertThat(result.viewCount()).isEqualTo(1L);
     }
 
 }

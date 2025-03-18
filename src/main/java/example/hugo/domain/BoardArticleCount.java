@@ -5,8 +5,8 @@ public record BoardArticleCount(
     Long articleCount
 ) {
 
-    public static BoardArticleCount init(Long boardId, Long articleCount) {
-        return new BoardArticleCount(boardId, articleCount);
+    public static BoardArticleCount init(Long boardId) {
+        return new BoardArticleCount(boardId, 1L);
     }
 
 }

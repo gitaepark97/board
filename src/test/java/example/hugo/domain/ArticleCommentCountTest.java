@@ -15,11 +15,11 @@ class ArticleCommentCountTest {
         Long commentCount = 2L;
 
         // when
-        ArticleCommentCount result = ArticleCommentCount.init(articleId, commentCount);
+        ArticleCommentCount result = ArticleCommentCount.init(articleId);
 
         // then
         assertThat(result.articleId()).isEqualTo(articleId);
-        assertThat(result.commentCount()).isEqualTo(commentCount);
+        assertThat(result.commentCount()).isEqualTo(1L);
     }
 
 }

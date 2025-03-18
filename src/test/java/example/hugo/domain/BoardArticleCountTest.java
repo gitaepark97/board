@@ -12,14 +12,13 @@ class BoardArticleCountTest {
     void initArticleViewCount() {
         // given
         Long boardId = 1L;
-        Long articleCount = 2L;
 
         // when
-        BoardArticleCount result = BoardArticleCount.init(boardId, articleCount);
+        BoardArticleCount result = BoardArticleCount.init(boardId);
 
         // then
         assertThat(result.boardId()).isEqualTo(boardId);
-        assertThat(result.articleCount()).isEqualTo(articleCount);
+        assertThat(result.articleCount()).isEqualTo(1L);
     }
 
 }
