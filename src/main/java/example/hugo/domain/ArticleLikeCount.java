@@ -9,12 +9,4 @@ public record ArticleLikeCount(
         return new ArticleLikeCount(articleId, 1L);
     }
 
-    public ArticleLikeCount increase() {
-        return new ArticleLikeCount(articleId, likeCount + 1);
-    }
-
-    public ArticleLikeCount decrease() {
-        return new ArticleLikeCount(articleId, likeCount - 1);
-    }
-
 }

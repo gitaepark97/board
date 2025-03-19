@@ -26,8 +26,8 @@ class CommentReader {
 
     }
 
-    Long countArticleComment(Long articleId) {
-        return articleCommentCountRepository.findById(articleId)
+    Long countArticleComments(Long articleId) {
+        return articleCommentCountRepository.findByArticleId(articleId)
             .map(ArticleCommentCount::commentCount)
             .orElse(0L);
     }

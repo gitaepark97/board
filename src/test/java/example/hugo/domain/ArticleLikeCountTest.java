@@ -20,33 +20,5 @@ class ArticleLikeCountTest {
         assertThat(result.articleId()).isEqualTo(articleId);
         assertThat(result.likeCount()).isEqualTo(1L);
     }
-
-    @Test
-    @DisplayName("게시글 좋아요 수 증가에 성공합니다.")
-    void increaseArticleLikeCount() {
-        // given
-        ArticleLikeCount existArticleLikeCount = new ArticleLikeCount(1L, 2L);
-
-        // when
-        ArticleLikeCount increaseArticleLikeCount = existArticleLikeCount.increase();
-
-        // then
-        assertThat(increaseArticleLikeCount.articleId()).isEqualTo(existArticleLikeCount.articleId());
-        assertThat(increaseArticleLikeCount.likeCount()).isEqualTo(existArticleLikeCount.likeCount() + 1);
-    }
-
-    @Test
-    @DisplayName("게시글 좋아요 수 감소에 성공합니다.")
-    void decreaseArticleLikeCount() {
-        // given
-        ArticleLikeCount existArticleLikeCount = new ArticleLikeCount(1L, 2L);
-
-        // when
-        ArticleLikeCount increaseArticleLikeCount = existArticleLikeCount.decrease();
-
-        // then
-        assertThat(increaseArticleLikeCount.articleId()).isEqualTo(existArticleLikeCount.articleId());
-        assertThat(increaseArticleLikeCount.likeCount()).isEqualTo(existArticleLikeCount.likeCount() - 1);
-    }
-
+    
 }

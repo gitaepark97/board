@@ -26,7 +26,7 @@ class ArticleReader {
     }
 
     Long countBoardArticles(Long boardId) {
-        return boardArticleCountRepository.findById(boardId)
+        return boardArticleCountRepository.findByBoardId(boardId)
             .map(BoardArticleCount::articleCount)
             .orElse(0L);
     }

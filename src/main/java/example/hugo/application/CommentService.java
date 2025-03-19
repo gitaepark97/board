@@ -22,7 +22,7 @@ public class CommentService {
     }
 
     public Long countArticleComment(Long articleId) {
-        return commentReader.countArticleComment(articleId);
+        return commentReader.countArticleComments(articleId);
     }
 
     public Comment createComment(Long articleId, String content, Long parentCommentId, Long writerId) {

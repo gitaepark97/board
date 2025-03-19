@@ -42,17 +42,18 @@ class CommentWriter {
     @Transactional
     void deleteComment(Long commentId) {
         // 댓글 조회
-        Comment existComment = commentRepository.findById(commentId)
+        commentRepository.findById(commentId)
             .filter(not(Comment::isDeleted))
-            .orElseThrow(ErrorCode.NOT_FOUND_COMMENT::toException);
-
-        // 댓글 삭제
-        if (hasChildren(existComment)) {
-            Comment deletedComment = existComment.delete(timeProvider.now());
-            commentRepository.save(deletedComment);
-        } else {
-            deleteComment(existComment);
-        }
+            .ifPresent(existComment -> {
+                    // 댓글 삭제
+                    if (hasChildren(existComment)) {
+                        Comment deletedComment = existComment.delete(timeProvider.now());
+                        commentRepository.save(deletedComment);
+                    } else {
+                        deleteComment(existComment);
+                    }
+                }
+            );
     }
 
     private void deleteComment(Comment comment) {

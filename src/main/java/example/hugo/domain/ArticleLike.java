@@ -1,11 +1,10 @@
 package example.hugo.domain;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-@Builder(access = AccessLevel.PRIVATE)
+@Builder
 public record ArticleLike(
     Long articleLikeId,
     Long articleId,

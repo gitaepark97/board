@@ -17,8 +17,11 @@ public enum ErrorCode {
     // Comment
     NOT_FOUND_PARENT_COMMENT(HttpStatus.NOT_FOUND, "부모 댓글을 찾을 수 없습니다."),
     NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."),
-    ;
 
+    // Article Like
+    NOT_FOUND_ARTICLE_LIKE(HttpStatus.NOT_FOUND, "좋아요를 찾을 수 없습니다."),
+    ;
+    
     private final HttpStatus httpStatus;
     private final String message;
 

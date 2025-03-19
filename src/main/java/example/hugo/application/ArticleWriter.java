@@ -34,7 +34,8 @@ class ArticleWriter {
     @Transactional
     Article updateArticle(Long articleId, String title, String content) {
         // 기존 게시글 조회
-        Article existArticle = readArticle(articleId);
+        Article existArticle = articleRepository.findById(articleId)
+            .orElseThrow(ErrorCode.NOT_FOUND_ARTICLE::toException);
 
         // 게시글 변경
         Article updatedArticle = existArticle.update(title, content, timeProvider.now());
@@ -46,18 +47,13 @@ class ArticleWriter {
     @Transactional
     void deleteArticle(Long articleId) {
         // 기존 게시글 조회
-        Article existArticle = readArticle(articleId);
+        articleRepository.findById(articleId).ifPresent(existArticle -> {
+            // 게시글 삭제
+            articleRepository.deleteById(existArticle.articleId());
 
-        // 게시글 삭제
-        articleRepository.deleteById(existArticle.articleId());
-
-        // 게시판 게시글 수 변경
-        boardArticleCountRepository.decrease(existArticle.boardId());
-    }
-
-    private Article readArticle(Long articleId) {
-        return articleRepository.findById(articleId)
-            .orElseThrow(ErrorCode.NOT_FOUND_ARTICLE::toException);
+            // 게시판 게시글 수 변경
+            boardArticleCountRepository.decrease(existArticle.boardId());
+        });
     }
 
 }

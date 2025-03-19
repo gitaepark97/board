@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface BoardArticleCountRepository {
 
-    Optional<BoardArticleCount> findById(Long boardId);
+    Optional<BoardArticleCount> findByBoardId(Long boardId);
 
     void save(BoardArticleCount boardArticleCount);
 

@@ -19,7 +19,7 @@ class ArticleCommentCountRepositoryImpl implements ArticleCommentCountRepository
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Optional<ArticleCommentCount> findById(Long articleId) {
+    public Optional<ArticleCommentCount> findByArticleId(Long articleId) {
         return articleCommentCountEntityRepository.findById(articleId)
             .map(ArticleCommentCountEntity::toArticleCommentCount);
     }
