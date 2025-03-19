@@ -34,6 +34,11 @@ class CommentController {
             .toList();
     }
 
+    @GetMapping("/articles/{articleId}/count")
+    Long count(@PathVariable Long articleId) {
+        return commentService.countArticleComment(articleId);
+    }
+
     @PostMapping
     CommentResponse createComment(@RequestBody @Valid CommentCreateRequest request) {
         return CommentResponse.from(commentService.createComment(request.articleId(), request.content(), request.parentCommentId(), request.writerId()));

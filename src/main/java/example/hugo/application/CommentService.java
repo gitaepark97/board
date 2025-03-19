@@ -21,6 +21,10 @@ public class CommentService {
         return commentReader.readComments(articleId, pageSize, lastParentCommentId, lastCommentId);
     }
 
+    public Long countArticleComment(Long articleId) {
+        return commentReader.countArticleComment(articleId);
+    }
+
     public Comment createComment(Long articleId, String content, Long parentCommentId, Long writerId) {
         return commentWriter.createComment(articleId, content, parentCommentId, writerId);
     }
