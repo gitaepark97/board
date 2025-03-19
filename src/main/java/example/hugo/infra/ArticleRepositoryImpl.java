@@ -25,13 +25,13 @@ class ArticleRepositoryImpl implements ArticleRepository {
     }
 
     @Override
-    public List<Article> findByBoardId(Long boardId, Long limit) {
-        QArticleEntity qArticleEntity = QArticleEntity.articleEntity;
+    public List<Article> findAllByBoardId(Long boardId, Long limit) {
+        QArticleEntity articleEntity = QArticleEntity.articleEntity;
 
         return queryFactory
-            .selectFrom(qArticleEntity)
-            .where(qArticleEntity.boardId.eq(boardId))
-            .orderBy(qArticleEntity.articleId.desc())
+            .selectFrom(articleEntity)
+            .where(articleEntity.boardId.eq(boardId))
+            .orderBy(articleEntity.articleId.desc())
             .limit(limit)
             .fetch()
             .stream()
@@ -40,16 +40,16 @@ class ArticleRepositoryImpl implements ArticleRepository {
     }
 
     @Override
-    public List<Article> findByBoardId(Long boardId, Long limit, Long lastArticleId) {
-        QArticleEntity qArticleEntity = QArticleEntity.articleEntity;
+    public List<Article> findAllByBoardId(Long boardId, Long limit, Long lastArticleId) {
+        QArticleEntity articleEntity = QArticleEntity.articleEntity;
 
         return queryFactory
-            .selectFrom(qArticleEntity)
+            .selectFrom(articleEntity)
             .where(
-                qArticleEntity.boardId.eq(boardId),
-                qArticleEntity.articleId.lt(lastArticleId)
+                articleEntity.boardId.eq(boardId),
+                articleEntity.articleId.lt(lastArticleId)
             )
-            .orderBy(qArticleEntity.articleId.desc())
+            .orderBy(articleEntity.articleId.desc())
             .limit(limit)
             .fetch()
             .stream()

@@ -21,8 +21,8 @@ class ArticleReader {
 
     List<Article> readArticles(Long boardId, Long pageSize, Long lastArticleId) {
         return lastArticleId == null ?
-            articleRepository.findByBoardId(boardId, pageSize) :
-            articleRepository.findByBoardId(boardId, pageSize, lastArticleId);
+            articleRepository.findAllByBoardId(boardId, pageSize) :
+            articleRepository.findAllByBoardId(boardId, pageSize, lastArticleId);
     }
 
     Long countBoardArticles(Long boardId) {

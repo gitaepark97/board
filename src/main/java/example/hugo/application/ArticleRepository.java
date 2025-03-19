@@ -9,9 +9,9 @@ public interface ArticleRepository {
 
     Optional<Article> findById(Long articleId);
 
-    List<Article> findByBoardId(Long boardId, Long limit);
+    List<Article> findAllByBoardId(Long boardId, Long limit);
 
-    List<Article> findByBoardId(Long boardId, Long limit, Long lastArticleId);
+    List<Article> findAllByBoardId(Long boardId, Long limit, Long lastArticleId);
 
     void save(Article article);
 

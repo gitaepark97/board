@@ -23,9 +23,9 @@ class ArticleWriter {
         articleRepository.save(newArticle);
 
         // 게시판 게시글 수 변경
-        long result = boardArticleCountRepository.increase(boardId);
+        long result = boardArticleCountRepository.increase(newArticle.boardId());
         if (result == 0L) {
-            boardArticleCountRepository.save(BoardArticleCount.init(boardId));
+            boardArticleCountRepository.save(BoardArticleCount.init(newArticle.boardId()));
         }
 
         return newArticle;
