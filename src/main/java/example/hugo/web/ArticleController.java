@@ -39,6 +39,11 @@ class ArticleController {
         return articleService.countBoardArticles(boardId);
     }
 
+    @GetMapping("/{articleId}/view/count")
+    Long countArticleViews(@PathVariable Long articleId) {
+        return articleService.countArticleViews(articleId);
+    }
+
     @PostMapping
     ArticleResponse createArticle(@RequestBody @Valid ArticleCreateRequest request) {
         return ArticleResponse.from(articleService.createArticle(request.title(), request.content(), request.boardId(), request.writerId()));

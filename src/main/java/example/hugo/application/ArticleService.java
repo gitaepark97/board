@@ -25,6 +25,10 @@ public class ArticleService {
         return articleReader.countBoardArticles(boardId);
     }
 
+    public Long countArticleViews(Long articleId) {
+        return articleReader.countArticleViews(articleId);
+    }
+
     public Article createArticle(String title, String content, Long boardId, Long writerId) {
         return articleWriter.createArticle(title, content, boardId, writerId);
     }
