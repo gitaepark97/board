@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface ArticleLikeCountRepository {
 
-    Optional<ArticleLikeCount> findByArticleId(Long articleId);
+    Optional<ArticleLikeCount> findById(Long articleId);
 
     void save(ArticleLikeCount articleLikeCount);
 

@@ -44,13 +44,13 @@ class CommentWriter {
         // 댓글 조회
         commentRepository.findById(commentId)
             .filter(not(Comment::isDeleted))
-            .ifPresent(existComment -> {
+            .ifPresent(existingComment -> {
                     // 댓글 삭제
-                    if (hasChildren(existComment)) {
-                        Comment deletedComment = existComment.delete(timeProvider.now());
+                    if (hasChildren(existingComment)) {
+                        Comment deletedComment = existingComment.delete(timeProvider.now());
                         commentRepository.save(deletedComment);
                     } else {
-                        deleteComment(existComment);
+                        deleteComment(existingComment);
                     }
                 }
             );

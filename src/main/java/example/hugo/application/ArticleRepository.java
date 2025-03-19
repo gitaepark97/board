@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface ArticleRepository {
 
+    boolean existsById(Long articleId);
+
     Optional<Article> findById(Long articleId);
 
     List<Article> findAllByBoardId(Long boardId, Long limit);

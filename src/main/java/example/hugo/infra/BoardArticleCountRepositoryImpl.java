@@ -19,7 +19,7 @@ class BoardArticleCountRepositoryImpl implements BoardArticleCountRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Optional<BoardArticleCount> findByBoardId(Long boardId) {
+    public Optional<BoardArticleCount> findById(Long boardId) {
         return boardArticleCountEntityRepository.findById(boardId).map(BoardArticleCountEntity::toBoardArticleCount);
     }
 

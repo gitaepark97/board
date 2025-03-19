@@ -34,11 +34,11 @@ class ArticleWriter {
     @Transactional
     Article updateArticle(Long articleId, String title, String content) {
         // 기존 게시글 조회
-        Article existArticle = articleRepository.findById(articleId)
+        Article existingArticle = articleRepository.findById(articleId)
             .orElseThrow(ErrorCode.NOT_FOUND_ARTICLE::toException);
 
         // 게시글 변경
-        Article updatedArticle = existArticle.update(title, content, timeProvider.now());
+        Article updatedArticle = existingArticle.update(title, content, timeProvider.now());
         articleRepository.save(updatedArticle);
 
         return updatedArticle;
@@ -47,12 +47,12 @@ class ArticleWriter {
     @Transactional
     void deleteArticle(Long articleId) {
         // 기존 게시글 조회
-        articleRepository.findById(articleId).ifPresent(existArticle -> {
+        articleRepository.findById(articleId).ifPresent(existingArticle -> {
             // 게시글 삭제
-            articleRepository.deleteById(existArticle.articleId());
+            articleRepository.deleteById(existingArticle.articleId());
 
             // 게시판 게시글 수 변경
-            boardArticleCountRepository.decrease(existArticle.boardId());
+            boardArticleCountRepository.decrease(existingArticle.boardId());
         });
     }
 

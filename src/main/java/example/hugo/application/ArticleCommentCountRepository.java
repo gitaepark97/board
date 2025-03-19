@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface ArticleCommentCountRepository {
 
-    Optional<ArticleCommentCount> findByArticleId(Long articleId);
+    Optional<ArticleCommentCount> findById(Long articleId);
 
     void save(ArticleCommentCount articleCommentCount);
 

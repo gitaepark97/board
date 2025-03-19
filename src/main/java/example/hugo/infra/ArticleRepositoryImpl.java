@@ -20,6 +20,11 @@ class ArticleRepositoryImpl implements ArticleRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
+    public boolean existsById(Long articleId) {
+        return articleEntityRepository.existsById(articleId);
+    }
+
+    @Override
     public Optional<Article> findById(Long articleId) {
         return articleEntityRepository.findById(articleId).map(ArticleEntity::toArticle);
     }

@@ -19,7 +19,7 @@ class ArticleLikeReader {
     }
 
     Long countArticleLikes(Long articleId) {
-        return articleLikeCountRepository.findByArticleId(articleId)
+        return articleLikeCountRepository.findById(articleId)
             .map(ArticleLikeCount::likeCount)
             .orElse(0L);
     }

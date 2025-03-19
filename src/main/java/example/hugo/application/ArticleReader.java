@@ -15,6 +15,12 @@ class ArticleReader {
     private final ArticleRepository articleRepository;
     private final BoardArticleCountRepository boardArticleCountRepository;
 
+    void checkArticleExists(Long articleId) {
+        if (!articleRepository.existsById(articleId)) {
+            throw ErrorCode.NOT_FOUND_ARTICLE.toException();
+        }
+    }
+
     Article readArticle(Long articleId) {
         return articleRepository.findById(articleId).orElseThrow(ErrorCode.NOT_FOUND_ARTICLE::toException);
     }
@@ -26,7 +32,7 @@ class ArticleReader {
     }
 
     Long countBoardArticles(Long boardId) {
-        return boardArticleCountRepository.findByBoardId(boardId)
+        return boardArticleCountRepository.findById(boardId)
             .map(BoardArticleCount::articleCount)
             .orElse(0L);
     }

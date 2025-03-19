@@ -19,7 +19,7 @@ class ArticleLikeCountRepositoryImpl implements ArticleLikeCountRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Optional<ArticleLikeCount> findByArticleId(Long articleId) {
+    public Optional<ArticleLikeCount> findById(Long articleId) {
         return articleLikeCountEntityRepository.findById(articleId).map(ArticleLikeCountEntity::toArticleLikeCount);
     }
 

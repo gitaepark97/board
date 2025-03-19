@@ -31,12 +31,12 @@ class ArticleLikeWriter {
     @Transactional
     void deleteArticleLike(Long articleId, Long userId) {
         // 좋아요 조회
-        articleLikeRepository.findByArticleIdAndUserId(articleId, userId).ifPresent(existArticleLike -> {
+        articleLikeRepository.findByArticleIdAndUserId(articleId, userId).ifPresent(existingArticleLike -> {
                 // 좋아요 삭제
-                articleLikeRepository.delete(existArticleLike);
+                articleLikeRepository.delete(existingArticleLike);
 
                 // 게시글 좋아요 수 변경
-                articleLikeCountRepository.decrease(existArticleLike.articleId());
+                articleLikeCountRepository.decrease(existingArticleLike.articleId());
             }
         );
     }

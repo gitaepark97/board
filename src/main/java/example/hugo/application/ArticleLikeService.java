@@ -10,6 +10,7 @@ public class ArticleLikeService {
 
     private final ArticleLikeReader articleLikeReader;
     private final ArticleLikeWriter articleLikeWriter;
+    private final ArticleReader articleReader;
 
     public ArticleLike readArticleLike(Long articleId, Long userId) {
         return articleLikeReader.readArticleLike(articleId, userId);
@@ -20,6 +21,7 @@ public class ArticleLikeService {
     }
 
     public void like(Long articleId, Long userId) {
+        articleReader.checkArticleExists(articleId);
         articleLikeWriter.createArticleLike(articleId, userId);
     }
 

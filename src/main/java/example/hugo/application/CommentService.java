@@ -12,6 +12,7 @@ public class CommentService {
 
     private final CommentReader commentReader;
     private final CommentWriter commentWriter;
+    private final ArticleReader articleReader;
 
     public Comment readComment(Long commentId) {
         return commentReader.readComment(commentId);
@@ -26,6 +27,7 @@ public class CommentService {
     }
 
     public Comment createComment(Long articleId, String content, Long parentCommentId, Long writerId) {
+        articleReader.checkArticleExists(articleId);
         return commentWriter.createComment(articleId, content, parentCommentId, writerId);
     }
 
