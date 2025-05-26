@@ -28,3 +28,16 @@ include::{snippets}/articles/create/request-fields.adoc[]
 
 include::{snippets}/articles/create/http-response.adoc[]
 include::{snippets}/articles/create/response-fields.adoc[]
+
+=== 게시글 수정
+
+==== 요청
+
+include::{snippets}/articles/update/http-request.adoc[]
+include::{snippets}/articles/update/response-fields.adoc[]
+include::{snippets}/articles/update/request-fields.adoc[]
+
+==== 응답
+
+include::{snippets}/articles/update/http-response.adoc[]
+include::{snippets}/articles/update/response-fields.adoc[]

@@ -86,4 +86,25 @@ class ArticleServiceTest {
             .isInstanceOf(ArticleNotFound.class);
     }
 
+    @Test
+    void update_정상동작() {
+        // given
+        Long articleId = 1L;
+        String newTitle = "수정된 제목";
+        String newContent = "수정된 내용";
+        LocalDateTime createdAt = LocalDateTime.of(2024, 1, 1, 10, 0);
+        LocalDateTime updatedAt = LocalDateTime.of(2024, 1, 2, 12, 0);
+        when(articleRepository.findById(articleId)).thenReturn(Optional.of(Article.create(articleId, 1L, 100L, "원래 제목", "원래 내용", createdAt)));
+        when(timeProvider.now()).thenReturn(updatedAt);
+
+        // when
+        Article updated = articleService.update(articleId, newTitle, newContent);
+
+        // then
+        assertThat(updated.getTitle()).isEqualTo(newTitle);
+        assertThat(updated.getContent()).isEqualTo(newContent);
+        assertThat(updated.getUpdatedAt()).isEqualTo(updatedAt);
+        assertThat(updated.getCreatedAt()).isEqualTo(createdAt);
+    }
+
 }

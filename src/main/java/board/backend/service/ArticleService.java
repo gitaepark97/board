@@ -30,4 +30,16 @@ public class ArticleService {
         return articleRepository.findById(articleId).orElseThrow(ArticleNotFound::new);
     }
 
+    public Article update(Long articleId, String title, String content) {
+        // 게시글 조회
+        Article article = this.read(articleId);
+
+        // 게시글 수정
+        Article updatedArticle = article.update(title, content, timeProvider.now());
+        // 게시글 저장
+        articleRepository.save(updatedArticle);
+
+        return updatedArticle;
+    }
+
 }
