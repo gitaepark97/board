@@ -3,6 +3,7 @@ package board.backend.service;
 import board.backend.common.IdProvider;
 import board.backend.common.TimeProvider;
 import board.backend.domain.Article;
+import board.backend.domain.ArticleNotFound;
 import board.backend.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,11 @@ public class ArticleService {
         articleRepository.save(newArticle);
 
         return newArticle;
+    }
+
+    public Article read(Long articleId) {
+        // 게시글 조회
+        return articleRepository.findById(articleId).orElseThrow(ArticleNotFound::new);
     }
 
 }

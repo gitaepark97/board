@@ -5,6 +5,18 @@
 
 == Article
 
+=== 게시글 조회
+
+==== 요청
+
+include::{snippets}/articles/read/http-request.adoc[]
+include::{snippets}/articles/read/path-parameters.adoc[]
+
+==== 응답
+
+include::{snippets}/articles/read/http-response.adoc[]
+include::{snippets}/articles/read/response-fields.adoc[]
+
 === 게시글 생성
 
 ==== 요청

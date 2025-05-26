@@ -21,4 +21,9 @@ public class ArticleController {
         return articleService.create(request.boardId(), request.writerId(), request.title(), request.content());
     }
 
+    @GetMapping("/{articleId}")
+    Article read(@PathVariable Long articleId) {
+        return articleService.read(articleId);
+    }
+
 }

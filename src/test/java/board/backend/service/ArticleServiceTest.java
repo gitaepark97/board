@@ -3,13 +3,16 @@ package board.backend.service;
 import board.backend.common.IdProvider;
 import board.backend.common.TimeProvider;
 import board.backend.domain.Article;
+import board.backend.domain.ArticleNotFound;
 import board.backend.repository.ArticleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -53,6 +56,34 @@ class ArticleServiceTest {
         assertThat(article.getContent()).isEqualTo(content);
         assertThat(article.getCreatedAt()).isEqualTo(now);
         assertThat(article.getUpdatedAt()).isEqualTo(now);
+    }
+
+    @Test
+    void read_정상조회() {
+        // given
+        Long articleId = 1L;
+        Article article = Article.create(
+            articleId, 10L, 100L, "조회 제목", "조회 내용",
+            LocalDateTime.of(2024, 1, 1, 10, 0)
+        );
+        when(articleRepository.findById(articleId)).thenReturn(Optional.of(article));
+
+        // when
+        Article result = articleService.read(articleId);
+
+        // then
+        assertThat(result).isEqualTo(article);
+    }
+
+    @Test
+    void read_존재하지않을때_예외() {
+        // given
+        Long invalidId = 999L;
+        when(articleRepository.findById(invalidId)).thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> articleService.read(invalidId))
+            .isInstanceOf(ArticleNotFound.class);
     }
 
 }

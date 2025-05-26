@@ -28,6 +28,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -75,6 +78,38 @@ class ArticleControllerTest {
                     fieldWithPath("writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
                     fieldWithPath("title").type(JsonFieldType.STRING).description("제목"),
                     fieldWithPath("content").type(JsonFieldType.STRING).description("내용")
+                ),
+                responseFields(
+                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("게시글 ID"),
+                    fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
+                    fieldWithPath("writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
+                    fieldWithPath("title").type(JsonFieldType.STRING).description("제목"),
+                    fieldWithPath("content").type(JsonFieldType.STRING).description("내용"),
+                    fieldWithPath("createdAt").type(JsonFieldType.STRING).description("생성 시각"),
+                    fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("수정 시각")
+                )
+            ));
+    }
+
+    @Test
+    @DisplayName("게시글 조회 API - 성공")
+    void read_success() throws Exception {
+        // given
+        Long articleId = 1L;
+        LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
+        Article response = Article.create(articleId, 1L, 100L, "조회 제목", "조회 내용", now);
+
+        when(articleService.read(articleId)).thenReturn(response);
+
+        // when & then
+        mockMvc.perform(get("/api/articles/{articleId}", articleId)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(articleId))
+            .andExpect(jsonPath("$.title").value("조회 제목"))
+            .andDo(document("articles/read",
+                pathParameters(
+                    parameterWithName("articleId").description("조회할 게시글 ID")
                 ),
                 responseFields(
                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("게시글 ID"),
