@@ -1,6 +1,7 @@
 package board.backend.domain;
 
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -10,7 +11,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 class ArticleTest {
 
     @Test
-    void create_Article_정상생성() {
+    @DisplayName("Article 생성에 성공한다")
+    void create_success() {
         // given
         Long id = 1L;
         Long boardId = 10L;
@@ -33,7 +35,8 @@ class ArticleTest {
     }
 
     @Test
-    void update_Article_제목과내용수정() {
+    @DisplayName("Article 수정 시 제목과 내용이 변경되고 updatedAt이 갱신된다")
+    void update_success() {
         // given
         LocalDateTime createdAt = LocalDateTime.of(2024, 1, 1, 10, 0);
         Article article = Article.create(1L, 10L, 100L, "이전 제목", "이전 내용", createdAt);

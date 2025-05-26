@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/articles")
@@ -16,15 +18,24 @@ public class ArticleController {
 
     private final ArticleService articleService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    Article create(@RequestBody @Valid ArticleCreateRequest request) {
-        return articleService.create(request.boardId(), request.writerId(), request.title(), request.content());
+    @GetMapping
+    List<Article> readAll(
+        @RequestParam Long boardId,
+        @RequestParam(required = false, defaultValue = "10") Long pageSize,
+        @RequestParam(required = false) Long lastArticleId
+    ) {
+        return articleService.readAll(boardId, pageSize, lastArticleId);
     }
 
     @GetMapping("/{articleId}")
     Article read(@PathVariable Long articleId) {
         return articleService.read(articleId);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    Article create(@RequestBody @Valid ArticleCreateRequest request) {
+        return articleService.create(request.boardId(), request.writerId(), request.title(), request.content());
     }
 
     @PutMapping("/{articleId}")

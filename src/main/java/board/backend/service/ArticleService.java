@@ -1,13 +1,15 @@
 package board.backend.service;
 
-import board.backend.common.IdProvider;
-import board.backend.common.TimeProvider;
 import board.backend.domain.Article;
 import board.backend.domain.ArticleNotFound;
 import board.backend.repository.ArticleRepository;
+import board.backend.support.IdProvider;
+import board.backend.support.TimeProvider;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -17,6 +19,18 @@ public class ArticleService {
     private final TimeProvider timeProvider;
     private final ArticleRepository articleRepository;
 
+    public List<Article> readAll(Long boardId, Long pageSize, Long lastArticleId) {
+        // 게시글 목록 조회
+        return lastArticleId == null ?
+            articleRepository.findAllByBoardId(boardId, pageSize) :
+            articleRepository.findAllByBoardId(boardId, pageSize, lastArticleId);
+    }
+
+    public Article read(Long articleId) {
+        // 게시글 조회
+        return articleRepository.findById(articleId).orElseThrow(ArticleNotFound::new);
+    }
+
     @Transactional
     public Article create(Long boardId, Long writerId, String title, String content) {
         // 게시글 생성
@@ -25,11 +39,6 @@ public class ArticleService {
         articleRepository.save(newArticle);
 
         return newArticle;
-    }
-
-    public Article read(Long articleId) {
-        // 게시글 조회
-        return articleRepository.findById(articleId).orElseThrow(ArticleNotFound::new);
     }
 
     @Transactional

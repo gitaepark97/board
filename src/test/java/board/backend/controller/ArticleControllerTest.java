@@ -23,6 +23,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -30,8 +31,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,6 +53,85 @@ class ArticleControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
             .apply(documentationConfiguration(provider))
             .build();
+    }
+
+    @Test
+    @DisplayName("게시글 목록 조회 API - 성공")
+    void readAll_success() throws Exception {
+        // given
+        Long boardId = 1L;
+        Long pageSize = 10L;
+        Long lastArticleId = 5L;
+
+        LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
+
+        List<Article> responses = List.of(
+            Article.create(6L, boardId, 100L, "제목1", "내용1", now),
+            Article.create(7L, boardId, 101L, "제목2", "내용2", now)
+        );
+
+        when(articleService.readAll(boardId, pageSize, lastArticleId)).thenReturn(responses);
+
+        // when & then
+        mockMvc.perform(get("/api/articles")
+                .param("boardId", boardId.toString())
+                .param("pageSize", pageSize.toString())
+                .param("lastArticleId", lastArticleId.toString())
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(responses.size()))
+            .andExpect(jsonPath("$[0].id").value(6L))
+            .andExpect(jsonPath("$[0].title").value("제목1"))
+            .andExpect(jsonPath("$[1].id").value(7L))
+            .andExpect(jsonPath("$[1].title").value("제목2"))
+            .andDo(document("articles/read-all",
+                queryParameters(
+                    parameterWithName("boardId").description("게시판 ID"),
+                    parameterWithName("pageSize").optional().description("페이지 크기 (기본값: 10)"),
+                    parameterWithName("lastArticleId").optional().description("마지막으로 조회한 게시글 ID (커서 기반 페이징)")
+                ),
+                responseFields(
+                    fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("게시글 ID"),
+                    fieldWithPath("[].boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
+                    fieldWithPath("[].writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
+                    fieldWithPath("[].title").type(JsonFieldType.STRING).description("제목"),
+                    fieldWithPath("[].content").type(JsonFieldType.STRING).description("내용"),
+                    fieldWithPath("[].createdAt").type(JsonFieldType.STRING).description("생성 시각"),
+                    fieldWithPath("[].updatedAt").type(JsonFieldType.STRING).description("수정 시각")
+                )
+            ));
+    }
+
+    @Test
+    @DisplayName("게시글 조회 API - 성공")
+    void read_success() throws Exception {
+        // given
+        Long articleId = 1L;
+        LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
+        Article response = Article.create(articleId, 1L, 100L, "조회 제목", "조회 내용", now);
+
+        when(articleService.read(articleId)).thenReturn(response);
+
+        // when & then
+        mockMvc.perform(get("/api/articles/{articleId}", articleId)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(articleId))
+            .andExpect(jsonPath("$.title").value("조회 제목"))
+            .andDo(document("articles/read",
+                pathParameters(
+                    parameterWithName("articleId").description("조회할 게시글 ID")
+                ),
+                responseFields(
+                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("게시글 ID"),
+                    fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
+                    fieldWithPath("writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
+                    fieldWithPath("title").type(JsonFieldType.STRING).description("제목"),
+                    fieldWithPath("content").type(JsonFieldType.STRING).description("내용"),
+                    fieldWithPath("createdAt").type(JsonFieldType.STRING).description("생성 시각"),
+                    fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("수정 시각")
+                )
+            ));
     }
 
     @Test
@@ -91,39 +170,6 @@ class ArticleControllerTest {
                 )
             ));
     }
-
-    @Test
-    @DisplayName("게시글 조회 API - 성공")
-    void read_success() throws Exception {
-        // given
-        Long articleId = 1L;
-        LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
-        Article response = Article.create(articleId, 1L, 100L, "조회 제목", "조회 내용", now);
-
-        when(articleService.read(articleId)).thenReturn(response);
-
-        // when & then
-        mockMvc.perform(get("/api/articles/{articleId}", articleId)
-                .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(articleId))
-            .andExpect(jsonPath("$.title").value("조회 제목"))
-            .andDo(document("articles/read",
-                pathParameters(
-                    parameterWithName("articleId").description("조회할 게시글 ID")
-                ),
-                responseFields(
-                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("게시글 ID"),
-                    fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
-                    fieldWithPath("writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
-                    fieldWithPath("title").type(JsonFieldType.STRING).description("제목"),
-                    fieldWithPath("content").type(JsonFieldType.STRING).description("내용"),
-                    fieldWithPath("createdAt").type(JsonFieldType.STRING).description("생성 시각"),
-                    fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("수정 시각")
-                )
-            ));
-    }
-
 
     @Test
     @DisplayName("게시글 수정 API - 성공")

@@ -1,4 +1,4 @@
-package board.backend.common;
+package board.backend.support;
 
 import org.springframework.stereotype.Component;
 

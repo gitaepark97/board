@@ -1,14 +1,16 @@
 package board.backend.service;
 
-import board.backend.common.IdProvider;
-import board.backend.common.TimeProvider;
 import board.backend.domain.Article;
 import board.backend.domain.ArticleNotFound;
 import board.backend.repository.ArticleRepository;
+import board.backend.support.IdProvider;
+import board.backend.support.TimeProvider;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -33,33 +35,51 @@ class ArticleServiceTest {
     }
 
     @Test
-    void create_정상동작() {
+    @DisplayName("lastArticleId가 null이면 첫 페이지 게시글을 조회한다")
+    void readAll_without_lastArticleId_returns_first_page() {
         // given
-        Long generatedId = 1L;
-        Long boardId = 10L;
-        Long writerId = 100L;
-        String title = "제목입니다";
-        String content = "내용입니다";
-        LocalDateTime now = LocalDateTime.of(2024, 1, 1, 12, 0);
+        Long boardId = 1L;
+        Long pageSize = 3L;
+        Long lastArticleId = null;
 
-        when(idProvider.nextId()).thenReturn(generatedId);
-        when(timeProvider.now()).thenReturn(now);
+        List<Article> articles = List.of(
+            Article.create(3L, boardId, 100L, "제목1", "내용1", LocalDateTime.now()),
+            Article.create(2L, boardId, 101L, "제목2", "내용2", LocalDateTime.now())
+        );
+
+        when(articleRepository.findAllByBoardId(boardId, pageSize)).thenReturn(articles);
 
         // when
-        Article article = articleService.create(boardId, writerId, title, content);
+        List<Article> result = articleService.readAll(boardId, pageSize, lastArticleId);
 
         // then
-        assertThat(article.getId()).isEqualTo(generatedId);
-        assertThat(article.getBoardId()).isEqualTo(boardId);
-        assertThat(article.getWriterId()).isEqualTo(writerId);
-        assertThat(article.getTitle()).isEqualTo(title);
-        assertThat(article.getContent()).isEqualTo(content);
-        assertThat(article.getCreatedAt()).isEqualTo(now);
-        assertThat(article.getUpdatedAt()).isEqualTo(now);
+        assertThat(result).isEqualTo(articles);
+    }
+
+    @DisplayName("lastArticleId가 존재하면 해당 이후 페이지 게시글을 조회한다")
+    void readAll_with_lastArticleId_returns_next_page() {
+        // given
+        Long boardId = 1L;
+        Long pageSize = 3L;
+        Long lastArticleId = 10L;
+
+        List<Article> articles = List.of(
+            Article.create(9L, boardId, 100L, "제목3", "내용3", LocalDateTime.now()),
+            Article.create(8L, boardId, 101L, "제목4", "내용4", LocalDateTime.now())
+        );
+
+        when(articleRepository.findAllByBoardId(boardId, pageSize, lastArticleId)).thenReturn(articles);
+
+        // when
+        List<Article> result = articleService.readAll(boardId, pageSize, lastArticleId);
+
+        // then
+        assertThat(result).isEqualTo(articles);
     }
 
     @Test
-    void read_정상조회() {
+    @DisplayName("게시글 조회에 성공한다")
+    void read_success() {
         // given
         Long articleId = 1L;
         Article article = Article.create(
@@ -87,7 +107,35 @@ class ArticleServiceTest {
     }
 
     @Test
-    void update_정상동작() {
+    @DisplayName("게시글 생성에 성공한다")
+    void create_success() {
+        // given
+        Long generatedId = 1L;
+        Long boardId = 10L;
+        Long writerId = 100L;
+        String title = "제목입니다";
+        String content = "내용입니다";
+        LocalDateTime now = LocalDateTime.of(2024, 1, 1, 12, 0);
+
+        when(idProvider.nextId()).thenReturn(generatedId);
+        when(timeProvider.now()).thenReturn(now);
+
+        // when
+        Article article = articleService.create(boardId, writerId, title, content);
+
+        // then
+        assertThat(article.getId()).isEqualTo(generatedId);
+        assertThat(article.getBoardId()).isEqualTo(boardId);
+        assertThat(article.getWriterId()).isEqualTo(writerId);
+        assertThat(article.getTitle()).isEqualTo(title);
+        assertThat(article.getContent()).isEqualTo(content);
+        assertThat(article.getCreatedAt()).isEqualTo(now);
+        assertThat(article.getUpdatedAt()).isEqualTo(now);
+    }
+
+    @Test
+    @DisplayName("게시글 수정에 성공한다")
+    void update_success() {
         // given
         Long articleId = 1L;
         String newTitle = "수정된 제목";
@@ -108,7 +156,8 @@ class ArticleServiceTest {
     }
 
     @Test
-    void delete_정상동작() {
+    @DisplayName("게시글 삭제에 성공한다")
+    void delete_success() {
         // given
         Long articleId = 1L;
 

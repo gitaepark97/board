@@ -1,6 +1,6 @@
 package board.backend.domain;
 
-import board.backend.common.ApplicationException;
+import board.backend.support.ApplicationException;
 import org.springframework.http.HttpStatus;
 
 public class ArticleNotFound extends ApplicationException {
