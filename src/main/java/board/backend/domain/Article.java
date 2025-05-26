@@ -30,9 +30,14 @@ public class Article {
 
     private LocalDateTime updatedAt;
 
-    public static Article create(Long id, Long boardId, Long writerId, String title, String content) {
-        LocalDateTime now = LocalDateTime.now();
-
+    public static Article create(
+        Long id,
+        Long boardId,
+        Long writerId,
+        String title,
+        String content,
+        LocalDateTime now
+    ) {
         return Article.builder()
             .id(id)
             .boardId(boardId)
@@ -44,10 +49,10 @@ public class Article {
             .build();
     }
 
-    public Article update(String title, String content) {
+    public Article update(String title, String content, LocalDateTime now) {
         this.title = title;
         this.content = content;
-        this.updatedAt = LocalDateTime.now();
+        this.updatedAt = now;
 
         return this;
     }

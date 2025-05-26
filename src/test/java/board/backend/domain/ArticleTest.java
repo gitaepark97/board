@@ -15,11 +15,12 @@ class ArticleTest {
         Long id = 1L;
         Long boardId = 10L;
         Long writerId = 100L;
-        String title = "첫 번째 게시글";
-        String content = "내용입니다.";
+        String title = "제목";
+        String content = "내용";
+        LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
 
         // when
-        Article article = Article.create(id, boardId, writerId, title, content);
+        Article article = Article.create(id, boardId, writerId, title, content, now);
 
         // then
         assertThat(article.getId()).isEqualTo(id);
@@ -27,27 +28,28 @@ class ArticleTest {
         assertThat(article.getWriterId()).isEqualTo(writerId);
         assertThat(article.getTitle()).isEqualTo(title);
         assertThat(article.getContent()).isEqualTo(content);
-        assertThat(article.getCreatedAt()).isNotNull();
-        assertThat(article.getUpdatedAt()).isNotNull();
-        assertThat(article.getCreatedAt()).isEqualTo(article.getUpdatedAt());
+        assertThat(article.getCreatedAt()).isEqualTo(now);
+        assertThat(article.getUpdatedAt()).isEqualTo(now);
     }
 
     @Test
     void update_Article_제목과내용수정() {
         // given
-        Article article = Article.create(1L, 10L, 100L, "이전 제목", "이전 내용");
+        LocalDateTime createdAt = LocalDateTime.of(2024, 1, 1, 10, 0);
+        Article article = Article.create(1L, 10L, 100L, "이전 제목", "이전 내용", createdAt);
 
         String newTitle = "수정된 제목";
         String newContent = "수정된 내용";
-        LocalDateTime beforeUpdate = article.getUpdatedAt();
+        LocalDateTime updatedAt = LocalDateTime.of(2024, 1, 2, 12, 0);
 
         // when
-        Article updatedArticle = article.update(newTitle, newContent);
+        Article updated = article.update(newTitle, newContent, updatedAt);
 
         // then
-        assertThat(updatedArticle.getTitle()).isEqualTo(newTitle);
-        assertThat(updatedArticle.getContent()).isEqualTo(newContent);
-        assertThat(updatedArticle.getUpdatedAt()).isAfter(beforeUpdate);
+        assertThat(updated.getTitle()).isEqualTo(newTitle);
+        assertThat(updated.getContent()).isEqualTo(newContent);
+        assertThat(updated.getUpdatedAt()).isEqualTo(updatedAt);
+        assertThat(updated.getCreatedAt()).isEqualTo(createdAt);
     }
 
 }
