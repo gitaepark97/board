@@ -17,6 +17,7 @@ public class ArticleService {
     private final TimeProvider timeProvider;
     private final ArticleRepository articleRepository;
 
+    @Transactional
     public Article create(Long boardId, Long writerId, String title, String content) {
         // 게시글 생성
         Article newArticle = Article.create(idProvider.nextId(), boardId, writerId, title, content, timeProvider.now());
@@ -31,6 +32,7 @@ public class ArticleService {
         return articleRepository.findById(articleId).orElseThrow(ArticleNotFound::new);
     }
 
+    @Transactional
     public Article update(Long articleId, String title, String content) {
         // 게시글 조회
         Article article = this.read(articleId);
