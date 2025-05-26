@@ -1,7 +1,6 @@
 package board.backend.repository;
 
 import board.backend.TestcontainersConfiguration;
-import board.backend.config.QueryDSLConfig;
 import board.backend.domain.Article;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
