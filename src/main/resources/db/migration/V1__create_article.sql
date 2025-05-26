@@ -1,6 +1,6 @@
 CREATE TABLE article
 (
-    article_id bigint        not null primary key,
+    id         bigint        not null primary key,
     title      varchar(100)  not null,
     content    varchar(3000) not null,
     board_id   bigint        not null,

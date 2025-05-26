@@ -1,0 +1,18 @@
+= API 문서
+:toc: left
+:source-highlighter: highlightjs
+:sectlinks:
+
+== Article
+
+=== 게시글 생성
+
+==== 요청
+
+include::{snippets}/articles/create/http-request.adoc[]
+include::{snippets}/articles/create/request-fields.adoc[]
+
+==== 응답
+
+include::{snippets}/articles/create/http-response.adoc[]
+include::{snippets}/articles/create/response-fields.adoc[]
