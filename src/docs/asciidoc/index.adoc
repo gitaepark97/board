@@ -34,10 +34,21 @@ include::{snippets}/articles/create/response-fields.adoc[]
 ==== 요청
 
 include::{snippets}/articles/update/http-request.adoc[]
-include::{snippets}/articles/update/response-fields.adoc[]
+include::{snippets}/articles/update/path-parameters.adoc[]
 include::{snippets}/articles/update/request-fields.adoc[]
 
 ==== 응답
 
 include::{snippets}/articles/update/http-response.adoc[]
 include::{snippets}/articles/update/response-fields.adoc[]
+
+=== 게시글 삭제
+
+==== 요청
+
+include::{snippets}/articles/delete/http-request.adoc[]
+include::{snippets}/articles/delete/path-parameters.adoc[]
+
+==== 응답
+
+include::{snippets}/articles/delete/http-response.adoc[]

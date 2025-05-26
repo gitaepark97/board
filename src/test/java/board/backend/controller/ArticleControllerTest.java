@@ -166,5 +166,20 @@ class ArticleControllerTest {
             ));
     }
 
+    @Test
+    @DisplayName("게시글 삭제 API - 성공")
+    void delete_success() throws Exception {
+        // given
+        Long articleId = 1L;
+
+        // when & then
+        mockMvc.perform(delete("/api/articles/{articleId}", articleId))
+            .andExpect(status().isNoContent())
+            .andDo(document("articles/delete",
+                pathParameters(
+                    parameterWithName("articleId").description("삭제할 게시글 ID")
+                )
+            ));
+    }
 
 }

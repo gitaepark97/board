@@ -107,4 +107,13 @@ class ArticleServiceTest {
         assertThat(updated.getCreatedAt()).isEqualTo(createdAt);
     }
 
+    @Test
+    void delete_정상동작() {
+        // given
+        Long articleId = 1L;
+
+        // when
+        articleService.delete(articleId);
+    }
+
 }

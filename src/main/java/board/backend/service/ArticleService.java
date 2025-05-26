@@ -5,6 +5,7 @@ import board.backend.common.TimeProvider;
 import board.backend.domain.Article;
 import board.backend.domain.ArticleNotFound;
 import board.backend.repository.ArticleRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +41,12 @@ public class ArticleService {
         articleRepository.save(updatedArticle);
 
         return updatedArticle;
+    }
+
+    @Transactional
+    public void delete(Long articleId) {
+        // 게시글 삭제
+        articleRepository.findById(articleId).ifPresent(articleRepository::delete);
     }
 
 }
