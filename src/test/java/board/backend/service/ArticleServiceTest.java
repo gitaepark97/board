@@ -179,4 +179,27 @@ class ArticleServiceTest {
         articleService.delete(articleId);
     }
 
+    @Test
+    @DisplayName("게시글이 존재하면 예외를 던지지 않는다")
+    void checkArticleExist_success() {
+        // given
+        Long articleId = 1L;
+        when(articleRepository.existsById(articleId)).thenReturn(true);
+
+        // when
+        articleService.checkArticleExistOrThrow(articleId);
+    }
+
+    @Test
+    @DisplayName("게시글이 존재하지 않으면 ArticleNotFound 예외를 던진다")
+    void checkArticleExist_fail() {
+        // given
+        Long articleId = 999L;
+        when(articleRepository.existsById(articleId)).thenReturn(false);
+
+        // when & then
+        assertThatThrownBy(() -> articleService.checkArticleExistOrThrow(articleId))
+            .isInstanceOf(ArticleNotFound.class);
+    }
+
 }

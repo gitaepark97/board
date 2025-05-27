@@ -13,9 +13,13 @@ public class ArticleLikeService {
 
     private final TimeProvider timeProvider;
     private final ArticleLikeRepository articleLikeRepository;
+    private final ArticleService articleService;
 
     @Transactional
     public void like(Long articleId, Long userId) {
+        // 게시글 존재 확인
+        articleService.checkArticleExistOrThrow(articleId);
+
         ArticleLike articleLike = ArticleLike.create(articleId, userId, timeProvider.now());
         articleLikeRepository.save(articleLike);
     }

@@ -17,13 +17,15 @@ class ArticleLikeServiceTest {
 
     private TimeProvider timeProvider;
     private ArticleLikeRepository articleLikeRepository;
+    private ArticleService articleService;
     private ArticleLikeService articleLikeService;
 
     @BeforeEach
     void setUp() {
         timeProvider = mock(TimeProvider.class);
         articleLikeRepository = mock(ArticleLikeRepository.class);
-        articleLikeService = new ArticleLikeService(timeProvider, articleLikeRepository);
+        articleService = mock(ArticleService.class);
+        articleLikeService = new ArticleLikeService(timeProvider, articleLikeRepository, articleService);
     }
 
     @Test

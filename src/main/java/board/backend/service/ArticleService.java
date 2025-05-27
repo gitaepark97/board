@@ -60,4 +60,10 @@ public class ArticleService {
         articleRepository.findById(articleId).ifPresent(articleRepository::delete);
     }
 
+    void checkArticleExistOrThrow(Long articleId) {
+        if (!articleRepository.existsById(articleId)) {
+            throw new ArticleNotFound();
+        }
+    }
+
 }
