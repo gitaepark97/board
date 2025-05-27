@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/articles")
-public class ArticleController {
+class ArticleController {
 
     private final ArticleService articleService;
 

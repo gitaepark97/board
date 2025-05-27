@@ -64,3 +64,17 @@ include::{snippets}/articles/delete/path-parameters.adoc[]
 ==== 응답
 
 include::{snippets}/articles/delete/http-response.adoc[]
+
+== Article Like
+
+=== 게시글 좋아요 생성
+
+==== 요청
+
+include::{snippets}/article-likes/like/http-request.adoc[]
+include::{snippets}/article-likes/like/path-parameters.adoc[]
+
+==== 응답
+
+include::{snippets}/article-likes/like/http-response.adoc[]
+include::{snippets}/article-likes/like/response-fields.adoc[]

@@ -4,23 +4,13 @@ import board.backend.controller.request.ArticleCreateRequest;
 import board.backend.controller.request.ArticleUpdateRequest;
 import board.backend.domain.Article;
 import board.backend.service.ArticleService;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,7 +19,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -37,23 +26,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ArticleController.class)
-@ExtendWith(RestDocumentationExtension.class)
-class ArticleControllerTest {
+class ArticleControllerTest extends TestController {
 
-    protected final ObjectMapper objectMapper = new ObjectMapper();
-    @Autowired
-    protected WebApplicationContext context;
-    protected MockMvc mockMvc;
     @MockitoBean
     private ArticleService articleService;
-
-    @BeforeEach
-    void init(RestDocumentationContextProvider provider) {
-        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-            .apply(documentationConfiguration(provider))
-            .build();
-    }
 
     @Test
     @DisplayName("게시글 목록 조회 API - 성공")
@@ -79,11 +55,13 @@ class ArticleControllerTest {
                 .param("lastArticleId", lastArticleId.toString())
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(responses.size()))
-            .andExpect(jsonPath("$[0].id").value(6L))
-            .andExpect(jsonPath("$[0].title").value("제목1"))
-            .andExpect(jsonPath("$[1].id").value(7L))
-            .andExpect(jsonPath("$[1].title").value("제목2"))
+            .andExpect(jsonPath("$.status").value(HttpStatus.OK.name()))
+            .andExpect(jsonPath("$.message").value("성공"))
+            .andExpect(jsonPath("$.data.length()").value(responses.size()))
+            .andExpect(jsonPath("$.data[0].id").value(6L))
+            .andExpect(jsonPath("$.data[0].title").value("제목1"))
+            .andExpect(jsonPath("$.data[1].id").value(7L))
+            .andExpect(jsonPath("$.data[1].title").value("제목2"))
             .andDo(document("articles/read-all",
                 queryParameters(
                     parameterWithName("boardId").description("게시판 ID"),
@@ -91,13 +69,15 @@ class ArticleControllerTest {
                     parameterWithName("lastArticleId").optional().description("마지막으로 조회한 게시글 ID (커서 기반 페이징)")
                 ),
                 responseFields(
-                    fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("게시글 ID"),
-                    fieldWithPath("[].boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
-                    fieldWithPath("[].writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
-                    fieldWithPath("[].title").type(JsonFieldType.STRING).description("제목"),
-                    fieldWithPath("[].content").type(JsonFieldType.STRING).description("내용"),
-                    fieldWithPath("[].createdAt").type(JsonFieldType.STRING).description("생성 시각"),
-                    fieldWithPath("[].updatedAt").type(JsonFieldType.STRING).description("수정 시각")
+                    fieldWithPath("status").description("HTTP 상태"),
+                    fieldWithPath("message").description("응답 메시지"),
+                    fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("게시글 ID"),
+                    fieldWithPath("data[].boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
+                    fieldWithPath("data[].writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
+                    fieldWithPath("data[].title").type(JsonFieldType.STRING).description("제목"),
+                    fieldWithPath("data[].content").type(JsonFieldType.STRING).description("내용"),
+                    fieldWithPath("data[].createdAt").type(JsonFieldType.STRING).description("생성 시각"),
+                    fieldWithPath("data[].updatedAt").type(JsonFieldType.STRING).description("수정 시각")
                 )
             ));
     }
@@ -116,20 +96,24 @@ class ArticleControllerTest {
         mockMvc.perform(get("/api/articles/{articleId}", articleId)
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(articleId))
-            .andExpect(jsonPath("$.title").value("조회 제목"))
+            .andExpect(jsonPath("$.status").value(HttpStatus.OK.name()))
+            .andExpect(jsonPath("$.message").value("성공"))
+            .andExpect(jsonPath("$.data.id").value(articleId))
+            .andExpect(jsonPath("$.data.title").value("조회 제목"))
             .andDo(document("articles/read",
                 pathParameters(
                     parameterWithName("articleId").description("조회할 게시글 ID")
                 ),
                 responseFields(
-                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("게시글 ID"),
-                    fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
-                    fieldWithPath("writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
-                    fieldWithPath("title").type(JsonFieldType.STRING).description("제목"),
-                    fieldWithPath("content").type(JsonFieldType.STRING).description("내용"),
-                    fieldWithPath("createdAt").type(JsonFieldType.STRING).description("생성 시각"),
-                    fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("수정 시각")
+                    fieldWithPath("status").description("HTTP 상태"),
+                    fieldWithPath("message").description("응답 메시지"),
+                    fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("게시글 ID"),
+                    fieldWithPath("data.boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
+                    fieldWithPath("data.writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
+                    fieldWithPath("data.title").type(JsonFieldType.STRING).description("제목"),
+                    fieldWithPath("data.content").type(JsonFieldType.STRING).description("내용"),
+                    fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("생성 시각"),
+                    fieldWithPath("data.updatedAt").type(JsonFieldType.STRING).description("수정 시각")
                 )
             ));
     }
@@ -150,8 +134,10 @@ class ArticleControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.id").value(1L))
-            .andExpect(jsonPath("$.title").value("제목입니다"))
+            .andExpect(jsonPath("$.status").value(HttpStatus.CREATED.name()))
+            .andExpect(jsonPath("$.message").value("성공"))
+            .andExpect(jsonPath("$.data.id").value(1L))
+            .andExpect(jsonPath("$.data.title").value("제목입니다"))
             .andDo(document("articles/create",
                 requestFields(
                     fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
@@ -160,13 +146,15 @@ class ArticleControllerTest {
                     fieldWithPath("content").type(JsonFieldType.STRING).description("내용")
                 ),
                 responseFields(
-                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("게시글 ID"),
-                    fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
-                    fieldWithPath("writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
-                    fieldWithPath("title").type(JsonFieldType.STRING).description("제목"),
-                    fieldWithPath("content").type(JsonFieldType.STRING).description("내용"),
-                    fieldWithPath("createdAt").type(JsonFieldType.STRING).description("생성 시각"),
-                    fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("수정 시각")
+                    fieldWithPath("status").description("HTTP 상태"),
+                    fieldWithPath("message").description("응답 메시지"),
+                    fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("게시글 ID"),
+                    fieldWithPath("data.boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
+                    fieldWithPath("data.writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
+                    fieldWithPath("data.title").type(JsonFieldType.STRING).description("제목"),
+                    fieldWithPath("data.content").type(JsonFieldType.STRING).description("내용"),
+                    fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("생성 시각"),
+                    fieldWithPath("data.updatedAt").type(JsonFieldType.STRING).description("수정 시각")
                 )
             ));
     }
@@ -190,8 +178,10 @@ class ArticleControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(articleId))
-            .andExpect(jsonPath("$.title").value("수정된 제목"))
+            .andExpect(jsonPath("$.status").value(HttpStatus.OK.name()))
+            .andExpect(jsonPath("$.message").value("성공"))
+            .andExpect(jsonPath("$.data.id").value(articleId))
+            .andExpect(jsonPath("$.data.title").value("수정된 제목"))
             .andDo(document("articles/update",
                 pathParameters(
                     parameterWithName("articleId").description("수정할 게시글 ID")
@@ -201,13 +191,15 @@ class ArticleControllerTest {
                     fieldWithPath("content").type(JsonFieldType.STRING).description("수정할 내용")
                 ),
                 responseFields(
-                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("게시글 ID"),
-                    fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
-                    fieldWithPath("writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
-                    fieldWithPath("title").type(JsonFieldType.STRING).description("제목"),
-                    fieldWithPath("content").type(JsonFieldType.STRING).description("내용"),
-                    fieldWithPath("createdAt").type(JsonFieldType.STRING).description("생성 시각"),
-                    fieldWithPath("updatedAt").type(JsonFieldType.STRING).description("수정 시각")
+                    fieldWithPath("status").description("HTTP 상태"),
+                    fieldWithPath("message").description("응답 메시지"),
+                    fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("게시글 ID"),
+                    fieldWithPath("data.boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
+                    fieldWithPath("data.writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
+                    fieldWithPath("data.title").type(JsonFieldType.STRING).description("제목"),
+                    fieldWithPath("data.content").type(JsonFieldType.STRING).description("내용"),
+                    fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("생성 시각"),
+                    fieldWithPath("data.updatedAt").type(JsonFieldType.STRING).description("수정 시각")
                 )
             ));
     }
@@ -220,10 +212,16 @@ class ArticleControllerTest {
 
         // when & then
         mockMvc.perform(delete("/api/articles/{articleId}", articleId))
-            .andExpect(status().isNoContent())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value(HttpStatus.OK.name()))
+            .andExpect(jsonPath("$.message").value("성공"))
             .andDo(document("articles/delete",
                 pathParameters(
                     parameterWithName("articleId").description("삭제할 게시글 ID")
+                ),
+                responseFields(
+                    fieldWithPath("status").description("HTTP 상태"),
+                    fieldWithPath("message").description("응답 메시지")
                 )
             ));
     }

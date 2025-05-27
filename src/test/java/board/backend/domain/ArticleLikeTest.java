@@ -19,7 +19,7 @@ class ArticleLikeTest {
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
 
         // when
-        ArticleLike articleLike = ArticleLike.like(articleId, userId, now);
+        ArticleLike articleLike = ArticleLike.create(articleId, userId, now);
 
         // then
         assertThat(articleLike.getId().articleId()).isEqualTo(articleId);
