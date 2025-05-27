@@ -1,6 +1,6 @@
 package board.backend.controller.security;
 
-import board.backend.controller.response.ApiResponse;
+import board.backend.support.ApiResponse;
 import board.backend.support.ApplicationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;

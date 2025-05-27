@@ -1,6 +1,5 @@
-package board.backend.controller.response;
+package board.backend.support;
 
-import board.backend.support.ApplicationException;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;

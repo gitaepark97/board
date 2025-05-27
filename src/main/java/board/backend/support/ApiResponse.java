@@ -1,6 +1,5 @@
-package board.backend.controller.response;
+package board.backend.support;
 
-import board.backend.support.ApplicationException;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.http.HttpStatus;
 
