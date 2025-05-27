@@ -22,8 +22,8 @@ class ArticleLikeTest {
         ArticleLike articleLike = ArticleLike.create(articleId, userId, now);
 
         // then
-        assertThat(articleLike.getId().articleId()).isEqualTo(articleId);
-        assertThat(articleLike.getId().userId()).isEqualTo(userId);
+        assertThat(articleLike.getArticleId()).isEqualTo(articleId);
+        assertThat(articleLike.getUserId()).isEqualTo(userId);
         assertThat(articleLike.getCreatedAt()).isEqualTo(now);
     }
 

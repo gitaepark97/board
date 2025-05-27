@@ -19,5 +19,10 @@ public class ArticleLikeService {
         ArticleLike articleLike = ArticleLike.create(articleId, userId, timeProvider.now());
         articleLikeRepository.save(articleLike);
     }
-    
+
+    @Transactional
+    public void unlike(Long articleId, Long userId) {
+        articleLikeRepository.findByArticleIdAndUserId(articleId, userId).ifPresent(articleLikeRepository::delete);
+    }
+
 }

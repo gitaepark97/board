@@ -2,10 +2,7 @@ package board.backend.controller;
 
 import board.backend.service.ArticleLikeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -17,6 +14,11 @@ class ArticleLikeController {
     @PostMapping("/articles/{articleId}/users/{userId}")
     void like(@PathVariable Long articleId, @PathVariable Long userId) {
         articleLikeService.like(articleId, userId);
+    }
+
+    @DeleteMapping("/articles/{articleId}/users/{userId}")
+    void unlike(@PathVariable Long articleId, @PathVariable Long userId) {
+        articleLikeService.unlike(articleId, userId);
     }
 
 }

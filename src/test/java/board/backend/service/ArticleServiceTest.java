@@ -160,6 +160,20 @@ class ArticleServiceTest {
     void delete_success() {
         // given
         Long articleId = 1L;
+        Article article = Article.create(articleId, 1L, 100L, "제목", "내용", LocalDateTime.now());
+
+        when(articleRepository.findById(articleId)).thenReturn(Optional.of(article));
+
+        // when
+        articleService.delete(articleId);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 게시글이면 삭제하지 않는다")
+    void delete_not_found_does_nothing() {
+        // given
+        Long articleId = 999L;
+        when(articleRepository.findById(articleId)).thenReturn(Optional.empty());
 
         // when
         articleService.delete(articleId);

@@ -78,3 +78,15 @@ include::{snippets}/article-likes/like/path-parameters.adoc[]
 
 include::{snippets}/article-likes/like/http-response.adoc[]
 include::{snippets}/article-likes/like/response-fields.adoc[]
+
+=== 게시글 좋아요 삭제
+
+==== 요청
+
+include::{snippets}/article-likes/unlike/http-request.adoc[]
+include::{snippets}/article-likes/unlike/path-parameters.adoc[]
+
+==== 응답
+
+include::{snippets}/article-likes/unlike/http-response.adoc[]
+include::{snippets}/article-likes/unlike/response-fields.adoc[]
