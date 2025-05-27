@@ -36,7 +36,21 @@ class ArticleLikeServiceTest {
         Long userId = 100L;
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 12, 0);
 
+        when(articleLikeRepository.existsByArticleIdAndUserId(articleId, userId)).thenReturn(false);
         when(timeProvider.now()).thenReturn(now);
+
+        // when
+        articleLikeService.like(articleId, userId);
+    }
+
+    @Test
+    @DisplayName("이미 좋아요가 눌린 경우 저장하지 않는다")
+    void like_alreadyExists_doesNothing() {
+        // given
+        Long articleId = 1L;
+        Long userId = 100L;
+
+        when(articleLikeRepository.existsByArticleIdAndUserId(articleId, userId)).thenReturn(true);
 
         // when
         articleLikeService.like(articleId, userId);

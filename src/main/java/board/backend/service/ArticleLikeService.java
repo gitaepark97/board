@@ -17,11 +17,15 @@ public class ArticleLikeService {
 
     @Transactional
     public void like(Long articleId, Long userId) {
-        // 게시글 존재 확인
-        articleService.checkArticleExistOrThrow(articleId);
+        if (!articleLikeRepository.existsByArticleIdAndUserId(articleId, userId)) {
+            // 게시글 존재 확인
+            articleService.checkArticleExistOrThrow(articleId);
 
-        ArticleLike articleLike = ArticleLike.create(articleId, userId, timeProvider.now());
-        articleLikeRepository.save(articleLike);
+            // 게시글 좋아요 생성
+            ArticleLike articleLike = ArticleLike.create(articleId, userId, timeProvider.now());
+            // 게시글 좋아요 저장
+            articleLikeRepository.save(articleLike);
+        }
     }
 
     @Transactional
