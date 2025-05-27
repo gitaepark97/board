@@ -44,7 +44,6 @@ public class ArticleController {
     }
 
     @DeleteMapping("/{articleId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     void delete(@PathVariable Long articleId) {
         articleService.delete(articleId);
     }
