@@ -1,7 +1,7 @@
 package board.backend.domain;
 
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
@@ -15,20 +15,14 @@ import java.time.LocalDateTime;
 @Table(name = "article_like")
 public class ArticleLike {
 
-    @Id
-    private Long id;
-
-    private Long articleId;
-
-    private Long userId;
+    @EmbeddedId
+    private ArticleLikeId id;
 
     private LocalDateTime createdAt;
 
-    public static ArticleLike like(Long id, Long articleId, Long userId, LocalDateTime now) {
+    public static ArticleLike create(Long articleId, Long userId, LocalDateTime now) {
         return ArticleLike.builder()
-            .id(id)
-            .articleId(articleId)
-            .userId(userId)
+            .id(new ArticleLikeId(articleId, userId))
             .createdAt(now)
             .build();
     }
