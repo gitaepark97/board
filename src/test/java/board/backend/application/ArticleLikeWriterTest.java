@@ -1,4 +1,4 @@
-package board.backend.service;
+package board.backend.application;
 
 import board.backend.domain.ArticleLike;
 import board.backend.repository.ArticleLikeRepository;
@@ -13,19 +13,17 @@ import java.util.Optional;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class ArticleLikeServiceTest {
+class ArticleLikeWriterTest {
 
     private TimeProvider timeProvider;
     private ArticleLikeRepository articleLikeRepository;
-    private ArticleService articleService;
-    private ArticleLikeService articleLikeService;
+    private ArticleLikeWriter articleLikeWriter;
 
     @BeforeEach
     void setUp() {
         timeProvider = mock(TimeProvider.class);
         articleLikeRepository = mock(ArticleLikeRepository.class);
-        articleService = mock(ArticleService.class);
-        articleLikeService = new ArticleLikeService(timeProvider, articleLikeRepository, articleService);
+        articleLikeWriter = new ArticleLikeWriter(timeProvider, articleLikeRepository);
     }
 
     @Test
@@ -40,7 +38,7 @@ class ArticleLikeServiceTest {
         when(timeProvider.now()).thenReturn(now);
 
         // when
-        articleLikeService.like(articleId, userId);
+        articleLikeWriter.like(articleId, userId);
     }
 
     @Test
@@ -53,7 +51,7 @@ class ArticleLikeServiceTest {
         when(articleLikeRepository.existsByArticleIdAndUserId(articleId, userId)).thenReturn(true);
 
         // when
-        articleLikeService.like(articleId, userId);
+        articleLikeWriter.like(articleId, userId);
     }
 
     @Test
@@ -68,7 +66,7 @@ class ArticleLikeServiceTest {
             .thenReturn(Optional.of(like));
 
         // when
-        articleLikeService.unlike(articleId, userId);
+        articleLikeWriter.unlike(articleId, userId);
     }
 
     @Test
@@ -82,7 +80,7 @@ class ArticleLikeServiceTest {
             .thenReturn(Optional.empty());
 
         // when
-        articleLikeService.unlike(articleId, userId);
+        articleLikeWriter.unlike(articleId, userId);
 
     }
 

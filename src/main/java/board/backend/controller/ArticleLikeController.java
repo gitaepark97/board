@@ -1,6 +1,6 @@
 package board.backend.controller;
 
-import board.backend.service.ArticleLikeService;
+import board.backend.application.ArticleLikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,9 +1,9 @@
 package board.backend.controller;
 
+import board.backend.application.ArticleService;
 import board.backend.controller.request.ArticleCreateRequest;
 import board.backend.controller.request.ArticleUpdateRequest;
 import board.backend.domain.Article;
-import board.backend.service.ArticleService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

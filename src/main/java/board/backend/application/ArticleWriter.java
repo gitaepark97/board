@@ -1,4 +1,4 @@
-package board.backend.service;
+package board.backend.application;
 
 import board.backend.domain.Article;
 import board.backend.domain.ArticleNotFound;
@@ -7,29 +7,15 @@ import board.backend.support.IdProvider;
 import board.backend.support.TimeProvider;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
-@Service
-public class ArticleService {
+@Component
+class ArticleWriter {
 
     private final IdProvider idProvider;
     private final TimeProvider timeProvider;
     private final ArticleRepository articleRepository;
-
-    public List<Article> readAll(Long boardId, Long pageSize, Long lastArticleId) {
-        // 게시글 목록 조회
-        return lastArticleId == null ?
-            articleRepository.findAllByBoardId(boardId, pageSize) :
-            articleRepository.findAllByBoardId(boardId, pageSize, lastArticleId);
-    }
-
-    public Article read(Long articleId) {
-        // 게시글 조회
-        return articleRepository.findById(articleId).orElseThrow(ArticleNotFound::new);
-    }
 
     @Transactional
     public Article create(Long boardId, Long writerId, String title, String content) {
@@ -44,7 +30,7 @@ public class ArticleService {
     @Transactional
     public Article update(Long articleId, String title, String content) {
         // 게시글 조회
-        Article article = this.read(articleId);
+        Article article = articleRepository.findById(articleId).orElseThrow(ArticleNotFound::new);
 
         // 게시글 수정
         Article updatedArticle = article.update(title, content, timeProvider.now());
@@ -58,12 +44,6 @@ public class ArticleService {
     public void delete(Long articleId) {
         // 게시글 삭제
         articleRepository.findById(articleId).ifPresent(articleRepository::delete);
-    }
-
-    void checkArticleExistOrThrow(Long articleId) {
-        if (!articleRepository.existsById(articleId)) {
-            throw new ArticleNotFound();
-        }
     }
 
 }

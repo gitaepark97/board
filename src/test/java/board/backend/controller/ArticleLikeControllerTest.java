@@ -1,6 +1,6 @@
 package board.backend.controller;
 
-import board.backend.service.ArticleLikeService;
+import board.backend.application.ArticleLikeService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
