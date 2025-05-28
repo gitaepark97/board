@@ -75,9 +75,7 @@ class ArticleControllerTest extends TestController {
                     fieldWithPath("data[].boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
                     fieldWithPath("data[].writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
                     fieldWithPath("data[].title").type(JsonFieldType.STRING).description("제목"),
-                    fieldWithPath("data[].content").type(JsonFieldType.STRING).description("내용"),
-                    fieldWithPath("data[].createdAt").type(JsonFieldType.STRING).description("생성 시각"),
-                    fieldWithPath("data[].updatedAt").type(JsonFieldType.STRING).description("수정 시각")
+                    fieldWithPath("data[].createdAt").type(JsonFieldType.STRING).description("생성 시각")
                 )
             ));
     }

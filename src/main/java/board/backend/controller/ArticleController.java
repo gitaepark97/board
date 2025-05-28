@@ -3,7 +3,8 @@ package board.backend.controller;
 import board.backend.application.ArticleService;
 import board.backend.controller.request.ArticleCreateRequest;
 import board.backend.controller.request.ArticleUpdateRequest;
-import board.backend.domain.Article;
+import board.backend.controller.response.ArticleResponse;
+import board.backend.controller.response.ArticleSummaryResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,28 +20,31 @@ class ArticleController {
     private final ArticleService articleService;
 
     @GetMapping
-    List<Article> readAll(
+    List<ArticleSummaryResponse> readAll(
         @RequestParam Long boardId,
         @RequestParam(required = false, defaultValue = "10") Long pageSize,
         @RequestParam(required = false) Long lastArticleId
     ) {
-        return articleService.readAll(boardId, pageSize, lastArticleId);
+        return articleService.readAll(boardId, pageSize, lastArticleId)
+            .stream()
+            .map(ArticleSummaryResponse::of)
+            .toList();
     }
 
     @GetMapping("/{articleId}")
-    Article read(@PathVariable Long articleId) {
-        return articleService.read(articleId);
+    ArticleResponse read(@PathVariable Long articleId) {
+        return ArticleResponse.of(articleService.read(articleId));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    Article create(@RequestBody @Valid ArticleCreateRequest request) {
-        return articleService.create(request.boardId(), request.writerId(), request.title(), request.content());
+    ArticleResponse create(@RequestBody @Valid ArticleCreateRequest request) {
+        return ArticleResponse.of(articleService.create(request.boardId(), request.writerId(), request.title(), request.content()));
     }
 
     @PutMapping("/{articleId}")
-    Article update(@PathVariable Long articleId, @RequestBody @Valid ArticleUpdateRequest request) {
-        return articleService.update(articleId, request.title(), request.content());
+    ArticleResponse update(@PathVariable Long articleId, @RequestBody @Valid ArticleUpdateRequest request) {
+        return ArticleResponse.of(articleService.update(articleId, request.title(), request.content()));
     }
 
     @DeleteMapping("/{articleId}")

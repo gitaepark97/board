@@ -512,9 +512,9 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 327
+Content-Length: 219
 
-{"status":"OK","message":"성공","data":[{"id":6,"boardId":1,"writerId":100,"title":"제목1","content":"내용1","createdAt":"2024-01-01T10:00:00","updatedAt":"2024-01-01T10:00:00"},{"id":7,"boardId":1,"writerId":101,"title":"제목2","content":"내용2","createdAt":"2024-01-01T10:00:00","updatedAt":"2024-01-01T10:00:00"}]}</code></pre>
+{"status":"OK","message":"성공","data":[{"id":6,"boardId":1,"writerId":100,"title":"제목1","createdAt":"2024-01-01T10:00:00"},{"id":7,"boardId":1,"writerId":101,"title":"제목2","createdAt":"2024-01-01T10:00:00"}]}</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -562,19 +562,9 @@ Content-Length: 327
 <td class="tableblock halign-left valign-top"><p class="tableblock">제목</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].content</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">내용</p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].createdAt</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">생성 시각</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].updatedAt</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정 시각</p></td>
 </tr>
 </tbody>
 </table>
@@ -1146,7 +1136,7 @@ Content-Length: 34
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2025-05-27 15:36:44 +0900
+Last updated 2025-05-27 15:49:59 +0900
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
