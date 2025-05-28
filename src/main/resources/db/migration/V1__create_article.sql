@@ -8,3 +8,5 @@ CREATE TABLE article
     created_at datetime      not null,
     updated_at datetime      not null
 );
+
+create index idx_board_id_article_id on article (board_id asc, id desc);
