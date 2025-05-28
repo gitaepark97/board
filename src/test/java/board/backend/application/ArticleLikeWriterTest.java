@@ -1,6 +1,7 @@
 package board.backend.application;
 
 import board.backend.domain.ArticleLike;
+import board.backend.repository.ArticleLikeCountRepository;
 import board.backend.repository.ArticleLikeRepository;
 import board.backend.support.TimeProvider;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,18 +18,20 @@ class ArticleLikeWriterTest {
 
     private TimeProvider timeProvider;
     private ArticleLikeRepository articleLikeRepository;
+    private ArticleLikeCountRepository articleLikeCountRepository;
     private ArticleLikeWriter articleLikeWriter;
 
     @BeforeEach
     void setUp() {
         timeProvider = mock(TimeProvider.class);
         articleLikeRepository = mock(ArticleLikeRepository.class);
-        articleLikeWriter = new ArticleLikeWriter(timeProvider, articleLikeRepository);
+        articleLikeCountRepository = mock(ArticleLikeCountRepository.class);
+        articleLikeWriter = new ArticleLikeWriter(timeProvider, articleLikeRepository, articleLikeCountRepository);
     }
 
     @Test
     @DisplayName("게시글 좋아요에 성공한다")
-    void like_success() {
+    void like_success_increase_count() {
         // given
         Long articleId = 1L;
         Long userId = 100L;
@@ -36,6 +39,23 @@ class ArticleLikeWriterTest {
 
         when(articleLikeRepository.existsByArticleIdAndUserId(articleId, userId)).thenReturn(false);
         when(timeProvider.now()).thenReturn(now);
+        when(articleLikeCountRepository.increase(articleId)).thenReturn(1L);
+
+        // when
+        articleLikeWriter.like(articleId, userId);
+    }
+
+    @Test
+    @DisplayName("게시글의 첫 좋아요에 성공한다")
+    void like_success_save_count() {
+        // given
+        Long articleId = 1L;
+        Long userId = 100L;
+        LocalDateTime now = LocalDateTime.of(2024, 1, 1, 12, 0);
+
+        when(articleLikeRepository.existsByArticleIdAndUserId(articleId, userId)).thenReturn(false);
+        when(timeProvider.now()).thenReturn(now);
+        when(articleLikeCountRepository.increase(articleId)).thenReturn(0L);
 
         // when
         articleLikeWriter.like(articleId, userId);

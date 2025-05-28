@@ -4,7 +4,7 @@ import board.backend.domain.Article;
 
 import java.util.List;
 
-public interface CustomArticleRepository {
+interface CustomArticleRepository {
 
     List<Article> findAllByBoardId(Long boardId, Long pageSize);
 

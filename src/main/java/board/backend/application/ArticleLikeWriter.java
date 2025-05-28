@@ -1,6 +1,8 @@
 package board.backend.application;
 
 import board.backend.domain.ArticleLike;
+import board.backend.domain.ArticleLikeCount;
+import board.backend.repository.ArticleLikeCountRepository;
 import board.backend.repository.ArticleLikeRepository;
 import board.backend.support.TimeProvider;
 import jakarta.transaction.Transactional;
@@ -13,6 +15,7 @@ class ArticleLikeWriter {
 
     private final TimeProvider timeProvider;
     private final ArticleLikeRepository articleLikeRepository;
+    private final ArticleLikeCountRepository articleLikeCountRepository;
 
     @Transactional
     void like(Long articleId, Long userId) {
@@ -21,12 +24,24 @@ class ArticleLikeWriter {
             ArticleLike articleLike = ArticleLike.create(articleId, userId, timeProvider.now());
             // 게시글 좋아요 저장
             articleLikeRepository.save(articleLike);
+
+            // 게시글 좋아요 수 증가
+            long result = articleLikeCountRepository.increase(articleId);
+            if (result == 0) {
+                articleLikeCountRepository.save(ArticleLikeCount.init(articleId));
+            }
         }
     }
 
     @Transactional
     void unlike(Long articleId, Long userId) {
-        articleLikeRepository.findByArticleIdAndUserId(articleId, userId).ifPresent(articleLikeRepository::delete);
+        articleLikeRepository.findByArticleIdAndUserId(articleId, userId).ifPresent(articleLike -> {
+            // 게시글 좋아요 삭제
+            articleLikeRepository.delete(articleLike);
+
+            // 게시글 좋아요 수 감소
+            articleLikeCountRepository.decrease(articleId);
+        });
     }
 
 }

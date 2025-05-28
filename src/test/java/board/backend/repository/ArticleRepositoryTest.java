@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @Import({TestcontainersConfiguration.class, CustomArticleRepositoryImpl.class, QueryDSLConfig.class})
 @DataJpaTest
-class ArticleRepositoryImplTest {
+class ArticleRepositoryTest {
 
     @Autowired
     private ArticleRepository articleRepository;
