@@ -4,6 +4,7 @@ import board.backend.application.ArticleService;
 import board.backend.controller.request.ArticleCreateRequest;
 import board.backend.controller.request.ArticleUpdateRequest;
 import board.backend.domain.Article;
+import board.backend.domain.ArticleWithLikeCount;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -41,9 +42,9 @@ class ArticleControllerTest extends TestController {
 
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
 
-        List<Article> responses = List.of(
-            Article.create(6L, boardId, 100L, "제목1", "내용1", now),
-            Article.create(7L, boardId, 101L, "제목2", "내용2", now)
+        List<ArticleWithLikeCount> responses = List.of(
+            ArticleWithLikeCount.of(Article.create(6L, boardId, 100L, "제목1", "내용1", now), 1L),
+            ArticleWithLikeCount.of(Article.create(7L, boardId, 101L, "제목2", "내용2", now), 0L)
         );
 
         when(articleService.readAll(boardId, pageSize, lastArticleId)).thenReturn(responses);
@@ -60,8 +61,10 @@ class ArticleControllerTest extends TestController {
             .andExpect(jsonPath("$.data.length()").value(responses.size()))
             .andExpect(jsonPath("$.data[0].id").value(6L))
             .andExpect(jsonPath("$.data[0].title").value("제목1"))
+            .andExpect(jsonPath("$.data[0].likeCount").value(1L))
             .andExpect(jsonPath("$.data[1].id").value(7L))
             .andExpect(jsonPath("$.data[1].title").value("제목2"))
+            .andExpect(jsonPath("$.data[1].likeCount").value(0L))
             .andDo(document("articles/read-all",
                 queryParameters(
                     parameterWithName("boardId").description("게시판 ID"),
@@ -75,7 +78,8 @@ class ArticleControllerTest extends TestController {
                     fieldWithPath("data[].boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
                     fieldWithPath("data[].writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
                     fieldWithPath("data[].title").type(JsonFieldType.STRING).description("제목"),
-                    fieldWithPath("data[].createdAt").type(JsonFieldType.STRING).description("생성 시각")
+                    fieldWithPath("data[].createdAt").type(JsonFieldType.STRING).description("생성 시각"),
+                    fieldWithPath("data[].likeCount").type(JsonFieldType.NUMBER).description("좋아요 수")
                 )
             ));
     }
