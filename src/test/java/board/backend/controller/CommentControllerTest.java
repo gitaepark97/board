@@ -13,10 +13,14 @@ import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -73,6 +77,31 @@ class CommentControllerTest extends TestController {
                     fieldWithPath("data.content").description("댓글 내용"),
                     fieldWithPath("data.createdAt").description("작성 시각"),
                     fieldWithPath("data.isDeleted").description("삭제 여부")
+                )
+            ));
+    }
+
+    @DisplayName("댓글 삭제 API - 성공")
+    @Test
+    void delete_success() throws Exception {
+        // given
+        Long commentId = 10L;
+
+        doNothing().when(commentService).delete(commentId);
+
+        // when & then
+        mockMvc.perform(delete("/api/comments/{commentId}", commentId)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("OK"))
+            .andExpect(jsonPath("$.message").value("성공"))
+            .andDo(document("comments/delete",
+                pathParameters(
+                    parameterWithName("commentId").description("삭제할 댓글 ID")
+                ),
+                responseFields(
+                    fieldWithPath("status").description("HTTP 상태"),
+                    fieldWithPath("message").description("응답 메시지")
                 )
             ));
     }

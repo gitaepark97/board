@@ -21,4 +21,9 @@ class CommentController {
         return CommentResponse.of(commentService.create(request.articleId(), request.writerId(), request.parentCommentId(), request.content()));
     }
 
+    @DeleteMapping("/{commentId}")
+    void delete(@PathVariable Long commentId) {
+        commentService.delete(commentId);
+    }
+
 }

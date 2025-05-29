@@ -104,3 +104,15 @@ include::{snippets}/comments/create/request-body.adoc[]
 
 include::{snippets}/comments/create/http-response.adoc[]
 include::{snippets}/comments/create/response-fields.adoc[]
+
+=== 댓글 삭제
+
+==== 요청
+
+include::{snippets}/comments/delete/http-request.adoc[]
+include::{snippets}/comments/delete/path-parameters.adoc[]
+
+==== 응답
+
+include::{snippets}/comments/delete/http-response.adoc[]
+include::{snippets}/comments/delete/response-fields.adoc[]

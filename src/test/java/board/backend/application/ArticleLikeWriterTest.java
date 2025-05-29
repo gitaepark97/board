@@ -31,7 +31,7 @@ class ArticleLikeWriterTest {
 
     @Test
     @DisplayName("게시글 좋아요에 성공한다")
-    void like_success_increase_count() {
+    void like_successIncreaseCount() {
         // given
         Long articleId = 1L;
         Long userId = 100L;
@@ -47,7 +47,7 @@ class ArticleLikeWriterTest {
 
     @Test
     @DisplayName("게시글의 첫 좋아요에 성공한다")
-    void like_success_save_count() {
+    void like_successSaveCount() {
         // given
         Long articleId = 1L;
         Long userId = 100L;
@@ -63,7 +63,7 @@ class ArticleLikeWriterTest {
 
     @Test
     @DisplayName("이미 좋아요가 눌린 경우 저장하지 않는다")
-    void like_alreadyExists_doesNothing() {
+    void like_alreadyExistsDoesNothing() {
         // given
         Long articleId = 1L;
         Long userId = 100L;
@@ -91,7 +91,7 @@ class ArticleLikeWriterTest {
 
     @Test
     @DisplayName("좋아요 기록이 없으면 아무 동작도 하지 않는다")
-    void unlike_not_found_does_nothing() {
+    void unlike_notFoundDoesNothing() {
         // given
         Long articleId = 1L;
         Long userId = 100L;

@@ -30,7 +30,7 @@ class ArticleReaderTest {
 
     @Test
     @DisplayName("lastArticleId가 null이면 첫 페이지 게시글을 조회한다")
-    void readAll_without_lastArticleId_returns_first_page() {
+    void readAll_withoutLastArticleIdReturnsFirstPage() {
         // given
         Long boardId = 1L;
         Long pageSize = 3L;
@@ -51,7 +51,7 @@ class ArticleReaderTest {
     }
 
     @DisplayName("lastArticleId가 존재하면 해당 이후 페이지 게시글을 조회한다")
-    void readAll_with_lastArticleId_returns_next_page() {
+    void readAll_withLastArticleIdReturnsNextPage() {
         // given
         Long boardId = 1L;
         Long pageSize = 3L;
@@ -91,7 +91,7 @@ class ArticleReaderTest {
 
     @Test
     @DisplayName("게시글이 존재하지 않으면 예외가 발생한다")
-    void read_fail_when_article_not_found() {
+    void read_failWhenArticleNotFound() {
         // given
         Long invalidId = 999L;
         when(articleRepository.findById(invalidId)).thenReturn(Optional.empty());

@@ -96,7 +96,7 @@ class ArticleWriterTest {
 
     @Test
     @DisplayName("존재하지 않는 게시글이면 삭제하지 않는다")
-    void delete_not_found_does_nothing() {
+    void delete_notFoundDoesNothing() {
         // given
         Long articleId = 999L;
         when(articleRepository.findById(articleId)).thenReturn(Optional.empty());

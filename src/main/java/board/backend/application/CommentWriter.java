@@ -8,6 +8,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import static java.util.function.Predicate.not;
+
 @RequiredArgsConstructor
 @Component
 class CommentWriter {
@@ -24,6 +26,35 @@ class CommentWriter {
         commentRepository.save(newComment);
 
         return newComment;
+    }
+
+    @Transactional
+    void delete(Long commentId) {
+        commentRepository.findById(commentId).filter(not(Comment::getIsDeleted)).ifPresent(comment -> {
+            if (hasChildren(comment)) {
+                // 댓글 삭제
+                Comment deletedComment = comment.delete();
+                // 댓글 저장
+                commentRepository.save(deletedComment);
+            } else {
+                delete(comment);
+            }
+        });
+    }
+
+    private boolean hasChildren(Comment comment) {
+        return commentRepository.countBy(comment.getArticleId(), comment.getId(), 2) == 2;
+    }
+
+    private void delete(Comment comment) {
+        commentRepository.delete(comment);
+        if (!comment.isRoot()) {
+            // 부모 댓글 삭제
+            commentRepository.findById(comment.getParentId())
+                .filter(Comment::getIsDeleted)
+                .filter(not(this::hasChildren))
+                .ifPresent(this::delete);
+        }
     }
 
 }

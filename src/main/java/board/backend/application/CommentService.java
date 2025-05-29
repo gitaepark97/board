@@ -14,4 +14,8 @@ public class CommentService {
         return commentWriter.create(articleId, writerId, parentCommentId, content);
     }
 
+    public void delete(Long commentId) {
+        commentWriter.delete(commentId);
+    }
+
 }

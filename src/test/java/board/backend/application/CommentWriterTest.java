@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
@@ -53,6 +54,81 @@ class CommentWriterTest {
         assertThat(comment.getParentId()).isEqualTo(parentCommentId);
         assertThat(comment.getContent()).isEqualTo(content);
         assertThat(comment.getCreatedAt()).isEqualTo(now);
+    }
+
+    @Test
+    @DisplayName("삭제된 댓글이면 삭제하지 않는다")
+    void delete_alreadyDeleted_doesNothing() {
+        // given
+        Long commentId = 1L;
+        Comment deletedComment = mock(Comment.class);
+        when(deletedComment.getIsDeleted()).thenReturn(true);
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(deletedComment));
+
+        // when
+        commentWriter.delete(commentId);
+    }
+
+    @Test
+    @DisplayName("자식이 있는 댓글은 논리 삭제된다")
+    void delete_withChildren_marksAsDeleted() {
+        // given
+        Long commentId = 1L;
+        Comment comment = mock(Comment.class);
+        when(comment.getIsDeleted()).thenReturn(false);
+        when(comment.getArticleId()).thenReturn(10L);
+        when(comment.getId()).thenReturn(commentId);
+        when(comment.delete()).thenReturn(comment);
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
+        when(commentRepository.countBy(10L, commentId, 2)).thenReturn(2);
+
+        // when
+        commentWriter.delete(commentId);
+    }
+
+    @Test
+    @DisplayName("자식이 없는 댓글은 물리 삭제된다")
+    void delete_withoutChildren_deletesComment() {
+        // given
+        Long commentId = 1L;
+        Comment comment = mock(Comment.class);
+        when(comment.getIsDeleted()).thenReturn(false);
+        when(comment.getArticleId()).thenReturn(10L);
+        when(comment.getId()).thenReturn(commentId);
+        when(comment.isRoot()).thenReturn(true); // 루트 댓글이므로 부모 재귀 삭제 없음
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
+        when(commentRepository.countBy(10L, commentId, 2)).thenReturn(1);
+
+        // when
+        commentWriter.delete(commentId);
+    }
+
+    @Test
+    @DisplayName("부모가 삭제 상태이고 자식이 없으면 재귀적으로 삭제한다")
+    void delete_recursivelyDeletesParentIfDeletedAndNoChildren() {
+        // given
+        Long commentId = 2L;
+        Long parentId = 1L;
+
+        Comment child = mock(Comment.class);
+        when(child.getIsDeleted()).thenReturn(false);
+        when(child.getArticleId()).thenReturn(10L);
+        when(child.getId()).thenReturn(commentId);
+        when(child.getParentId()).thenReturn(parentId);
+        when(child.isRoot()).thenReturn(false);
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(child));
+        when(commentRepository.countBy(10L, commentId, 2)).thenReturn(1);
+
+        Comment parent = mock(Comment.class);
+        when(parent.getIsDeleted()).thenReturn(true);
+        when(parent.getArticleId()).thenReturn(10L);
+        when(parent.getId()).thenReturn(parentId);
+        when(parent.isRoot()).thenReturn(true);
+        when(commentRepository.findById(parentId)).thenReturn(Optional.of(parent));
+        when(commentRepository.countBy(10L, parentId, 2)).thenReturn(1);
+
+        // when
+        commentWriter.delete(commentId);
     }
 
 }
