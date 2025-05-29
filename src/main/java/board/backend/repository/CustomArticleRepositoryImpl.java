@@ -29,14 +29,14 @@ class CustomArticleRepositoryImpl implements CustomArticleRepository {
     }
 
     @Override
-    public List<Article> findAllByBoardId(Long boardId, Long pageSize, Long lastArticleId) {
+    public List<Article> findAllByBoardId(Long boardId, Long pageSize, Long lastId) {
         QArticle article = QArticle.article;
 
         return queryFactory
             .selectFrom(article)
             .where(
                 article.boardId.eq(boardId),
-                article.id.lt(lastArticleId)
+                article.id.lt(lastId)
             )
             .orderBy(article.id.desc())
             .limit(pageSize)

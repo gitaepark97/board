@@ -87,4 +87,39 @@ class CommentRepositoryTest {
         assertThat(count).isEqualTo(0);
     }
 
+    @Test
+    @DisplayName("시간순 정렬로 댓글을 pageSize만큼 조회한다 (첫 페이지)")
+    void findAllByArticleId_firstPage() {
+        // when
+        var comments = commentRepository.findAllByArticleId(articleId, 5L);
+
+        // then
+        assertThat(comments.size()).isEqualTo(5);
+        assertThat(comments.getFirst().getId()).isLessThan(comments.get(4).getId());
+    }
+
+    @Test
+    @DisplayName("커서 기반으로 다음 페이지의 댓글을 조회한다")
+    void findAllByArticleId_nextPage() {
+        // given
+        var firstPage = commentRepository.findAllByArticleId(articleId, 5L);
+        var lastComment = firstPage.get(4);
+
+        // when
+        var nextPage = commentRepository.findAllByArticleId(
+            articleId,
+            5L,
+            lastComment.getParentId(),
+            lastComment.getId()
+        );
+
+        // then
+        assertThat(nextPage.size()).isLessThanOrEqualTo(5);
+        for (var comment : nextPage) {
+            boolean isCursorAfter = comment.getParentId() > lastComment.getParentId()
+                || (comment.getParentId().equals(lastComment.getParentId()) && comment.getId() > lastComment.getId());
+            assertThat(isCursorAfter).isTrue();
+        }
+    }
+
 }

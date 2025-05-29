@@ -93,6 +93,18 @@ include::{snippets}/article-likes/unlike/response-fields.adoc[]
 
 == Comment
 
+=== 댓글 목록 조회
+
+==== 요청
+
+include::{snippets}/comments/read-all/http-request.adoc[]
+include::{snippets}/comments/read-all/query-parameters.adoc[]
+
+==== 응답
+
+include::{snippets}/comments/read-all/http-response.adoc[]
+include::{snippets}/comments/read-all/response-fields.adoc[]
+
 === 댓글 생성
 
 ==== 요청

@@ -8,6 +8,6 @@ interface CustomArticleRepository {
 
     List<Article> findAllByBoardId(Long boardId, Long pageSize);
 
-    List<Article> findAllByBoardId(Long writerId, Long pageSize, Long lastArticleId);
+    List<Article> findAllByBoardId(Long boardId, Long pageSize, Long lastId);
 
 }

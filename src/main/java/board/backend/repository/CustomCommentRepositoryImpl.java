@@ -19,8 +19,7 @@ class CustomCommentRepositoryImpl implements CustomCommentRepository {
         QComment comment = QComment.comment;
 
         List<Comment> limitedComments = queryFactory
-            .select(comment)
-            .from(comment)
+            .selectFrom(comment)
             .where(
                 comment.articleId.eq(articleId),
                 comment.parentId.eq(parentId)
@@ -29,6 +28,41 @@ class CustomCommentRepositoryImpl implements CustomCommentRepository {
             .fetch();
 
         return limitedComments.size();
+    }
+
+    @Override
+    public List<Comment> findAllByArticleId(Long articleId, Long pageSize) {
+        QComment comment = QComment.comment;
+
+        return queryFactory
+            .selectFrom(comment)
+            .where(
+                comment.articleId.eq(articleId)
+            )
+            .orderBy(comment.parentId.asc(), comment.id.asc())
+            .limit(pageSize)
+            .fetch();
+    }
+
+    @Override
+    public List<Comment> findAllByArticleId(
+        Long articleId,
+        Long pageSize,
+        Long lastParentId,
+        Long lastId
+    ) {
+        QComment comment = QComment.comment;
+
+        return queryFactory
+            .selectFrom(comment)
+            .where(
+                comment.articleId.eq(articleId),
+                comment.parentId.gt(lastParentId)
+                    .or(comment.parentId.eq(lastParentId).and(comment.id.gt(lastId)))
+            )
+            .orderBy(comment.parentId.asc(), comment.id.asc())
+            .limit(pageSize)
+            .fetch();
     }
 
 }

@@ -36,7 +36,6 @@ class CommentWriterTest {
     @DisplayName("부모 댓글 없이 댓글 생성에 성공한다")
     void create_successWithoutParentCommentId() {
         // given
-        Long parentId = null;
         Long newCommentId = 10L;
         Long articleId = 1L;
         Long writerId = 100L;
@@ -47,7 +46,7 @@ class CommentWriterTest {
         when(timeProvider.now()).thenReturn(now);
 
         // when
-        Comment result = commentWriter.create(articleId, writerId, parentId, content);
+        Comment result = commentWriter.create(articleId, writerId, null, content);
 
         // then
         assertThat(result.getId()).isEqualTo(newCommentId);
