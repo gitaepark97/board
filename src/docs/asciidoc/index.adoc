@@ -90,3 +90,17 @@ include::{snippets}/article-likes/unlike/path-parameters.adoc[]
 
 include::{snippets}/article-likes/unlike/http-response.adoc[]
 include::{snippets}/article-likes/unlike/response-fields.adoc[]
+
+== Comment
+
+=== 댓글 생성
+
+==== 요청
+
+include::{snippets}/comments/create/http-request.adoc[]
+include::{snippets}/comments/create/request-body.adoc[]
+
+==== 응답
+
+include::{snippets}/comments/create/http-response.adoc[]
+include::{snippets}/comments/create/response-fields.adoc[]
