@@ -42,7 +42,7 @@ public class Comment {
             .id(id)
             .articleId(articleId)
             .writerId(writerId)
-            .parentId(parentId)
+            .parentId(parentId == null ? id : parentId)
             .content(content)
             .createdAt(now)
             .isDeleted(false)

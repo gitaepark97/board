@@ -1,6 +1,7 @@
 package board.backend.application;
 
 import board.backend.domain.Comment;
+import board.backend.domain.CommentNotFound;
 import board.backend.repository.CommentRepository;
 import board.backend.support.IdProvider;
 import board.backend.support.TimeProvider;
@@ -20,6 +21,11 @@ class CommentWriter {
 
     @Transactional
     Comment create(Long articleId, Long writerId, Long parentCommentId, String content) {
+        // 부모 댓글 확인
+        if (parentCommentId != null) {
+            checkCommentExistOrThrow(parentCommentId);
+        }
+
         // 댓글 생성
         Comment newComment = Comment.create(idProvider.nextId(), articleId, writerId, parentCommentId, content, timeProvider.now());
         // 댓글 저장
@@ -40,6 +46,12 @@ class CommentWriter {
                 delete(comment);
             }
         });
+    }
+
+    private void checkCommentExistOrThrow(Long commentId) {
+        if (!commentRepository.existsById(commentId)) {
+            throw new CommentNotFound();
+        }
     }
 
     private boolean hasChildren(Comment comment) {

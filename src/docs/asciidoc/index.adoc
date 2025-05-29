@@ -98,7 +98,7 @@ include::{snippets}/article-likes/unlike/response-fields.adoc[]
 ==== 요청
 
 include::{snippets}/comments/create/http-request.adoc[]
-include::{snippets}/comments/create/request-body.adoc[]
+include::{snippets}/comments/create/request-fields.adoc[]
 
 ==== 응답
 

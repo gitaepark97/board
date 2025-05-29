@@ -9,8 +9,7 @@ public record CommentCreateRequest(
 
     @NotNull
     Long writerId,
-
-    @NotNull
+    
     Long parentCommentId,
 
     @NotBlank

@@ -10,27 +10,49 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 class CommentTest {
 
     @Test
-    @DisplayName("댓글 생성에 성공한다")
-    void create_success() {
+    @DisplayName("부모 ID가 null이면 댓글 생성 시 부모 ID에 자기 자신 id가 할당되고 isDeleted는 false이다")
+    void create_with_null_parentId() {
         // given
         Long id = 1L;
         Long articleId = 10L;
         Long writerId = 100L;
-        Long parentId = 1L;
-        String content = "댓글 내용";
+        Long parentId = null;
+        String content = "루트 댓글 내용";
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
 
         // when
         Comment comment = Comment.create(id, articleId, writerId, parentId, content, now);
 
         // then
+        assertThat(comment.getParentId()).isEqualTo(id);
+        assertThat(comment.isRoot()).isTrue();
         assertThat(comment.getId()).isEqualTo(id);
         assertThat(comment.getArticleId()).isEqualTo(articleId);
         assertThat(comment.getWriterId()).isEqualTo(writerId);
-        assertThat(comment.getParentId()).isEqualTo(parentId);
         assertThat(comment.getContent()).isEqualTo(content);
         assertThat(comment.getCreatedAt()).isEqualTo(now);
         assertThat(comment.getIsDeleted()).isFalse();
+    }
+
+    @Test
+    @DisplayName("부모 ID가 주어지면 댓글 생성 시 해당 값으로 할당되고, 루트 댓글이 아님을 판별할 수 있다")
+    void create_with_nonNull_parentId() {
+        // given
+        Long id = 2L;
+        Long articleId = 20L;
+        Long writerId = 200L;
+        // 루트 댓글이 아니라면 부모 ID가 자기 자신의 id와 달라야 함
+        Long parentId = 1L;
+        String content = "대댓글 내용";
+        LocalDateTime now = LocalDateTime.of(2024, 1, 2, 11, 0);
+
+        // when
+        Comment comment = Comment.create(id, articleId, writerId, parentId, content, now);
+
+        // then
+        assertThat(comment.getParentId()).isEqualTo(parentId);
+        assertThat(comment.isRoot()).isFalse();
+        assertThat(comment.getId()).isEqualTo(id);
     }
 
     @Test

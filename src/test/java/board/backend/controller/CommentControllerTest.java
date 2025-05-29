@@ -65,7 +65,7 @@ class CommentControllerTest extends TestController {
                 requestFields(
                     fieldWithPath("articleId").description("댓글을 작성할 게시글 ID"),
                     fieldWithPath("writerId").description("댓글 작성자 ID"),
-                    fieldWithPath("parentCommentId").description("부모 댓글 ID"),
+                    fieldWithPath("parentCommentId").description("부모 댓글 ID").optional(),
                     fieldWithPath("content").description("댓글 내용")
                 ),
                 responseFields(

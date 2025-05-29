@@ -1,6 +1,7 @@
 package board.backend.application;
 
 import board.backend.domain.Comment;
+import board.backend.domain.CommentNotFound;
 import board.backend.repository.CommentRepository;
 import board.backend.support.IdProvider;
 import board.backend.support.TimeProvider;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -31,29 +33,62 @@ class CommentWriterTest {
     }
 
     @Test
-    @DisplayName("댓글 생성에 성공한다")
-    void createComment_success() {
+    @DisplayName("부모 댓글 없이 댓글 생성에 성공한다")
+    void create_successWithoutParentCommentId() {
         // given
-        Long commentId = 1L;
-        Long articleId = 10L;
+        Long parentId = null;
+        Long newCommentId = 10L;
+        Long articleId = 1L;
         Long writerId = 100L;
-        Long parentCommentId = 1L; // 자기 자신을 부모로 둘 수 있음 (isRoot 조건)
-        String content = "댓글 내용입니다.";
+        String content = "댓글입니다";
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 12, 0);
 
-        when(idProvider.nextId()).thenReturn(commentId);
+        when(idProvider.nextId()).thenReturn(newCommentId);
         when(timeProvider.now()).thenReturn(now);
 
         // when
-        Comment comment = commentWriter.create(articleId, writerId, parentCommentId, content);
+        Comment result = commentWriter.create(articleId, writerId, parentId, content);
 
         // then
-        assertThat(comment.getId()).isEqualTo(commentId);
-        assertThat(comment.getArticleId()).isEqualTo(articleId);
-        assertThat(comment.getWriterId()).isEqualTo(writerId);
-        assertThat(comment.getParentId()).isEqualTo(parentCommentId);
-        assertThat(comment.getContent()).isEqualTo(content);
-        assertThat(comment.getCreatedAt()).isEqualTo(now);
+        assertThat(result.getId()).isEqualTo(newCommentId);
+    }
+
+    @Test
+    @DisplayName("부모 댓글이 존재할 경우 댓글 생성에 성공한다")
+    void create_successWithParentCommentId() {
+        // given
+        Long parentId = 10L;
+        Long newCommentId = 11L;
+        Long articleId = 1L;
+        Long writerId = 100L;
+        String content = "대댓글입니다";
+        LocalDateTime now = LocalDateTime.of(2024, 1, 1, 12, 0);
+
+        when(idProvider.nextId()).thenReturn(newCommentId);
+        when(timeProvider.now()).thenReturn(now);
+        when(commentRepository.existsById(parentId)).thenReturn(true);
+
+        // when
+        Comment result = commentWriter.create(articleId, writerId, parentId, content);
+
+        // then
+        assertThat(result.getParentId()).isEqualTo(parentId);
+    }
+
+    @Test
+    @DisplayName("부모 댓글이 존재하지 않으면 예외가 발생한다")
+    void create_failWhenParentCommentNotFound() {
+        // given
+        Long parentId = 10L;
+        Long articleId = 1L;
+        Long writerId = 100L;
+        String content = "잘못된 대댓글";
+
+        when(commentRepository.existsById(parentId)).thenReturn(false);
+
+        // when & then
+        assertThatThrownBy(() -> commentWriter.create(articleId, writerId, parentId, content))
+            .isInstanceOf(CommentNotFound.class);
     }
 
     @Test
@@ -88,7 +123,7 @@ class CommentWriterTest {
 
     @Test
     @DisplayName("자식이 없는 댓글은 물리 삭제된다")
-    void delete_withoutChildren_deletesComment() {
+    void delete_withoutChildrenDeletesComment() {
         // given
         Long commentId = 1L;
         Comment comment = mock(Comment.class);
