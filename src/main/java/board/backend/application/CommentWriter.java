@@ -1,7 +1,9 @@
 package board.backend.application;
 
+import board.backend.domain.ArticleCommentCount;
 import board.backend.domain.Comment;
 import board.backend.domain.CommentNotFound;
+import board.backend.repository.ArticleCommentCountRepository;
 import board.backend.repository.CommentRepository;
 import board.backend.support.IdProvider;
 import board.backend.support.TimeProvider;
@@ -18,6 +20,7 @@ class CommentWriter {
     private final IdProvider idProvider;
     private final TimeProvider timeProvider;
     private final CommentRepository commentRepository;
+    private final ArticleCommentCountRepository articleCommentCountRepository;
 
     @Transactional
     Comment create(Long articleId, Long writerId, Long parentCommentId, String content) {
@@ -30,6 +33,12 @@ class CommentWriter {
         Comment newComment = Comment.create(idProvider.nextId(), articleId, writerId, parentCommentId, content, timeProvider.now());
         // 댓글 저장
         commentRepository.save(newComment);
+
+        // 게시글 댓글 수 증가
+        long result = articleCommentCountRepository.increase(articleId);
+        if (result == 0) {
+            articleCommentCountRepository.save(ArticleCommentCount.init(articleId));
+        }
 
         return newComment;
     }
@@ -60,6 +69,7 @@ class CommentWriter {
 
     private void delete(Comment comment) {
         commentRepository.delete(comment);
+        articleCommentCountRepository.decrease(comment.getArticleId());
         if (!comment.isRoot()) {
             // 부모 댓글 삭제
             commentRepository.findById(comment.getParentId())

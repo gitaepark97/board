@@ -10,3 +10,9 @@ create table comment
 );
 
 create index idx_article_id_parent_comment_id_comment_id on comment (article_id asc, parent_id asc, id asc);
+
+create table article_comment_count
+(
+    article_id    bigint not null primary key,
+    comment_count bigint not null
+);

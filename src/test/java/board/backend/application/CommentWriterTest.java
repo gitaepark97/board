@@ -2,6 +2,7 @@ package board.backend.application;
 
 import board.backend.domain.Comment;
 import board.backend.domain.CommentNotFound;
+import board.backend.repository.ArticleCommentCountRepository;
 import board.backend.repository.CommentRepository;
 import board.backend.support.IdProvider;
 import board.backend.support.TimeProvider;
@@ -22,6 +23,7 @@ class CommentWriterTest {
     private IdProvider idProvider;
     private TimeProvider timeProvider;
     private CommentRepository commentRepository;
+    private ArticleCommentCountRepository articleCommentCountRepository;
     private CommentWriter commentWriter;
 
     @BeforeEach
@@ -29,7 +31,8 @@ class CommentWriterTest {
         idProvider = mock(IdProvider.class);
         timeProvider = mock(TimeProvider.class);
         commentRepository = mock(CommentRepository.class);
-        commentWriter = new CommentWriter(idProvider, timeProvider, commentRepository);
+        articleCommentCountRepository = mock(ArticleCommentCountRepository.class);
+        commentWriter = new CommentWriter(idProvider, timeProvider, commentRepository, articleCommentCountRepository);
     }
 
     @Test
@@ -44,6 +47,7 @@ class CommentWriterTest {
 
         when(idProvider.nextId()).thenReturn(newCommentId);
         when(timeProvider.now()).thenReturn(now);
+        when(articleCommentCountRepository.increase(articleId)).thenReturn(1L); // count 증가 성공
 
         // when
         Comment result = commentWriter.create(articleId, writerId, null, content);
@@ -66,12 +70,29 @@ class CommentWriterTest {
         when(idProvider.nextId()).thenReturn(newCommentId);
         when(timeProvider.now()).thenReturn(now);
         when(commentRepository.existsById(parentId)).thenReturn(true);
+        when(articleCommentCountRepository.increase(articleId)).thenReturn(1L);
 
         // when
         Comment result = commentWriter.create(articleId, writerId, parentId, content);
 
         // then
         assertThat(result.getParentId()).isEqualTo(parentId);
+    }
+
+    @Test
+    @DisplayName("첫 댓글 생성에 성공한다")
+    void create_commentCountIncreaseFails_thenSave() {
+        // given
+        Long articleId = 1L;
+        Long newCommentId = 11L;
+        LocalDateTime now = LocalDateTime.of(2024, 1, 1, 12, 0);
+
+        when(idProvider.nextId()).thenReturn(newCommentId);
+        when(timeProvider.now()).thenReturn(now);
+        when(articleCommentCountRepository.increase(articleId)).thenReturn(0L);
+
+        // when
+        commentWriter.create(articleId, 100L, null, "댓글");
     }
 
     @Test

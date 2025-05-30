@@ -18,8 +18,9 @@ class CustomCommentRepositoryImpl implements CustomCommentRepository {
     public int countBy(Long articleId, Long parentId, Integer limit) {
         QComment comment = QComment.comment;
 
-        List<Comment> limitedComments = queryFactory
-            .selectFrom(comment)
+        List<Long> limitedComments = queryFactory
+            .select(comment.id)
+            .from(comment)
             .where(
                 comment.articleId.eq(articleId),
                 comment.parentId.eq(parentId)
