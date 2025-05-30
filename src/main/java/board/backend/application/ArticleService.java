@@ -1,7 +1,7 @@
 package board.backend.application;
 
 import board.backend.domain.Article;
-import board.backend.domain.ArticleWithLikeCount;
+import board.backend.domain.ArticleWithCounts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,18 +15,26 @@ public class ArticleService {
 
     private final ArticleReader articleReader;
     private final ArticleLikeReader articleLikeReader;
+    private final ArticleCommentCountReader articleCommentCountReader;
     private final ArticleWriter articleWriter;
 
-    public List<ArticleWithLikeCount> readAll(Long boardId, Long pageSize, Long lastArticleId) {
+    public List<ArticleWithCounts> readAll(Long boardId, Long pageSize, Long lastArticleId) {
         // 게시글 목록 조회
         List<Article> articles = articleReader.readAll(boardId, pageSize, lastArticleId);
+        List<Long> articleIds = articles.stream().map(Article::getId).toList();
 
         // 게시글 좋아요 수 조회
-        List<Long> articleIds = articles.stream().map(Article::getId).toList();
-        Map<Long, Long> countMap = articleLikeReader.count(articleIds);
+        Map<Long, Long> likeCountMap = articleLikeReader.count(articleIds);
+
+        // 게시글 댓글 수 조회
+        Map<Long, Long> commentCountMap = articleCommentCountReader.count(articleIds);
 
         return articles.stream()
-            .map(article -> new ArticleWithLikeCount(article, countMap.getOrDefault(article.getId(), 0L)))
+            .map(article -> new ArticleWithCounts(
+                article,
+                likeCountMap.getOrDefault(article.getId(), 0L),
+                commentCountMap.getOrDefault(article.getId(), 0L))
+            )
             .collect(Collectors.toList());
     }
 
