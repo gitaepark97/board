@@ -1,7 +1,7 @@
 package board.backend.application;
 
 import board.backend.domain.ArticleLikeCount;
-import board.backend.repository.ArticleLikeCountRepository;
+import board.backend.infra.ArticleLikeCountRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,8 +1,8 @@
 package board.backend.application;
 
 import board.backend.domain.ArticleLike;
-import board.backend.repository.ArticleLikeCountRepository;
-import board.backend.repository.ArticleLikeRepository;
+import board.backend.infra.ArticleLikeCountRepository;
+import board.backend.infra.ArticleLikeRepository;
 import board.backend.support.TimeProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

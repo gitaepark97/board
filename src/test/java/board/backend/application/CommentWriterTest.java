@@ -2,8 +2,8 @@ package board.backend.application;
 
 import board.backend.domain.Comment;
 import board.backend.domain.CommentNotFound;
-import board.backend.repository.ArticleCommentCountRepository;
-import board.backend.repository.CommentRepository;
+import board.backend.infra.ArticleCommentCountRepository;
+import board.backend.infra.CommentRepository;
 import board.backend.support.IdProvider;
 import board.backend.support.TimeProvider;
 import org.junit.jupiter.api.BeforeEach;

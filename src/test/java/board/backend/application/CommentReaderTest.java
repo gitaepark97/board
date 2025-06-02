@@ -1,7 +1,7 @@
 package board.backend.application;
 
 import board.backend.domain.Comment;
-import board.backend.repository.CommentRepository;
+import board.backend.infra.CommentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

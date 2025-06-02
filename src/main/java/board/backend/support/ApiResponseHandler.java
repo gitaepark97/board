@@ -21,7 +21,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestControllerAdvice(basePackages = "board.backend.controller", basePackageClasses = ApiResponseHandler.class)
+@RestControllerAdvice(basePackages = "board.backend.web", basePackageClasses = ApiResponseHandler.class)
 @Slf4j
 class ApiResponseHandler implements ResponseBodyAdvice<Object> {
 

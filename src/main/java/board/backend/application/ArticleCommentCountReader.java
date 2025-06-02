@@ -1,7 +1,7 @@
 package board.backend.application;
 
 import board.backend.domain.ArticleCommentCount;
-import board.backend.repository.ArticleCommentCountRepository;
+import board.backend.infra.ArticleCommentCountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

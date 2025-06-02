@@ -1,0 +1,19 @@
+package board.backend.web.request;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record CommentCreateRequest(
+    @NotNull
+    Long articleId,
+
+    @NotNull
+    Long writerId,
+
+    Long parentCommentId,
+
+    @NotBlank
+    String content
+) {
+
+}

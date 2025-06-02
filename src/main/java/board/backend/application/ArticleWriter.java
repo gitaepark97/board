@@ -2,7 +2,7 @@ package board.backend.application;
 
 import board.backend.domain.Article;
 import board.backend.domain.ArticleNotFound;
-import board.backend.repository.ArticleRepository;
+import board.backend.infra.ArticleRepository;
 import board.backend.support.IdProvider;
 import board.backend.support.TimeProvider;
 import jakarta.transaction.Transactional;

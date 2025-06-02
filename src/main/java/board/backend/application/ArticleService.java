@@ -1,7 +1,7 @@
 package board.backend.application;
 
+import board.backend.application.dto.ArticleWithCounts;
 import board.backend.domain.Article;
-import board.backend.domain.ArticleWithCounts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

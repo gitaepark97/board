@@ -39,3 +39,6 @@ spring:
 logging:
   level:
     sql: error
+
+jwt:
+  secret: jwt_secret

@@ -3,6 +3,32 @@
 :source-highlighter: highlightjs
 :sectlinks:
 
+== Auth
+
+=== 회원가입
+
+==== 요청
+
+include::{snippets}/auth/register/http-request.adoc[]
+include::{snippets}/auth/register/request-fields.adoc[]
+
+==== 응답
+
+include::{snippets}/auth/register/http-response.adoc[]
+include::{snippets}/auth/register/response-fields.adoc[]
+
+=== 로그인
+
+==== 요청
+
+include::{snippets}/auth/login/http-request.adoc[]
+include::{snippets}/auth/login/request-fields.adoc[]
+
+==== 응답
+
+include::{snippets}/auth/login/http-response.adoc[]
+include::{snippets}/auth/login/response-fields.adoc[]
+
 == Article
 
 === 게시글 목록 조회

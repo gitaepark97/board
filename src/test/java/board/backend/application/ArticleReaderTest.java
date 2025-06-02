@@ -2,7 +2,7 @@ package board.backend.application;
 
 import board.backend.domain.Article;
 import board.backend.domain.ArticleNotFound;
-import board.backend.repository.ArticleRepository;
+import board.backend.infra.ArticleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

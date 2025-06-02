@@ -1,7 +1,7 @@
 package board.backend.application;
 
 import board.backend.domain.Article;
-import board.backend.repository.ArticleRepository;
+import board.backend.infra.ArticleRepository;
 import board.backend.support.IdProvider;
 import board.backend.support.TimeProvider;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,7 +1,7 @@
 package board.backend.application;
 
 import board.backend.domain.Comment;
-import board.backend.repository.CommentRepository;
+import board.backend.infra.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
