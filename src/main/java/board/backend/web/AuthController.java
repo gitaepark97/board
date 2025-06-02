@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -31,6 +32,11 @@ class AuthController {
     @PostMapping("/login")
     ResponseEntity<TokenResponse> login(@RequestBody @Valid LoginRequest request) {
         return setTokenResponse(authService.login(request.email(), request.password()));
+    }
+
+    @PostMapping("/logout")
+    void logout(@AuthenticationPrincipal Long userId) {
+        authService.logout(userId);
     }
 
     @PostMapping("/reissue-token")

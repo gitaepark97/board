@@ -12,6 +12,19 @@ class CustomUserRepositoryImpl implements CustomUserRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
+    public boolean customExistsById(Long id) {
+        QUser user = QUser.user;
+
+        Integer result = queryFactory
+            .selectOne()
+            .from(user)
+            .where(user.id.eq(id))
+            .fetchFirst();
+
+        return result != null;
+    }
+
+    @Override
     public boolean existsByEmail(String email) {
         QUser user = QUser.user;
 

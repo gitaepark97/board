@@ -12,7 +12,7 @@ public class ArticleLikeService {
 
     public void like(Long articleId, Long userId) {
         // 게시글 존재 확인
-        articleReader.checkArticleExistOrThrow(articleId);
+        articleReader.checkArticleExistsOrThrow(articleId);
 
         articleLikeWriter.like(articleId, userId);
     }

@@ -17,4 +17,9 @@ class UserReader {
         return userRepository.findByEmail(email);
     }
 
+    boolean isUserExists(Long userId) {
+        return userRepository.customExistsById(userId);
+    }
+
+
 }

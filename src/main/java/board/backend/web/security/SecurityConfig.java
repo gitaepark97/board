@@ -1,8 +1,10 @@
 package board.backend.web.security;
 
+import board.backend.application.AuthService;
 import board.backend.support.ApiResponse;
 import board.backend.support.ApplicationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,17 +15,20 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 class SecurityConfig {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final AuthService authService;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -34,8 +39,15 @@ class SecurityConfig {
             .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests.requestMatchers(HttpMethod.GET, "/", "/docs/**", "/actuator/**")
                 .permitAll()
+                .requestMatchers(HttpMethod.GET)
+                .permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login", "/api/auth/reissue-token")
+                .permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/**/my")
+                .authenticated()
                 .anyRequest()
-                .permitAll())
+                .authenticated())
+            .addFilterBefore(new TokenFilter(authService), UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint()))
             .build();
     }

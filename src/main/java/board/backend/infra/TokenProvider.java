@@ -35,4 +35,13 @@ public class TokenProvider {
             .compact();
     }
 
+    public Map<String, Object> getPayload(String token) {
+        return Jwts.parser()
+            .verifyWith(secretKey)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload();
+    }
+
+
 }

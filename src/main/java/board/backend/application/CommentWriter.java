@@ -26,7 +26,7 @@ class CommentWriter {
     Comment create(Long articleId, Long writerId, Long parentCommentId, String content) {
         // 부모 댓글 확인
         if (parentCommentId != null) {
-            checkCommentExistOrThrow(parentCommentId);
+            checkCommentExistsOrThrow(parentCommentId);
         }
 
         // 댓글 생성
@@ -57,7 +57,7 @@ class CommentWriter {
         });
     }
 
-    private void checkCommentExistOrThrow(Long commentId) {
+    private void checkCommentExistsOrThrow(Long commentId) {
         if (!commentRepository.existsById(commentId)) {
             throw new CommentNotFound();
         }

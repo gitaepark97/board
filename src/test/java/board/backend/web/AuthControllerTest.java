@@ -17,6 +17,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.cookies.CookieDocumentation.cookieWithName;
 import static org.springframework.restdocs.cookies.CookieDocumentation.requestCookies;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -83,6 +85,34 @@ class AuthControllerTest extends TestController {
                     fieldWithPath("status").description("HTTP 상태"),
                     fieldWithPath("message").description("응답 메시지"),
                     fieldWithPath("data.accessToken").description("엑세스 토큰")
+                )
+            ));
+    }
+
+    @Test
+    @DisplayName("로그아웃 API - 성공")
+    void logout_success() throws Exception {
+        // given
+        Long userId = 1L;
+
+        doNothing().when(authService).logout(userId);
+
+        // when & then
+        mockMvc.perform(post("/api/auth/logout")
+                .principal(userId::toString)
+                .header("Authorization", "Bearer access token")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("OK"))
+            .andExpect(jsonPath("$.message").value("성공"))
+            .andExpect(jsonPath("$.data").doesNotExist())
+            .andDo(document("auth/logout",
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access Token: Bearer 타입")
+                ),
+                responseFields(
+                    fieldWithPath("status").description("HTTP 상태"),
+                    fieldWithPath("message").description("응답 메시지")
                 )
             ));
     }

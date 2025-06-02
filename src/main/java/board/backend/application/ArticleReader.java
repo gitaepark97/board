@@ -26,7 +26,7 @@ class ArticleReader {
         return articleRepository.findById(articleId).orElseThrow(ArticleNotFound::new);
     }
 
-    void checkArticleExistOrThrow(Long articleId) {
+    void checkArticleExistsOrThrow(Long articleId) {
         if (!articleRepository.customExistsById(articleId)) {
             throw new ArticleNotFound();
         }

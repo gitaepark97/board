@@ -110,7 +110,7 @@ class ArticleReaderTest {
         when(articleRepository.customExistsById(articleId)).thenReturn(true);
 
         // when
-        articleReader.checkArticleExistOrThrow(articleId);
+        articleReader.checkArticleExistsOrThrow(articleId);
     }
 
     @Test
@@ -121,7 +121,7 @@ class ArticleReaderTest {
         when(articleRepository.customExistsById(articleId)).thenReturn(false);
 
         // when & then
-        assertThatThrownBy(() -> articleReader.checkArticleExistOrThrow(articleId))
+        assertThatThrownBy(() -> articleReader.checkArticleExistsOrThrow(articleId))
             .isInstanceOf(ArticleNotFound.class);
     }
 

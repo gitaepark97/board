@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
@@ -24,6 +25,15 @@ class TokenProcessor {
             // 세션 ID 사용
             session.getId()
         );
+    }
+
+    Optional<Long> getUserId(String token) {
+        try {
+            Map<String, Object> payload = tokenProvider.getPayload(token);
+            return Optional.of(Long.parseLong(payload.get("userId").toString()));
+        } catch (Exception ignored) {
+            return Optional.empty();
+        }
     }
 
 }

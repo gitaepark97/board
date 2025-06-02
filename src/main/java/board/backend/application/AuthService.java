@@ -7,6 +7,8 @@ import board.backend.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class AuthService {
@@ -38,12 +40,22 @@ public class AuthService {
         return tokenProcessor.issueToken(session);
     }
 
+    public void logout(Long userId) {
+        // 세션 삭제
+        sessionWriter.delete(userId);
+    }
+
     public Token reissueToken(String refreshToken) {
         // 세션 조회
         Session session = sessionReader.read(refreshToken);
 
         // 토큰 발급
         return tokenProcessor.issueToken(session);
+    }
+
+    public Optional<Long> getUserId(String accessToken) {
+        // 회원 ID 추출
+        return tokenProcessor.getUserId(accessToken).filter(userReader::isUserExists);
     }
 
 }
