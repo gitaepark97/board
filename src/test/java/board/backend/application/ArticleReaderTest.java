@@ -50,6 +50,7 @@ class ArticleReaderTest {
         assertThat(result).isEqualTo(articles);
     }
 
+    @Test
     @DisplayName("lastArticleId가 존재하면 해당 이후 페이지 게시글을 조회한다")
     void readAll_withLastArticleIdReturnsNextPage() {
         // given
@@ -106,7 +107,7 @@ class ArticleReaderTest {
     void checkArticleExist_success() {
         // given
         Long articleId = 1L;
-        when(articleRepository.existsById(articleId)).thenReturn(true);
+        when(articleRepository.customExistsById(articleId)).thenReturn(true);
 
         // when
         articleReader.checkArticleExistOrThrow(articleId);
@@ -117,7 +118,7 @@ class ArticleReaderTest {
     void checkArticleExist_fail() {
         // given
         Long articleId = 999L;
-        when(articleRepository.existsById(articleId)).thenReturn(false);
+        when(articleRepository.customExistsById(articleId)).thenReturn(false);
 
         // when & then
         assertThatThrownBy(() -> articleReader.checkArticleExistOrThrow(articleId))

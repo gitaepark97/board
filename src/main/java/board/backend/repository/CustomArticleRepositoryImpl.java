@@ -15,6 +15,19 @@ class CustomArticleRepositoryImpl implements CustomArticleRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
+    public boolean customExistsById(Long id) {
+        QArticle article = QArticle.article;
+
+        Integer result = queryFactory
+            .selectOne()
+            .from(article)
+            .where(article.id.eq(id))
+            .fetchFirst();
+
+        return result != null;
+    }
+
+    @Override
     public List<Article> findAllByBoardId(Long boardId, Long pageSize) {
         QArticle article = QArticle.article;
 

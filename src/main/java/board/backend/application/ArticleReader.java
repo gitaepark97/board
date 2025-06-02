@@ -27,7 +27,7 @@ class ArticleReader {
     }
 
     void checkArticleExistOrThrow(Long articleId) {
-        if (!articleRepository.existsById(articleId)) {
+        if (!articleRepository.customExistsById(articleId)) {
             throw new ArticleNotFound();
         }
     }

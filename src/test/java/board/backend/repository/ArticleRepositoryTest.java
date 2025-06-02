@@ -2,6 +2,7 @@ package board.backend.repository;
 
 import board.backend.TestcontainersConfiguration;
 import board.backend.domain.Article;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 class ArticleRepositoryTest {
 
+    private final Long articleId = 1L;
     @Autowired
     private ArticleRepository articleRepository;
 
@@ -37,6 +39,26 @@ class ArticleRepositoryTest {
             );
             articleRepository.save(article);
         }
+    }
+
+    @Test
+    @DisplayName("articleId로 게시글 존재 여부를 확인한다 - 존재함")
+    void customExistsById_exists() {
+        // when
+        boolean result = articleRepository.customExistsById(articleId);
+
+        // then
+        AssertionsForClassTypes.assertThat(result).isTrue();
+    }
+
+    @Test
+    @DisplayName("articleId로 게시글 존재 여부를 확인한다 - 존재하지 않음")
+    void customExistsById_notExists() {
+        // when
+        boolean result = articleRepository.customExistsById(999L);
+
+        // then
+        AssertionsForClassTypes.assertThat(result).isFalse();
     }
 
     @Test

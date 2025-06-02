@@ -8,9 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ArticleLikeRepository extends JpaRepository<ArticleLike, ArticleLikeId> {
-
-    boolean existsByArticleIdAndUserId(Long articleId, Long userId);
+public interface ArticleLikeRepository extends JpaRepository<ArticleLike, ArticleLikeId>, CustomArticleLikeRepository {
 
     Optional<ArticleLike> findByArticleIdAndUserId(Long articleId, Long userId);
 

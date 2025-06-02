@@ -28,7 +28,7 @@ class ArticleLikeCountRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        ArticleLikeCount likeCount = ArticleLikeCount.init(articleId); // 초기값은 1
+        ArticleLikeCount likeCount = ArticleLikeCount.init(articleId);
         articleLikeCountRepository.save(likeCount);
     }
 
