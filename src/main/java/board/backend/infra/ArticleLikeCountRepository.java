@@ -11,5 +11,5 @@ import java.util.List;
 public interface ArticleLikeCountRepository extends JpaRepository<ArticleLikeCount, Long>, CustomArticleLikeCountRepository {
 
     List<ArticleLikeCount> findByArticleIdIn(Collection<Long> articleIds);
-
+    
 }

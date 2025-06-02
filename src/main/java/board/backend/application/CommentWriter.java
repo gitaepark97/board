@@ -57,6 +57,15 @@ class CommentWriter {
         });
     }
 
+    @Transactional
+    void deleteArticle(Long articleId) {
+        // 게시글 댓글 삭제
+        commentRepository.deleteByArticleId(articleId);
+
+        // 게시글 댓글 수 삭제
+        articleCommentCountRepository.deleteById(articleId);
+    }
+
     private void checkCommentExistsOrThrow(Long commentId) {
         if (!commentRepository.existsById(commentId)) {
             throw new CommentNotFound();

@@ -2,6 +2,7 @@ package board.backend.application;
 
 import board.backend.application.dto.ArticleWithCounts;
 import board.backend.domain.Article;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,8 @@ public class ArticleService {
     private final ArticleLikeReader articleLikeReader;
     private final ArticleCommentCountReader articleCommentCountReader;
     private final ArticleWriter articleWriter;
+    private final ArticleLikeWriter articleLikeWriter;
+    private final CommentWriter commentWriter;
 
     public List<ArticleWithCounts> readAll(Long boardId, Long pageSize, Long lastArticleId) {
         // 게시글 목록 조회
@@ -50,8 +53,16 @@ public class ArticleService {
         return articleWriter.update(articleId, title, content);
     }
 
+    @Transactional
     public void delete(Long articleId) {
+        // 게시글 삭제
         articleWriter.delete(articleId);
+
+        // 게시글 좋아요 삭제
+        articleLikeWriter.deleteArticle(articleId);
+
+        // 게시글 댓글 삭제
+        commentWriter.deleteArticle(articleId);
     }
 
 }

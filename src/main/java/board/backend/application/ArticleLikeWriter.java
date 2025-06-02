@@ -44,4 +44,13 @@ class ArticleLikeWriter {
         });
     }
 
+    @Transactional
+    void deleteArticle(Long articleId) {
+        // 게시글 좋아요 삭제
+        articleLikeRepository.deleteByArticleId(articleId);
+
+        // 게시글 좋아요 수 삭제
+        articleLikeCountRepository.deleteById(articleId);
+    }
+
 }

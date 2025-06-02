@@ -101,7 +101,16 @@ class ArticleLikeWriterTest {
 
         // when
         articleLikeWriter.unlike(articleId, userId);
+    }
 
+    @Test
+    @DisplayName("게시글 ID로 좋아요와 좋아요 수를 함께 삭제한다")
+    void deleteArticle_success() {
+        // given
+        Long articleId = 1L;
+
+        // when
+        articleLikeWriter.deleteArticle(articleId);
     }
 
 }
