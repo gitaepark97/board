@@ -29,6 +29,18 @@ include::{snippets}/auth/login/request-fields.adoc[]
 include::{snippets}/auth/login/http-response.adoc[]
 include::{snippets}/auth/login/response-fields.adoc[]
 
+=== 토큰 재발급
+
+==== 요청
+
+include::{snippets}/auth/reissue-token/http-request.adoc[]
+include::{snippets}/auth/reissue-token/request-cookies.adoc[]
+
+==== 응답
+
+include::{snippets}/auth/reissue-token/http-response.adoc[]
+include::{snippets}/auth/reissue-token/response-fields.adoc[]
+
 == Article
 
 === 게시글 목록 조회

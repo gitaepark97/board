@@ -13,6 +13,7 @@ public class AuthService {
 
     private final UserReader userReader;
     private final LoginInfoReader loginInfoReader;
+    private final SessionReader sessionReader;
     private final UserWriter userWriter;
     private final LoginInfoWriter loginInfoWriter;
     private final SessionWriter sessionWriter;
@@ -36,5 +37,13 @@ public class AuthService {
         // 토큰 발급
         return tokenProcessor.issueToken(session);
     }
-    
+
+    public Token reissueToken(String refreshToken) {
+        // 세션 조회
+        Session session = sessionReader.read(refreshToken);
+
+        // 토큰 발급
+        return tokenProcessor.issueToken(session);
+    }
+
 }

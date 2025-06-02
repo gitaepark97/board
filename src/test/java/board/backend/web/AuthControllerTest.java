@@ -4,6 +4,7 @@ import board.backend.application.AuthService;
 import board.backend.application.dto.Token;
 import board.backend.web.request.LoginRequest;
 import board.backend.web.request.RegisterRequest;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -14,6 +15,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.cookies.CookieDocumentation.cookieWithName;
+import static org.springframework.restdocs.cookies.CookieDocumentation.requestCookies;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -80,6 +83,36 @@ class AuthControllerTest extends TestController {
                     fieldWithPath("status").description("HTTP 상태"),
                     fieldWithPath("message").description("응답 메시지"),
                     fieldWithPath("data.accessToken").description("엑세스 토큰")
+                )
+            ));
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 API - 성공")
+    void reissueToken_success() throws Exception {
+        // given
+        String refreshToken = "valid-refresh-token";
+        Token token = new Token("new-access-token", "new-refresh-token");
+
+        when(authService.reissueToken(refreshToken)).thenReturn(token);
+
+        // when & then
+        mockMvc.perform(post("/api/auth/reissue-token")
+                .cookie(new Cookie("refreshToken", refreshToken))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(header().exists(HttpHeaders.SET_COOKIE))
+            .andExpect(jsonPath("$.status").value("OK"))
+            .andExpect(jsonPath("$.message").value("성공"))
+            .andExpect(jsonPath("$.data.accessToken").value("new-access-token"))
+            .andDo(document("auth/reissue-token",
+                requestCookies(
+                    cookieWithName("refreshToken").description("리프레시 토큰 (HttpOnly 쿠키)")
+                ),
+                responseFields(
+                    fieldWithPath("status").description("HTTP 상태"),
+                    fieldWithPath("message").description("응답 메시지"),
+                    fieldWithPath("data.accessToken").description("새 엑세스 토큰")
                 )
             ));
     }
