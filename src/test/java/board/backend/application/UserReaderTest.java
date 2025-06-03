@@ -54,4 +54,33 @@ class UserReaderTest {
         assertThat(result).isEmpty();
     }
 
+    @Test
+    @DisplayName("사용자가 존재하면 true를 반환한다")
+    void isUserExists_true() {
+        // given
+        Long userId = 1L;
+        when(userRepository.customExistsById(userId)).thenReturn(true);
+
+        // when
+        boolean result = userReader.isUserExists(userId);
+
+        // then
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    @DisplayName("사용자가 존재하지 않으면 false를 반환한다")
+    void isUserExists_false() {
+        // given
+        Long userId = 2L;
+        when(userRepository.customExistsById(userId)).thenReturn(false);
+
+        // when
+        boolean result = userReader.isUserExists(userId);
+
+        // then
+        assertThat(result).isFalse();
+    }
+
+
 }
