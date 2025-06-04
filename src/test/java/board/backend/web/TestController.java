@@ -1,11 +1,13 @@
 package board.backend.web;
 
+import board.backend.web.security.SecurityConfig;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -14,9 +16,11 @@ import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @WebMvcTest
 @ExtendWith(RestDocumentationExtension.class)
+@Import(SecurityConfig.class)
 class TestController {
 
     protected final ObjectMapper objectMapper = new ObjectMapper();
@@ -29,6 +33,7 @@ class TestController {
         objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
             .apply(documentationConfiguration(provider))
+            .apply(springSecurity())
             .build();
     }
 

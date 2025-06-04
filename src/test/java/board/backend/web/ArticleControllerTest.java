@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -136,6 +138,7 @@ class ArticleControllerTest extends TestController {
 
         // when & then
         mockMvc.perform(post("/api/articles")
+                .with(authentication(new UsernamePasswordAuthenticationToken(1L, null, null)))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated())
@@ -180,6 +183,7 @@ class ArticleControllerTest extends TestController {
 
         // when & then
         mockMvc.perform(put("/api/articles/{articleId}", articleId)
+                .with(authentication(new UsernamePasswordAuthenticationToken(1L, null, null)))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isOk())
@@ -216,7 +220,8 @@ class ArticleControllerTest extends TestController {
         Long articleId = 1L;
 
         // when & then
-        mockMvc.perform(delete("/api/articles/{articleId}", articleId))
+        mockMvc.perform(delete("/api/articles/{articleId}", articleId)
+                .with(authentication(new UsernamePasswordAuthenticationToken(1L, null, null))))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value(HttpStatus.OK.name()))
             .andExpect(jsonPath("$.message").value("성공"))

@@ -1,6 +1,7 @@
 package board.backend.application;
 
 import board.backend.domain.User;
+import board.backend.domain.UserNotFound;
 import board.backend.infra.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -26,7 +28,7 @@ class UserReaderTest {
 
     @Test
     @DisplayName("이메일로 유저 조회에 성공한다")
-    void read_success() {
+    void read_byEmailSuccess() {
         // given
         String email = "test@example.com";
         User user = User.create(1L, email, "닉네임", LocalDateTime.now()); // 생성자 혹은 builder 방식에 맞게 수정
@@ -41,8 +43,8 @@ class UserReaderTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 이메일이면 빈 Optional을 반환한다")
-    void read_notFound() {
+    @DisplayName("존재하지 않는 회원이면 빈 Optional을 반환한다")
+    void read_byEmailNotFound() {
         // given
         String email = "nonexistent@example.com";
         when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
@@ -52,6 +54,34 @@ class UserReaderTest {
 
         // then
         assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("ID로 유저 조회에 성공한다")
+    void read_byUserIdSuccess() {
+        // given
+        Long userId = 1L;
+        User user = User.create(userId, "email@example.com", "닉네임", LocalDateTime.now());
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        // when
+        User result = userReader.read(userId);
+
+        // then
+        assertThat(result).isEqualTo(user);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 회원이면 예외가 발생한다")
+    void read_byIdNotFound() {
+        // given
+        Long userId = 2L;
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> userReader.read(userId))
+            .isInstanceOf(UserNotFound.class);
     }
 
     @Test

@@ -1,6 +1,7 @@
 package board.backend.application;
 
 import board.backend.domain.User;
+import board.backend.domain.UserNotFound;
 import board.backend.infra.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,10 @@ class UserReader {
 
     Optional<User> read(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    User read(Long userId) {
+        return userRepository.findById(userId).orElseThrow(UserNotFound::new);
     }
 
     boolean isUserExists(Long userId) {

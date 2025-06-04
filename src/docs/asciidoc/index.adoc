@@ -53,6 +53,45 @@ include::{snippets}/auth/reissue-token/request-cookies.adoc[]
 include::{snippets}/auth/reissue-token/http-response.adoc[]
 include::{snippets}/auth/reissue-token/response-fields.adoc[]
 
+== User
+
+=== 본인 조회
+
+==== 요청
+
+include::{snippets}/users/read-my/http-request.adoc[]
+include::{snippets}/users/read-my/request-headers.adoc[]
+
+==== 응답
+
+include::{snippets}/users/read-my/http-response.adoc[]
+include::{snippets}/users/read-my/response-fields.adoc[]
+
+=== 회원 조회
+
+==== 요청
+
+include::{snippets}/users/read/http-request.adoc[]
+include::{snippets}/users/read/path-parameters.adoc[]
+
+==== 응답
+
+include::{snippets}/users/read/http-response.adoc[]
+include::{snippets}/users/read/response-fields.adoc[]
+
+=== 본인 수정
+
+==== 요청
+
+include::{snippets}/users/update-my/http-request.adoc[]
+include::{snippets}/users/update-my/request-headers.adoc[]
+include::{snippets}/users/update-my/request-fields.adoc[]
+
+==== 응답
+
+include::{snippets}/users/update-my/http-response.adoc[]
+include::{snippets}/users/update-my/response-fields.adoc[]
+
 == Article
 
 === 게시글 목록 조회

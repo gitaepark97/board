@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.mockito.Mockito.doNothing;
@@ -16,6 +17,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,7 +37,9 @@ class ArticleLikeControllerTest extends TestController {
         doNothing().when(articleLikeService).like(articleId, userId);
 
         // when & then
-        mockMvc.perform(post("/api/article-likes/articles/{articleId}/users/{userId}", articleId, userId))
+        mockMvc.perform(post("/api/article-likes/articles/{articleId}/users/{userId}", articleId, userId)
+                .with(authentication(new UsernamePasswordAuthenticationToken(1L, null, null)))
+                .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value(HttpStatus.OK.name()))
             .andExpect(jsonPath("$.message").value("성공"))
@@ -62,6 +66,7 @@ class ArticleLikeControllerTest extends TestController {
 
         // when & then
         mockMvc.perform(delete("/api/article-likes/articles/{articleId}/users/{userId}", articleId, userId)
+                .with(authentication(new UsernamePasswordAuthenticationToken(1L, null, null)))
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value(HttpStatus.OK.name()))
