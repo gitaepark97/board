@@ -4,12 +4,14 @@ import board.backend.application.ArticleLikeService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.mockito.Mockito.doNothing;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -31,22 +33,25 @@ class ArticleLikeControllerTest extends TestController {
     @DisplayName("게시글 좋아요 API - 성공")
     void like_success() throws Exception {
         // given
+        Long userId = 1L;
+        String accessToken = "valid-access-token";
         Long articleId = 1L;
-        Long userId = 100L;
 
         doNothing().when(articleLikeService).like(articleId, userId);
 
         // when & then
-        mockMvc.perform(post("/api/article-likes/articles/{articleId}/users/{userId}", articleId, userId)
-                .with(authentication(new UsernamePasswordAuthenticationToken(1L, null, null)))
-                .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/api/article-likes/articles/{articleId}", articleId)
+                .with(authentication(new UsernamePasswordAuthenticationToken(userId, null, null)))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value(HttpStatus.OK.name()))
             .andExpect(jsonPath("$.message").value("성공"))
             .andDo(document("article-likes/like",
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access Token: Bearer 타입")
+                ),
                 pathParameters(
-                    parameterWithName("articleId").description("좋아요할 게시글 ID"),
-                    parameterWithName("userId").description("좋아요를 누른 사용자 ID")
+                    parameterWithName("articleId").description("좋아요할 게시글 ID")
                 ),
                 responseFields(
                     fieldWithPath("status").description("HTTP 상태"),
@@ -59,22 +64,25 @@ class ArticleLikeControllerTest extends TestController {
     @DisplayName("게시글 좋아요 취소 API - 성공")
     void unlike_success() throws Exception {
         // given
+        Long userId = 1L;
+        String accessToken = "valid-access-token";
         Long articleId = 1L;
-        Long userId = 100L;
 
         doNothing().when(articleLikeService).unlike(articleId, userId);
 
         // when & then
-        mockMvc.perform(delete("/api/article-likes/articles/{articleId}/users/{userId}", articleId, userId)
-                .with(authentication(new UsernamePasswordAuthenticationToken(1L, null, null)))
-                .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete("/api/article-likes/articles/{articleId}", articleId)
+                .with(authentication(new UsernamePasswordAuthenticationToken(userId, null, null)))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value(HttpStatus.OK.name()))
             .andExpect(jsonPath("$.message").value("성공"))
             .andDo(document("article-likes/unlike",
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access Token: Bearer 타입")
+                ),
                 pathParameters(
-                    parameterWithName("articleId").description("좋아요를 취소할 게시글 ID"),
-                    parameterWithName("userId").description("좋아요를 취소하는 사용자 ID")
+                    parameterWithName("articleId").description("좋아요를 취소할 게시글 ID")
                 ),
                 responseFields(
                     fieldWithPath("status").description("HTTP 상태"),
