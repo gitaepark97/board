@@ -1,5 +1,6 @@
-package board.backend.support;
+package board.backend.web.response;
 
+import board.backend.support.ApplicationException;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.http.HttpStatus;
 
@@ -11,11 +12,11 @@ public record ApiResponse<T>(
 ) {
 
     public static <T> ApiResponse<T> of(ApplicationException e) {
-        return new ApiResponse<>(e.getStatus(), e.getMessage(), null);
+        return new ApiResponse<>(HttpStatus.valueOf(e.getStatus()), e.getMessage(), null);
     }
 
     static <T> ApiResponse<T> of(ApplicationException e, T data) {
-        return new ApiResponse<>(e.getStatus(), e.getMessage(), data);
+        return new ApiResponse<>(HttpStatus.valueOf(e.getStatus()), e.getMessage(), data);
     }
 
     static <T> ApiResponse<T> of(HttpStatus status, T data) {

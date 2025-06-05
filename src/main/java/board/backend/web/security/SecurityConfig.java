@@ -1,14 +1,13 @@
 package board.backend.web.security;
 
 import board.backend.application.AuthService;
-import board.backend.support.ApiResponse;
 import board.backend.support.ApplicationException;
+import board.backend.web.response.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -54,7 +53,7 @@ class SecurityConfig {
 
     private AuthenticationEntryPoint authenticationEntryPoint() {
         return (request, response, authException) -> {
-            ApplicationException exception = new ApplicationException(HttpStatus.UNAUTHORIZED, "인증에 실패했습니다.");
+            ApplicationException exception = new ApplicationException(401, "인증에 실패했습니다.");
             ApiResponse<?> apiResponse = ApiResponse.of(exception);
             response.setStatus(apiResponse.status().value());
             response.setContentType("application/json");

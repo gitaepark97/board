@@ -1,5 +1,6 @@
 package board.backend.domain;
 
+import board.backend.support.Forbidden;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

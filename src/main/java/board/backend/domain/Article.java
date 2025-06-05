@@ -1,5 +1,6 @@
 package board.backend.domain;
 
+import board.backend.support.Forbidden;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;

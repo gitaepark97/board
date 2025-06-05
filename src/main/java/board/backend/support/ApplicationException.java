@@ -1,14 +1,13 @@
 package board.backend.support;
 
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 public class ApplicationException extends RuntimeException {
 
-    private final HttpStatus status;
+    private final int status;
 
-    public ApplicationException(HttpStatus status, String message) {
+    public ApplicationException(int status, String message) {
         super(message);
         this.status = status;
     }

@@ -1,5 +1,6 @@
-package board.backend.support;
+package board.backend.web.response;
 
+import board.backend.support.ApplicationException;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +56,7 @@ class ApiResponseHandler implements ResponseBodyAdvice<Object> {
     @ExceptionHandler(Exception.class)
     ApiResponse<?> handleException(Exception e) {
         log.error(e.getMessage(), e);
-        return ApiResponse.of(new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."));
+        return ApiResponse.of(new ApplicationException(500, "서버 내부 오류입니다."));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -68,13 +69,13 @@ class ApiResponseHandler implements ResponseBodyAdvice<Object> {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return ApiResponse.of(new ApplicationException(HttpStatus.BAD_REQUEST, "잘못된 입력입니다."), errors);
+        return ApiResponse.of(new ApplicationException(400, "잘못된 입력입니다."), errors);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     ApiResponse<?> handleException(HttpMessageNotReadableException e) {
         log.warn(e.getMessage(), e);
-        return ApiResponse.of(new ApplicationException(HttpStatus.BAD_REQUEST, "잘못된 입력입니다."));
+        return ApiResponse.of(new ApplicationException(400, "잘못된 입력입니다."));
     }
 
     @ExceptionHandler(ApplicationException.class)

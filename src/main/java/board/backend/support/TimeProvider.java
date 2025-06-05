@@ -1,14 +1,9 @@
 package board.backend.support;
 
-import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
 
-@Component
-public class TimeProvider {
+public interface TimeProvider {
 
-    public LocalDateTime now() {
-        return LocalDateTime.now();
-    }
+    LocalDateTime now();
 
 }

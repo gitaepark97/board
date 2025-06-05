@@ -11,12 +11,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class IdProviderTest {
 
+    private final IdProvider idProvider = new Snowflake();
+
     @Test
     @DisplayName("ID가 정상적으로 생성된다")
     void nextId_success() {
-        // given
-        IdProvider idProvider = new IdProvider();
-
         // when
         Long id = idProvider.nextId();
 
@@ -29,7 +28,6 @@ class IdProviderTest {
     @DisplayName("여러 번 호출 시 ID가 중복되지 않는다")
     void nextId_multipleIdGeneration() {
         // given
-        IdProvider idProvider = new IdProvider();
         Set<Long> ids = new HashSet<>();
 
         // when
@@ -44,9 +42,6 @@ class IdProviderTest {
     @Test
     @DisplayName("ID는 시간 순으로 증가한다")
     void nextId_idIsTimeOrdered() {
-        // given
-        IdProvider idProvider = new IdProvider();
-
         // when
         Long id1 = idProvider.nextId();
         Long id2 = idProvider.nextId();
