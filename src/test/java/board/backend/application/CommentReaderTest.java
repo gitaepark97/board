@@ -36,7 +36,7 @@ class CommentReaderTest {
             Comment.create(2L, articleId, 101L, 2L, "댓글2", LocalDateTime.now())
         );
 
-        when(commentRepository.findAllByArticleId(articleId, pageSize)).thenReturn(comments);
+        when(commentRepository.findAllById(articleId, pageSize)).thenReturn(comments);
 
         // when
         List<Comment> result = commentReader.readAll(articleId, pageSize, null, null);
@@ -59,7 +59,7 @@ class CommentReaderTest {
             Comment.create(17L, articleId, 101L, 10L, "댓글4", LocalDateTime.now())
         );
 
-        when(commentRepository.findAllByArticleId(articleId, pageSize, lastParentCommentId, lastCommentId))
+        when(commentRepository.findAllById(articleId, pageSize, lastParentCommentId, lastCommentId))
             .thenReturn(comments);
 
         // when

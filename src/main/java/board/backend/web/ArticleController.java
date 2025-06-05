@@ -28,19 +28,19 @@ class ArticleController {
     ) {
         return articleService.readAll(boardId, pageSize, lastArticleId)
             .stream()
-            .map(ArticleSummaryResponse::of)
+            .map(ArticleSummaryResponse::from)
             .toList();
     }
 
     @GetMapping("/{articleId}")
     ArticleResponse read(@PathVariable Long articleId) {
-        return ArticleResponse.of(articleService.read(articleId));
+        return ArticleResponse.from(articleService.read(articleId));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     ArticleResponse create(@AuthenticationPrincipal Long userId, @RequestBody @Valid ArticleCreateRequest request) {
-        return ArticleResponse.of(articleService.create(request.boardId(), userId, request.title(), request.content()));
+        return ArticleResponse.from(articleService.create(request.boardId(), userId, request.title(), request.content()));
     }
 
     @PutMapping("/{articleId}")
@@ -49,7 +49,7 @@ class ArticleController {
         @PathVariable Long articleId,
         @RequestBody @Valid ArticleUpdateRequest request
     ) {
-        return ArticleResponse.of(articleService.update(articleId, userId, request.title(), request.content()));
+        return ArticleResponse.from(articleService.update(articleId, userId, request.title(), request.content()));
     }
 
     @DeleteMapping("/{articleId}")

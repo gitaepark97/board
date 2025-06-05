@@ -8,8 +8,8 @@ interface CustomCommentRepository {
 
     int countBy(Long articleId, Long parentId, Integer limit);
 
-    List<Comment> findAllByArticleId(Long articleId, Long pageSize);
+    List<Comment> findAllById(Long articleId, Long pageSize);
 
-    List<Comment> findAllByArticleId(Long articleId, Long pageSize, Long lastParentId, Long lastId);
+    List<Comment> findAllById(Long articleId, Long pageSize, Long lastParentId, Long lastId);
 
 }

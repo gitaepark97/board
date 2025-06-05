@@ -6,7 +6,11 @@ import board.backend.infra.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
@@ -26,5 +30,10 @@ class UserReader {
         return userRepository.customExistsById(userId);
     }
 
+    Map<Long, User> readAll(List<Long> userIds) {
+        return userRepository.findAllById(userIds)
+            .stream()
+            .collect(Collectors.toMap(User::getId, Function.identity()));
+    }
 
 }

@@ -34,7 +34,7 @@ class ArticleCommentCountReaderTest {
             ArticleCommentCount.init(2L)
         );
 
-        when(articleCommentCountRepository.findByArticleIdIn(articleIds)).thenReturn(commentCounts);
+        when(articleCommentCountRepository.findAllById(articleIds)).thenReturn(commentCounts);
 
         // when
         Map<Long, Long> result = articleCommentCountReader.count(articleIds);
@@ -50,7 +50,7 @@ class ArticleCommentCountReaderTest {
     void count_emptyResult_returnsEmptyMap() {
         // given
         List<Long> articleIds = List.of(10L, 20L);
-        when(articleCommentCountRepository.findByArticleIdIn(articleIds)).thenReturn(List.of());
+        when(articleCommentCountRepository.findAllById(articleIds)).thenReturn(List.of());
 
         // when
         Map<Long, Long> result = articleCommentCountReader.count(articleIds);

@@ -32,7 +32,7 @@ class CustomCommentRepositoryImpl implements CustomCommentRepository {
     }
 
     @Override
-    public List<Comment> findAllByArticleId(Long articleId, Long pageSize) {
+    public List<Comment> findAllById(Long articleId, Long pageSize) {
         QComment comment = QComment.comment;
 
         return queryFactory
@@ -46,7 +46,7 @@ class CustomCommentRepositoryImpl implements CustomCommentRepository {
     }
 
     @Override
-    public List<Comment> findAllByArticleId(
+    public List<Comment> findAllById(
         Long articleId,
         Long pageSize,
         Long lastParentId,

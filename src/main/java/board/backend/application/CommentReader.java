@@ -15,8 +15,8 @@ class CommentReader {
 
     List<Comment> readAll(Long articleId, Long pageSize, Long lastParentCommentId, Long lastCommentId) {
         return lastParentCommentId == null || lastCommentId == null ?
-            commentRepository.findAllByArticleId(articleId, pageSize) :
-            commentRepository.findAllByArticleId(articleId, pageSize, lastParentCommentId, lastCommentId);
+            commentRepository.findAllById(articleId, pageSize) :
+            commentRepository.findAllById(articleId, pageSize, lastParentCommentId, lastCommentId);
     }
 
 }

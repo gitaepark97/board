@@ -8,6 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -112,5 +114,39 @@ class UserReaderTest {
         assertThat(result).isFalse();
     }
 
+    @Test
+    @DisplayName("여러 유저 ID로 유저 목록을 조회해 Map으로 반환한다")
+    void readAll_success() {
+        // given
+        List<Long> userIds = List.of(1L, 2L);
+        List<User> users = List.of(
+            User.create(1L, "one@example.com", "one", LocalDateTime.now()),
+            User.create(2L, "two@example.com", "two", LocalDateTime.now())
+        );
+
+        when(userRepository.findAllById(userIds)).thenReturn(users);
+
+        // when
+        Map<Long, User> result = userReader.readAll(userIds);
+
+        // then
+        assertThat(result).hasSize(2);
+        assertThat(result.get(1L)).isEqualTo(users.get(0));
+        assertThat(result.get(2L)).isEqualTo(users.get(1));
+    }
+
+    @Test
+    @DisplayName("조회된 유저가 없으면 빈 Map을 반환한다")
+    void readAll_emptyResult() {
+        // given
+        List<Long> userIds = List.of(100L, 200L);
+        when(userRepository.findAllById(userIds)).thenReturn(List.of());
+
+        // when
+        Map<Long, User> result = userReader.readAll(userIds);
+
+        // then
+        assertThat(result).isEmpty();
+    }
 
 }

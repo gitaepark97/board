@@ -14,7 +14,7 @@ public record ArticleResponse(
     LocalDateTime updatedAt
 ) {
 
-    public static ArticleResponse of(Article article) {
+    public static ArticleResponse from(Article article) {
         return new ArticleResponse(
             article.getId(),
             article.getBoardId(),

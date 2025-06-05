@@ -16,7 +16,7 @@ class ArticleCommentCountReader {
     private final ArticleCommentCountRepository articleCommentCountRepository;
 
     Map<Long, Long> count(List<Long> articleIds) {
-        return articleCommentCountRepository.findByArticleIdIn(articleIds)
+        return articleCommentCountRepository.findAllById(articleIds)
             .stream()
             .collect(Collectors.toMap(ArticleCommentCount::getArticleId, ArticleCommentCount::getCommentCount));
     }

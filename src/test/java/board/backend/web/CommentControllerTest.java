@@ -1,13 +1,16 @@
 package board.backend.web;
 
 import board.backend.application.CommentService;
+import board.backend.application.dto.CommentWithWriter;
 import board.backend.domain.Comment;
+import board.backend.domain.User;
 import board.backend.web.request.CommentCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
@@ -43,9 +46,9 @@ class CommentControllerTest extends TestController {
         Long lastParentCommentId = 5L;
         Long lastCommentId = 7L;
 
-        List<Comment> comments = List.of(
-            Comment.create(8L, articleId, 100L, 8L, "댓글1", LocalDateTime.of(2024, 1, 1, 10, 0)),
-            Comment.create(9L, articleId, 101L, 9L, "댓글2", LocalDateTime.of(2024, 1, 1, 11, 0))
+        List<CommentWithWriter> comments = List.of(
+            CommentWithWriter.of(Comment.create(8L, articleId, 1L, 8L, "댓글1", LocalDateTime.of(2024, 1, 1, 10, 0)), User.create(1L, "user1@email.com", "회원1", LocalDateTime.now())),
+            CommentWithWriter.of(Comment.create(9L, articleId, 101L, 9L, "댓글2", LocalDateTime.of(2024, 1, 1, 11, 0)), User.create(2L, "user2@email.com", "회원2", LocalDateTime.now()))
         );
 
         when(commentService.readAll(articleId, pageSize, lastParentCommentId, lastCommentId))
@@ -63,8 +66,12 @@ class CommentControllerTest extends TestController {
             .andExpect(jsonPath("$.message").value("성공"))
             .andExpect(jsonPath("$.data.length()").value(2))
             .andExpect(jsonPath("$.data[0].id").value(8L))
+            .andExpect(jsonPath("$.data[0].writer.id").value(1L))
+            .andExpect(jsonPath("$.data[0].writer.nickname").value("회원1"))
             .andExpect(jsonPath("$.data[0].content").value("댓글1"))
             .andExpect(jsonPath("$.data[1].id").value(9L))
+            .andExpect(jsonPath("$.data[1].writer.id").value(2L))
+            .andExpect(jsonPath("$.data[1].writer.nickname").value("회원2"))
             .andExpect(jsonPath("$.data[1].content").value("댓글2"))
             .andDo(document("comments/read-all",
                 queryParameters(
@@ -76,12 +83,13 @@ class CommentControllerTest extends TestController {
                 responseFields(
                     fieldWithPath("status").description("HTTP 상태"),
                     fieldWithPath("message").description("응답 메시지"),
-                    fieldWithPath("data[].id").description("댓글 ID"),
-                    fieldWithPath("data[].writerId").description("작성자 ID"),
-                    fieldWithPath("data[].parentId").description("부모 댓글 ID"),
-                    fieldWithPath("data[].content").description("댓글 내용"),
-                    fieldWithPath("data[].createdAt").description("작성 시각"),
-                    fieldWithPath("data[].isDeleted").description("삭제 여부")
+                    fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("댓글 ID"),
+                    fieldWithPath("data[].writer.id").type(JsonFieldType.NUMBER).description("작성자 ID"),
+                    fieldWithPath("data[].writer.nickname").type(JsonFieldType.STRING).description("작성자 닉네임"),
+                    fieldWithPath("data[].parentId").type(JsonFieldType.NUMBER).description("부모 댓글 ID"),
+                    fieldWithPath("data[].content").type(JsonFieldType.STRING).description("댓글 내용"),
+                    fieldWithPath("data[].createdAt").type(JsonFieldType.STRING).description("작성 시각"),
+                    fieldWithPath("data[].isDeleted").type(JsonFieldType.BOOLEAN).description("삭제 여부")
                 )
             ));
     }
@@ -125,19 +133,19 @@ class CommentControllerTest extends TestController {
                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access Token: Bearer 타입")
                 ),
                 requestFields(
-                    fieldWithPath("articleId").description("댓글을 작성할 게시글 ID"),
-                    fieldWithPath("parentCommentId").optional().description("부모 댓글 ID"),
-                    fieldWithPath("content").description("댓글 내용")
+                    fieldWithPath("articleId").type(JsonFieldType.NUMBER).description("댓글을 작성할 게시글 ID"),
+                    fieldWithPath("parentCommentId").type(JsonFieldType.NUMBER).optional().description("부모 댓글 ID"),
+                    fieldWithPath("content").type(JsonFieldType.STRING).description("댓글 내용")
                 ),
                 responseFields(
                     fieldWithPath("status").description("HTTP 상태"),
                     fieldWithPath("message").description("응답 메시지"),
-                    fieldWithPath("data.id").description("댓글 ID"),
-                    fieldWithPath("data.writerId").description("작성자 ID"),
-                    fieldWithPath("data.parentId").description("부모 댓글 ID"),
-                    fieldWithPath("data.content").description("댓글 내용"),
-                    fieldWithPath("data.createdAt").description("작성 시각"),
-                    fieldWithPath("data.isDeleted").description("삭제 여부")
+                    fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("댓글 ID"),
+                    fieldWithPath("data.writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
+                    fieldWithPath("data.parentId").type(JsonFieldType.NUMBER).description("부모 댓글 ID"),
+                    fieldWithPath("data.content").type(JsonFieldType.STRING).description("댓글 내용"),
+                    fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("작성 시각"),
+                    fieldWithPath("data.isDeleted").type(JsonFieldType.BOOLEAN).description("삭제 여부")
                 )
             ));
     }

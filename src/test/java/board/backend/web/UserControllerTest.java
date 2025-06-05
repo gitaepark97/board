@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
@@ -61,11 +62,11 @@ class UserControllerTest extends TestController {
                 responseFields(
                     fieldWithPath("status").description("HTTP 상태"),
                     fieldWithPath("message").description("응답 메시지"),
-                    fieldWithPath("data.id").description("사용자 ID"),
-                    fieldWithPath("data.email").description("이메일"),
-                    fieldWithPath("data.nickname").description("닉네임"),
-                    fieldWithPath("data.createdAt").description("가입 시각"),
-                    fieldWithPath("data.updatedAt").description("수정 시각")
+                    fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("사용자 ID"),
+                    fieldWithPath("data.email").type(JsonFieldType.STRING).description("이메일"),
+                    fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("닉네임"),
+                    fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("가입 시각"),
+                    fieldWithPath("data.updatedAt").type(JsonFieldType.STRING).description("수정 시각")
                 )
             ));
     }
@@ -95,8 +96,8 @@ class UserControllerTest extends TestController {
                 responseFields(
                     fieldWithPath("status").description("HTTP 상태"),
                     fieldWithPath("message").description("응답 메시지"),
-                    fieldWithPath("data.id").description("사용자 ID"),
-                    fieldWithPath("data.nickname").description("닉네임")
+                    fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("사용자 ID"),
+                    fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("닉네임")
                 )
             ));
     }
@@ -130,16 +131,16 @@ class UserControllerTest extends TestController {
                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access Token: Bearer 타입")
                 ),
                 requestFields(
-                    fieldWithPath("nickname").description("수정할 닉네임")
+                    fieldWithPath("nickname").type(JsonFieldType.STRING).description("수정할 닉네임")
                 ),
                 responseFields(
                     fieldWithPath("status").description("HTTP 상태"),
                     fieldWithPath("message").description("응답 메시지"),
-                    fieldWithPath("data.id").description("사용자 ID"),
-                    fieldWithPath("data.email").description("이메일"),
-                    fieldWithPath("data.nickname").description("닉네임"),
-                    fieldWithPath("data.createdAt").description("가입 시각"),
-                    fieldWithPath("data.updatedAt").description("수정 시각")
+                    fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("사용자 ID"),
+                    fieldWithPath("data.email").type(JsonFieldType.STRING).description("이메일"),
+                    fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("닉네임"),
+                    fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("가입 시각"),
+                    fieldWithPath("data.updatedAt").type(JsonFieldType.STRING).description("수정 시각")
                 )
             ));
     }

@@ -1,7 +1,8 @@
 package board.backend.application;
 
-import board.backend.application.dto.ArticleWithCounts;
+import board.backend.application.dto.ArticleWithWriterAndCounts;
 import board.backend.domain.Article;
+import board.backend.domain.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,16 +16,21 @@ import java.util.stream.Collectors;
 public class ArticleService {
 
     private final ArticleReader articleReader;
+    private final UserReader userReader;
     private final ArticleLikeReader articleLikeReader;
     private final ArticleCommentCountReader articleCommentCountReader;
     private final ArticleWriter articleWriter;
     private final ArticleLikeWriter articleLikeWriter;
     private final CommentWriter commentWriter;
 
-    public List<ArticleWithCounts> readAll(Long boardId, Long pageSize, Long lastArticleId) {
+    public List<ArticleWithWriterAndCounts> readAll(Long boardId, Long pageSize, Long lastArticleId) {
         // 게시글 목록 조회
         List<Article> articles = articleReader.readAll(boardId, pageSize, lastArticleId);
         List<Long> articleIds = articles.stream().map(Article::getId).toList();
+        List<Long> writerIds = articles.stream().map(Article::getWriterId).toList();
+
+        // 작성자 조회
+        Map<Long, User> writerMap = userReader.readAll(writerIds);
 
         // 게시글 좋아요 수 조회
         Map<Long, Long> likeCountMap = articleLikeReader.count(articleIds);
@@ -33,8 +39,9 @@ public class ArticleService {
         Map<Long, Long> commentCountMap = articleCommentCountReader.count(articleIds);
 
         return articles.stream()
-            .map(article -> new ArticleWithCounts(
+            .map(article -> new ArticleWithWriterAndCounts(
                 article,
+                writerMap.get(article.getWriterId()),
                 likeCountMap.getOrDefault(article.getId(), 0L),
                 commentCountMap.getOrDefault(article.getId(), 0L))
             )

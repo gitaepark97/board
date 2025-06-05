@@ -1,8 +1,9 @@
 package board.backend.web;
 
 import board.backend.application.ArticleService;
-import board.backend.application.dto.ArticleWithCounts;
+import board.backend.application.dto.ArticleWithWriterAndCounts;
 import board.backend.domain.Article;
+import board.backend.domain.User;
 import board.backend.web.request.ArticleCreateRequest;
 import board.backend.web.request.ArticleUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -47,9 +48,9 @@ class ArticleControllerTest extends TestController {
 
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
 
-        List<ArticleWithCounts> responses = List.of(
-            ArticleWithCounts.of(Article.create(6L, boardId, 100L, "제목1", "내용1", now), 1L, 1L),
-            ArticleWithCounts.of(Article.create(7L, boardId, 101L, "제목2", "내용2", now), 0L, 0L)
+        List<ArticleWithWriterAndCounts> responses = List.of(
+            ArticleWithWriterAndCounts.of(Article.create(6L, boardId, 1L, "제목1", "내용1", now), User.create(1L, "user1@email.com", "회원1", LocalDateTime.now()), 1L, 1L),
+            ArticleWithWriterAndCounts.of(Article.create(7L, boardId, 2L, "제목2", "내용2", now), User.create(2L, "user2@email.com", "회원2", LocalDateTime.now()), 0L, 0L)
         );
 
         when(articleService.readAll(boardId, pageSize, lastArticleId)).thenReturn(responses);
@@ -66,9 +67,13 @@ class ArticleControllerTest extends TestController {
             .andExpect(jsonPath("$.data.length()").value(responses.size()))
             .andExpect(jsonPath("$.data[0].id").value(6L))
             .andExpect(jsonPath("$.data[0].title").value("제목1"))
+            .andExpect(jsonPath("$.data[0].writer.id").value(1L))
+            .andExpect(jsonPath("$.data[0].writer.nickname").value("회원1"))
             .andExpect(jsonPath("$.data[0].likeCount").value(1L))
             .andExpect(jsonPath("$.data[0].commentCount").value(1L))
             .andExpect(jsonPath("$.data[1].id").value(7L))
+            .andExpect(jsonPath("$.data[1].writer.id").value(2L))
+            .andExpect(jsonPath("$.data[1].writer.nickname").value("회원2"))
             .andExpect(jsonPath("$.data[1].title").value("제목2"))
             .andExpect(jsonPath("$.data[1].likeCount").value(0L))
             .andExpect(jsonPath("$.data[1].commentCount").value(0L))
@@ -83,7 +88,8 @@ class ArticleControllerTest extends TestController {
                     fieldWithPath("message").description("응답 메시지"),
                     fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("게시글 ID"),
                     fieldWithPath("data[].boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
-                    fieldWithPath("data[].writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
+                    fieldWithPath("data[].writer.id").type(JsonFieldType.NUMBER).description("작성자 ID"),
+                    fieldWithPath("data[].writer.nickname").type(JsonFieldType.STRING).description("작성자 닉네임"),
                     fieldWithPath("data[].title").type(JsonFieldType.STRING).description("제목"),
                     fieldWithPath("data[].createdAt").type(JsonFieldType.STRING).description("생성 시각"),
                     fieldWithPath("data[].likeCount").type(JsonFieldType.NUMBER).description("좋아요 수"),

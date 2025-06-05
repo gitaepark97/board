@@ -16,7 +16,7 @@ class ArticleLikeReader {
     private final ArticleLikeCountRepository articleLikeCountRepository;
 
     Map<Long, Long> count(List<Long> articleIds) {
-        return articleLikeCountRepository.findByArticleIdIn(articleIds)
+        return articleLikeCountRepository.findAllById(articleIds)
             .stream()
             .collect(Collectors.toMap(ArticleLikeCount::getArticleId, ArticleLikeCount::getLikeCount));
     }

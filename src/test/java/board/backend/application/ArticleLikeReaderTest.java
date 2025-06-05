@@ -34,7 +34,7 @@ class ArticleLikeReaderTest {
             ArticleLikeCount.init(2L)
         );
 
-        when(articleLikeCountRepository.findByArticleIdIn(articleIds)).thenReturn(likeCounts);
+        when(articleLikeCountRepository.findAllById(articleIds)).thenReturn(likeCounts);
 
         // when
         Map<Long, Long> result = articleLikeReader.count(articleIds);
@@ -50,7 +50,7 @@ class ArticleLikeReaderTest {
     void count_emptyResult_returnsEmptyMap() {
         // given
         List<Long> articleIds = List.of(10L, 20L);
-        when(articleLikeCountRepository.findByArticleIdIn(articleIds)).thenReturn(List.of());
+        when(articleLikeCountRepository.findAllById(articleIds)).thenReturn(List.of());
 
         // when
         Map<Long, Long> result = articleLikeReader.count(articleIds);

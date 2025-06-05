@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
@@ -80,13 +81,13 @@ class AuthControllerTest extends TestController {
             .andExpect(jsonPath("$.data.accessToken").value("access-token-value"))
             .andDo(document("auth/login",
                 requestFields(
-                    fieldWithPath("email").description("로그인 이메일"),
-                    fieldWithPath("password").description("비밀번호")
+                    fieldWithPath("email").type(JsonFieldType.STRING).description("로그인 이메일"),
+                    fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호")
                 ),
                 responseFields(
                     fieldWithPath("status").description("HTTP 상태"),
                     fieldWithPath("message").description("응답 메시지"),
-                    fieldWithPath("data.accessToken").description("엑세스 토큰")
+                    fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("엑세스 토큰")
                 )
             ));
     }
@@ -144,7 +145,7 @@ class AuthControllerTest extends TestController {
                 responseFields(
                     fieldWithPath("status").description("HTTP 상태"),
                     fieldWithPath("message").description("응답 메시지"),
-                    fieldWithPath("data.accessToken").description("새 엑세스 토큰")
+                    fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("새 엑세스 토큰")
                 )
             ));
     }

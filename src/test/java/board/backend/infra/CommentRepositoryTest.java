@@ -91,7 +91,7 @@ class CommentRepositoryTest {
     @DisplayName("시간순 정렬로 댓글을 pageSize만큼 조회한다 (첫 페이지)")
     void findAllByArticleId_firstPage() {
         // when
-        var comments = commentRepository.findAllByArticleId(articleId, 5L);
+        var comments = commentRepository.findAllById(articleId, 5L);
 
         // then
         assertThat(comments.size()).isEqualTo(5);
@@ -102,11 +102,11 @@ class CommentRepositoryTest {
     @DisplayName("커서 기반으로 다음 페이지의 댓글을 조회한다")
     void findAllByArticleId_nextPage() {
         // given
-        var firstPage = commentRepository.findAllByArticleId(articleId, 5L);
+        var firstPage = commentRepository.findAllById(articleId, 5L);
         var lastComment = firstPage.get(4);
 
         // when
-        var nextPage = commentRepository.findAllByArticleId(
+        var nextPage = commentRepository.findAllById(
             articleId,
             5L,
             lastComment.getParentId(),
