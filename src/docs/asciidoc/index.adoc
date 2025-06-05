@@ -123,6 +123,7 @@ include::{snippets}/articles/read/response-fields.adoc[]
 ==== 요청
 
 include::{snippets}/articles/create/http-request.adoc[]
+include::{snippets}/articles/create/request-headers.adoc[]
 include::{snippets}/articles/create/request-fields.adoc[]
 
 ==== 응답
@@ -135,6 +136,7 @@ include::{snippets}/articles/create/response-fields.adoc[]
 ==== 요청
 
 include::{snippets}/articles/update/http-request.adoc[]
+include::{snippets}/articles/update/request-headers.adoc[]
 include::{snippets}/articles/update/path-parameters.adoc[]
 include::{snippets}/articles/update/request-fields.adoc[]
 
@@ -148,6 +150,7 @@ include::{snippets}/articles/update/response-fields.adoc[]
 ==== 요청
 
 include::{snippets}/articles/delete/http-request.adoc[]
+include::{snippets}/articles/delete/request-headers.adoc[]
 include::{snippets}/articles/delete/path-parameters.adoc[]
 
 ==== 응답

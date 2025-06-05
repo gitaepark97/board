@@ -8,6 +8,7 @@ import board.backend.web.response.ArticleSummaryResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,18 +39,22 @@ class ArticleController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    ArticleResponse create(@RequestBody @Valid ArticleCreateRequest request) {
-        return ArticleResponse.of(articleService.create(request.boardId(), request.writerId(), request.title(), request.content()));
+    ArticleResponse create(@AuthenticationPrincipal Long userId, @RequestBody @Valid ArticleCreateRequest request) {
+        return ArticleResponse.of(articleService.create(request.boardId(), userId, request.title(), request.content()));
     }
 
     @PutMapping("/{articleId}")
-    ArticleResponse update(@PathVariable Long articleId, @RequestBody @Valid ArticleUpdateRequest request) {
-        return ArticleResponse.of(articleService.update(articleId, request.title(), request.content()));
+    ArticleResponse update(
+        @AuthenticationPrincipal Long userId,
+        @PathVariable Long articleId,
+        @RequestBody @Valid ArticleUpdateRequest request
+    ) {
+        return ArticleResponse.of(articleService.update(articleId, userId, request.title(), request.content()));
     }
 
     @DeleteMapping("/{articleId}")
-    void delete(@PathVariable Long articleId) {
-        articleService.delete(articleId);
+    void delete(@AuthenticationPrincipal Long userId, @PathVariable Long articleId) {
+        articleService.delete(articleId, userId);
     }
 
 }

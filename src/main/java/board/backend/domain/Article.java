@@ -49,12 +49,20 @@ public class Article {
             .build();
     }
 
-    public Article update(String title, String content, LocalDateTime now) {
+    public Article update(Long userId, String title, String content, LocalDateTime now) {
+        checkIsWriter(userId);
+
         this.title = title;
         this.content = content;
         this.updatedAt = now;
 
         return this;
+    }
+
+    public void checkIsWriter(Long userId) {
+        if (userId.longValue() != writerId.longValue()) {
+            throw new Forbidden();
+        }
     }
 
 }

@@ -49,14 +49,14 @@ public class ArticleService {
         return articleWriter.create(boardId, writerId, title, content);
     }
 
-    public Article update(Long articleId, String title, String content) {
-        return articleWriter.update(articleId, title, content);
+    public Article update(Long articleId, Long userId, String title, String content) {
+        return articleWriter.update(articleId, userId, title, content);
     }
 
     @Transactional
-    public void delete(Long articleId) {
+    public void delete(Long articleId, Long userId) {
         // 게시글 삭제
-        articleWriter.delete(articleId);
+        articleWriter.delete(articleId, userId);
 
         // 게시글 좋아요 삭제
         articleLikeWriter.deleteArticle(articleId);

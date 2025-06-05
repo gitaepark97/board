@@ -28,12 +28,12 @@ class ArticleWriter {
     }
 
     @Transactional
-    public Article update(Long articleId, String title, String content) {
+    public Article update(Long articleId, Long userId, String title, String content) {
         // 게시글 조회
         Article article = articleRepository.findById(articleId).orElseThrow(ArticleNotFound::new);
 
         // 게시글 수정
-        Article updatedArticle = article.update(title, content, timeProvider.now());
+        Article updatedArticle = article.update(userId, title, content, timeProvider.now());
         // 게시글 저장
         articleRepository.save(updatedArticle);
 
@@ -41,9 +41,13 @@ class ArticleWriter {
     }
 
     @Transactional
-    public void delete(Long articleId) {
+    public void delete(Long articleId, Long userId) {
         // 게시글 삭제
-        articleRepository.findById(articleId).ifPresent(articleRepository::delete);
+        articleRepository.findById(articleId).ifPresent((article -> {
+            // 작성자 확인
+            article.checkIsWriter(userId);
+            articleRepository.delete(article);
+        }));
     }
 
 }

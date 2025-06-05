@@ -8,6 +8,7 @@ import board.backend.web.request.ArticleUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -20,6 +21,8 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -129,16 +132,19 @@ class ArticleControllerTest extends TestController {
     @DisplayName("게시글 생성 API - 성공")
     void create_success() throws Exception {
         // given
-        ArticleCreateRequest request = new ArticleCreateRequest(1L, 100L, "제목입니다", "내용입니다");
+        Long userId = 1L;
+        String accessToken = "valid-access-token";
+        ArticleCreateRequest request = new ArticleCreateRequest(1L, "제목입니다", "내용입니다");
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
-        Article response = Article.create(1L, 1L, 100L, "제목입니다", "내용입니다", now);
+        Article response = Article.create(1L, 1L, userId, "제목입니다", "내용입니다", now);
 
         when(articleService.create(any(), any(), any(), any()))
             .thenReturn(response);
 
         // when & then
         mockMvc.perform(post("/api/articles")
-                .with(authentication(new UsernamePasswordAuthenticationToken(1L, null, null)))
+                .with(authentication(new UsernamePasswordAuthenticationToken(userId, null, null)))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated())
@@ -147,9 +153,11 @@ class ArticleControllerTest extends TestController {
             .andExpect(jsonPath("$.data.id").value(1L))
             .andExpect(jsonPath("$.data.title").value("제목입니다"))
             .andDo(document("articles/create",
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access Token: Bearer 타입")
+                ),
                 requestFields(
                     fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
-                    fieldWithPath("writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
                     fieldWithPath("title").type(JsonFieldType.STRING).description("제목"),
                     fieldWithPath("content").type(JsonFieldType.STRING).description("내용")
                 ),
@@ -171,19 +179,22 @@ class ArticleControllerTest extends TestController {
     @DisplayName("게시글 수정 API - 성공")
     void update_success() throws Exception {
         // given
+        Long userId = 1L;
+        String accessToken = "valid-access-token";
         Long articleId = 1L;
         ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용");
 
         LocalDateTime createdAt = LocalDateTime.of(2024, 1, 1, 10, 0);
         LocalDateTime updatedAt = LocalDateTime.of(2024, 1, 2, 12, 0);
-        Article response = Article.create(articleId, 1L, 100L, "수정된 제목", "수정된 내용", createdAt)
-            .update("수정된 제목", "수정된 내용", updatedAt);
+        Article response = Article.create(articleId, 1L, userId, "수정된 제목", "수정된 내용", createdAt)
+            .update(userId, "수정된 제목", "수정된 내용", updatedAt);
 
-        when(articleService.update(eq(articleId), any(), any())).thenReturn(response);
+        when(articleService.update(eq(userId), eq(articleId), any(), any())).thenReturn(response);
 
         // when & then
         mockMvc.perform(put("/api/articles/{articleId}", articleId)
-                .with(authentication(new UsernamePasswordAuthenticationToken(1L, null, null)))
+                .with(authentication(new UsernamePasswordAuthenticationToken(userId, null, null)))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isOk())
@@ -192,6 +203,9 @@ class ArticleControllerTest extends TestController {
             .andExpect(jsonPath("$.data.id").value(articleId))
             .andExpect(jsonPath("$.data.title").value("수정된 제목"))
             .andDo(document("articles/update",
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access Token: Bearer 타입")
+                ),
                 pathParameters(
                     parameterWithName("articleId").description("수정할 게시글 ID")
                 ),
@@ -217,15 +231,21 @@ class ArticleControllerTest extends TestController {
     @DisplayName("게시글 삭제 API - 성공")
     void delete_success() throws Exception {
         // given
+        Long userId = 1L;
+        String accessToken = "valid-access-token";
         Long articleId = 1L;
 
         // when & then
         mockMvc.perform(delete("/api/articles/{articleId}", articleId)
-                .with(authentication(new UsernamePasswordAuthenticationToken(1L, null, null))))
+                .with(authentication(new UsernamePasswordAuthenticationToken(userId, null, null)))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value(HttpStatus.OK.name()))
             .andExpect(jsonPath("$.message").value("성공"))
             .andDo(document("articles/delete",
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access Token: Bearer 타입")
+                ),
                 pathParameters(
                     parameterWithName("articleId").description("삭제할 게시글 ID")
                 ),

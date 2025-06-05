@@ -7,9 +7,6 @@ public record ArticleCreateRequest(
     @NotNull
     Long boardId,
 
-    @NotNull
-    Long writerId,
-
     @NotBlank
     String title,
 

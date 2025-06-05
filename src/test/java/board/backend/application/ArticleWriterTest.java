@@ -63,16 +63,17 @@ class ArticleWriterTest {
     @DisplayName("게시글 수정에 성공한다")
     void update_success() {
         // given
+        Long userId = 1L;
         Long articleId = 1L;
         String newTitle = "수정된 제목";
         String newContent = "수정된 내용";
         LocalDateTime createdAt = LocalDateTime.of(2024, 1, 1, 10, 0);
         LocalDateTime updatedAt = LocalDateTime.of(2024, 1, 2, 12, 0);
-        when(articleRepository.findById(articleId)).thenReturn(Optional.of(Article.create(articleId, 1L, 100L, "원래 제목", "원래 내용", createdAt)));
+        when(articleRepository.findById(articleId)).thenReturn(Optional.of(Article.create(articleId, 1L, userId, "원래 제목", "원래 내용", createdAt)));
         when(timeProvider.now()).thenReturn(updatedAt);
 
         // when
-        Article updated = articleWriter.update(articleId, newTitle, newContent);
+        Article updated = articleWriter.update(articleId, userId, newTitle, newContent);
 
         // then
         assertThat(updated.getTitle()).isEqualTo(newTitle);
@@ -85,24 +86,26 @@ class ArticleWriterTest {
     @DisplayName("게시글 삭제에 성공한다")
     void delete_success() {
         // given
+        Long userId = 1L;
         Long articleId = 1L;
-        Article article = Article.create(articleId, 1L, 100L, "제목", "내용", LocalDateTime.now());
+        Article article = Article.create(articleId, 1L, userId, "제목", "내용", LocalDateTime.now());
 
         when(articleRepository.findById(articleId)).thenReturn(Optional.of(article));
 
         // when
-        articleWriter.delete(articleId);
+        articleWriter.delete(articleId, userId);
     }
 
     @Test
     @DisplayName("존재하지 않는 게시글이면 삭제하지 않는다")
     void delete_notFoundDoesNothing() {
         // given
+        Long userId = 1L;
         Long articleId = 999L;
         when(articleRepository.findById(articleId)).thenReturn(Optional.empty());
 
         // when
-        articleWriter.delete(articleId);
+        articleWriter.delete(articleId, userId);
     }
 
 }
