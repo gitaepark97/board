@@ -7,6 +7,8 @@
 
 핵심 기능은 다음과 같습니다:
 
+- 회원가입 / 로그인 / 로그아웃 / 토큰 재발급
+- 회원 조회 / 수정
 - 게시글 등록 / 조회 / 수정 / 삭제
 - 게시글 좋아요 생성 / 삭제
 - 댓글, 대댓글 생성 / 삭제
@@ -75,10 +77,9 @@ docker-compose up -d
 
 ```text
 board.backend/
-├── controller/       # REST API Controller
-├── domain/           # 핵심 도메인 (Article 등)
-├── repository/       # JPA + QueryDSL 구현
-├── service/          # 비즈니스 로직
-├── support/          # 공통 유틸 (IdProvider, TimeProvider 등)
-└── config/           # 설정 파일 (Spring, JPA, Security 등)
+├── application/    # 비즈니스 로직
+├── domain/         # 핵심 도메인 (Article 등)
+├── infra/          # 인프라(외부 API, 라이브러리 등)
+├── support/        # 공통 유틸 (IdProvider, TimeProvider 등)
+└── web/            # REST API
 ```
