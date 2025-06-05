@@ -6,6 +6,7 @@ import board.backend.web.request.CommentCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -17,6 +18,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -87,9 +90,10 @@ class CommentControllerTest extends TestController {
     @DisplayName("댓글 생성 API - 성공")
     void create_success() throws Exception {
         // given
+        Long userId = 1L;
+        String accessToken = "valid-access-token";
         CommentCreateRequest request = new CommentCreateRequest(
             1L,
-            100L,
             100L,
             "댓글 내용"
         );
@@ -97,7 +101,7 @@ class CommentControllerTest extends TestController {
         Comment comment = Comment.create(
             10L,
             1L,
-            100L,
+            userId,
             100L,
             "댓글 내용",
             LocalDateTime.of(2024, 1, 1, 12, 0)
@@ -107,7 +111,8 @@ class CommentControllerTest extends TestController {
 
         // when & then
         mockMvc.perform(post("/api/comments")
-                .with(authentication(new UsernamePasswordAuthenticationToken(1L, null, null)))
+                .with(authentication(new UsernamePasswordAuthenticationToken(userId, null, null)))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated())
@@ -116,9 +121,11 @@ class CommentControllerTest extends TestController {
             .andExpect(jsonPath("$.data.id").value(10L))
             .andExpect(jsonPath("$.data.content").value("댓글 내용"))
             .andDo(document("comments/create",
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access Token: Bearer 타입")
+                ),
                 requestFields(
                     fieldWithPath("articleId").description("댓글을 작성할 게시글 ID"),
-                    fieldWithPath("writerId").description("댓글 작성자 ID"),
                     fieldWithPath("parentCommentId").optional().description("부모 댓글 ID"),
                     fieldWithPath("content").description("댓글 내용")
                 ),
@@ -139,18 +146,23 @@ class CommentControllerTest extends TestController {
     @DisplayName("댓글 삭제 API - 성공")
     void delete_success() throws Exception {
         // given
+        Long userId = 1L;
+        String accessToken = "valid-access-token";
         Long commentId = 10L;
 
-        doNothing().when(commentService).delete(commentId);
+        doNothing().when(commentService).delete(commentId, userId);
 
         // when & then
         mockMvc.perform(delete("/api/comments/{commentId}", commentId)
-                .with(authentication(new UsernamePasswordAuthenticationToken(1L, null, null)))
-                .accept(MediaType.APPLICATION_JSON))
+                .with(authentication(new UsernamePasswordAuthenticationToken(userId, null, null)))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value("OK"))
             .andExpect(jsonPath("$.message").value("성공"))
             .andDo(document("comments/delete",
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access Token: Bearer 타입")
+                ),
                 pathParameters(
                     parameterWithName("commentId").description("삭제할 댓글 ID")
                 ),

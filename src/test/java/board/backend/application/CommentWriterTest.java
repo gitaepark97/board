@@ -115,19 +115,21 @@ class CommentWriterTest {
     @DisplayName("삭제된 댓글이면 삭제하지 않는다")
     void delete_alreadyDeleted_doesNothing() {
         // given
+        Long userId = 1L;
         Long commentId = 1L;
         Comment deletedComment = mock(Comment.class);
         when(deletedComment.getIsDeleted()).thenReturn(true);
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(deletedComment));
 
         // when
-        commentWriter.delete(commentId);
+        commentWriter.delete(commentId, userId);
     }
 
     @Test
     @DisplayName("자식이 있는 댓글은 논리 삭제된다")
     void delete_withChildren_marksAsDeleted() {
         // given
+        Long userId = 1L;
         Long commentId = 1L;
         Comment comment = mock(Comment.class);
         when(comment.getIsDeleted()).thenReturn(false);
@@ -138,13 +140,14 @@ class CommentWriterTest {
         when(commentRepository.countBy(10L, commentId, 2)).thenReturn(2);
 
         // when
-        commentWriter.delete(commentId);
+        commentWriter.delete(commentId, userId);
     }
 
     @Test
     @DisplayName("자식이 없는 댓글은 물리 삭제된다")
     void delete_withoutChildrenDeletesComment() {
         // given
+        Long userId = 1L;
         Long commentId = 1L;
         Comment comment = mock(Comment.class);
         when(comment.getIsDeleted()).thenReturn(false);
@@ -155,13 +158,14 @@ class CommentWriterTest {
         when(commentRepository.countBy(10L, commentId, 2)).thenReturn(1);
 
         // when
-        commentWriter.delete(commentId);
+        commentWriter.delete(commentId, userId);
     }
 
     @Test
     @DisplayName("부모가 삭제 상태이고 자식이 없으면 재귀적으로 삭제한다")
     void delete_recursivelyDeletesParentIfDeletedAndNoChildren() {
         // given
+        Long userId = 1L;
         Long commentId = 2L;
         Long parentId = 1L;
 
@@ -183,7 +187,7 @@ class CommentWriterTest {
         when(commentRepository.countBy(10L, parentId, 2)).thenReturn(1);
 
         // when
-        commentWriter.delete(commentId);
+        commentWriter.delete(commentId, userId);
     }
 
 }

@@ -21,8 +21,8 @@ public class CommentService {
         return commentWriter.create(articleId, writerId, parentCommentId, content);
     }
 
-    public void delete(Long commentId) {
-        commentWriter.delete(commentId);
+    public void delete(Long commentId, Long userId) {
+        commentWriter.delete(commentId, userId);
     }
 
 }

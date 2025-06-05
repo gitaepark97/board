@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 class CommentTest {
 
@@ -90,6 +91,30 @@ class CommentTest {
 
         // then
         assertThat(comment.getIsDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("작성자 본인이면 예외가 발생하지 않는다")
+    void check_writer_success() {
+        // given
+        Long writerId = 1L;
+        Comment comment = Comment.create(1L, 10L, writerId, 1L, "삭제될 댓글", LocalDateTime.now());
+
+        // when & then
+        comment.checkIsWriter(writerId);
+    }
+
+    @Test
+    @DisplayName("작성자가 아니면 Forbidden 예외가 발생한다")
+    void check_writer_fail() {
+        // given
+        Long writerId = 1L;
+        Long anotherUserId = 2L;
+        Comment comment = Comment.create(1L, 10L, writerId, 1L, "삭제될 댓글", LocalDateTime.now());
+
+        // when & then
+        assertThatThrownBy(() -> comment.checkIsWriter(anotherUserId))
+            .isInstanceOf(Forbidden.class);
     }
 
 }

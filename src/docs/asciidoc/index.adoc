@@ -204,6 +204,7 @@ include::{snippets}/comments/read-all/response-fields.adoc[]
 ==== 요청
 
 include::{snippets}/comments/create/http-request.adoc[]
+include::{snippets}/comments/create/request-headers.adoc[]
 include::{snippets}/comments/create/request-fields.adoc[]
 
 ==== 응답
@@ -216,6 +217,7 @@ include::{snippets}/comments/create/response-fields.adoc[]
 ==== 요청
 
 include::{snippets}/comments/delete/http-request.adoc[]
+include::{snippets}/comments/delete/request-headers.adoc[]
 include::{snippets}/comments/delete/path-parameters.adoc[]
 
 ==== 응답

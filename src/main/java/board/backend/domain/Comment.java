@@ -58,4 +58,10 @@ public class Comment {
         return this;
     }
 
+    public void checkIsWriter(Long userId) {
+        if (userId.longValue() != writerId.longValue()) {
+            throw new Forbidden();
+        }
+    }
+
 }

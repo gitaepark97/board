@@ -7,9 +7,6 @@ public record CommentCreateRequest(
     @NotNull
     Long articleId,
 
-    @NotNull
-    Long writerId,
-
     Long parentCommentId,
 
     @NotBlank

@@ -44,8 +44,10 @@ class CommentWriter {
     }
 
     @Transactional
-    void delete(Long commentId) {
+    void delete(Long commentId, Long userId) {
         commentRepository.findById(commentId).filter(not(Comment::getIsDeleted)).ifPresent(comment -> {
+            comment.checkIsWriter(userId);
+
             if (hasChildren(comment)) {
                 // 댓글 삭제
                 Comment deletedComment = comment.delete();

@@ -6,6 +6,7 @@ import board.backend.web.response.CommentResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,13 +33,13 @@ class CommentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    CommentResponse create(@RequestBody @Valid CommentCreateRequest request) {
-        return CommentResponse.of(commentService.create(request.articleId(), request.writerId(), request.parentCommentId(), request.content()));
+    CommentResponse create(@AuthenticationPrincipal Long userId, @RequestBody @Valid CommentCreateRequest request) {
+        return CommentResponse.of(commentService.create(request.articleId(), userId, request.parentCommentId(), request.content()));
     }
 
     @DeleteMapping("/{commentId}")
-    void delete(@PathVariable Long commentId) {
-        commentService.delete(commentId);
+    void delete(@AuthenticationPrincipal Long userId, @PathVariable Long commentId) {
+        commentService.delete(commentId, userId);
     }
 
 }
