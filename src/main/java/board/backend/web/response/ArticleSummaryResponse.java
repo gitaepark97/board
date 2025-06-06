@@ -11,6 +11,7 @@ public record ArticleSummaryResponse(
     String title,
     LocalDateTime createdAt,
     Long likeCount,
+    Long viewCount,
     Long commentCount
 ) {
 
@@ -22,6 +23,7 @@ public record ArticleSummaryResponse(
             articleWithWriterAndCounts.article().getTitle(),
             articleWithWriterAndCounts.article().getCreatedAt(),
             articleWithWriterAndCounts.likeCount(),
+            articleWithWriterAndCounts.viewCount(),
             articleWithWriterAndCounts.commentCount()
         );
     }

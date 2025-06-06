@@ -21,7 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 class ArticleRepositoryTest {
 
-    private final Long articleId = 1L;
     @Autowired
     private ArticleRepository articleRepository;
 
@@ -45,6 +44,7 @@ class ArticleRepositoryTest {
     @DisplayName("articleId로 게시글 존재 여부를 확인한다 - 존재함")
     void customExistsById_exists() {
         // when
+        Long articleId = 1L;
         boolean result = articleRepository.customExistsById(articleId);
 
         // then

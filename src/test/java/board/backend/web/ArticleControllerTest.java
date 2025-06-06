@@ -49,8 +49,8 @@ class ArticleControllerTest extends TestController {
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
 
         List<ArticleWithWriterAndCounts> responses = List.of(
-            ArticleWithWriterAndCounts.of(Article.create(6L, boardId, 1L, "제목1", "내용1", now), User.create(1L, "user1@email.com", "회원1", LocalDateTime.now()), 1L, 1L),
-            ArticleWithWriterAndCounts.of(Article.create(7L, boardId, 2L, "제목2", "내용2", now), User.create(2L, "user2@email.com", "회원2", LocalDateTime.now()), 0L, 0L)
+            ArticleWithWriterAndCounts.of(Article.create(6L, boardId, 1L, "제목1", "내용1", now), User.create(1L, "user1@email.com", "회원1", LocalDateTime.now()), 1L, 1L, 1L),
+            ArticleWithWriterAndCounts.of(Article.create(7L, boardId, 2L, "제목2", "내용2", now), User.create(2L, "user2@email.com", "회원2", LocalDateTime.now()), 0L, 0L, 0L)
         );
 
         when(articleService.readAll(boardId, pageSize, lastArticleId)).thenReturn(responses);
@@ -70,12 +70,14 @@ class ArticleControllerTest extends TestController {
             .andExpect(jsonPath("$.data[0].writer.id").value(1L))
             .andExpect(jsonPath("$.data[0].writer.nickname").value("회원1"))
             .andExpect(jsonPath("$.data[0].likeCount").value(1L))
+            .andExpect(jsonPath("$.data[0].viewCount").value(1L))
             .andExpect(jsonPath("$.data[0].commentCount").value(1L))
             .andExpect(jsonPath("$.data[1].id").value(7L))
             .andExpect(jsonPath("$.data[1].writer.id").value(2L))
             .andExpect(jsonPath("$.data[1].writer.nickname").value("회원2"))
             .andExpect(jsonPath("$.data[1].title").value("제목2"))
             .andExpect(jsonPath("$.data[1].likeCount").value(0L))
+            .andExpect(jsonPath("$.data[1].viewCount").value(0L))
             .andExpect(jsonPath("$.data[1].commentCount").value(0L))
             .andDo(document("articles/read-all",
                 queryParameters(
@@ -93,6 +95,7 @@ class ArticleControllerTest extends TestController {
                     fieldWithPath("data[].title").type(JsonFieldType.STRING).description("제목"),
                     fieldWithPath("data[].createdAt").type(JsonFieldType.STRING).description("생성 시각"),
                     fieldWithPath("data[].likeCount").type(JsonFieldType.NUMBER).description("좋아요 수"),
+                    fieldWithPath("data[].viewCount").type(JsonFieldType.NUMBER).description("조회 수"),
                     fieldWithPath("data[].commentCount").type(JsonFieldType.NUMBER).description("댓글 수")
                 )
             ));

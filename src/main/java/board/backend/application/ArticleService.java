@@ -18,9 +18,11 @@ public class ArticleService {
     private final ArticleReader articleReader;
     private final UserReader userReader;
     private final ArticleLikeReader articleLikeReader;
-    private final ArticleCommentCountReader articleCommentCountReader;
+    private final ArticleViewReader articleViewReader;
+    private final CommentReader commentReader;
     private final ArticleWriter articleWriter;
     private final ArticleLikeWriter articleLikeWriter;
+    private final ArticleViewWriter articleViewWriter;
     private final CommentWriter commentWriter;
 
     public List<ArticleWithWriterAndCounts> readAll(Long boardId, Long pageSize, Long lastArticleId) {
@@ -35,21 +37,30 @@ public class ArticleService {
         // 게시글 좋아요 수 조회
         Map<Long, Long> likeCountMap = articleLikeReader.count(articleIds);
 
+        // 게시글 조회 수 조회
+        Map<Long, Long> viewCountMap = articleViewReader.count(articleIds);
+
         // 게시글 댓글 수 조회
-        Map<Long, Long> commentCountMap = articleCommentCountReader.count(articleIds);
+        Map<Long, Long> commentCountMap = commentReader.count(articleIds);
 
         return articles.stream()
             .map(article -> new ArticleWithWriterAndCounts(
                 article,
                 writerMap.get(article.getWriterId()),
                 likeCountMap.getOrDefault(article.getId(), 0L),
+                viewCountMap.getOrDefault(article.getId(), 0L),
                 commentCountMap.getOrDefault(article.getId(), 0L))
             )
             .collect(Collectors.toList());
     }
 
     public Article read(Long articleId) {
-        return articleReader.read(articleId);
+        Article article = articleReader.read(articleId);
+
+        // 조회수 증가
+        articleViewWriter.increase(articleId);
+
+        return article;
     }
 
     public Article create(Long boardId, Long writerId, String title, String content) {
@@ -67,6 +78,9 @@ public class ArticleService {
 
         // 게시글 좋아요 삭제
         articleLikeWriter.deleteArticle(articleId);
+
+        // 게시글 조회수 삭제
+        articleViewWriter.deleteArticle(articleId);
 
         // 게시글 댓글 삭제
         commentWriter.deleteArticle(articleId);
