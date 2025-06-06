@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -18,10 +18,10 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
-@WebMvcTest
 @ExtendWith(RestDocumentationExtension.class)
+@AutoConfigureMockMvc
 @Import(SecurityConfig.class)
-class TestController {
+abstract class TestController {
 
     protected final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired

@@ -19,7 +19,6 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -51,8 +50,7 @@ class CommentControllerTest extends TestController {
             CommentWithWriter.of(Comment.create(9L, articleId, 101L, 9L, "댓글2", LocalDateTime.of(2024, 1, 1, 11, 0)), User.create(2L, "user2@email.com", "회원2", LocalDateTime.now()))
         );
 
-        when(commentService.readAll(articleId, pageSize, lastParentCommentId, lastCommentId))
-            .thenReturn(comments);
+        when(commentService.readAll(articleId, pageSize, lastParentCommentId, lastCommentId)).thenReturn(comments);
 
         // when & then
         mockMvc.perform(get("/api/comments")
@@ -157,8 +155,6 @@ class CommentControllerTest extends TestController {
         Long userId = 1L;
         String accessToken = "valid-access-token";
         Long commentId = 10L;
-
-        doNothing().when(commentService).delete(commentId, userId);
 
         // when & then
         mockMvc.perform(delete("/api/comments/{commentId}", commentId)

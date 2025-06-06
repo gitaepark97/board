@@ -1,25 +1,20 @@
 package board.backend.infra;
 
-import board.backend.TestcontainersConfiguration;
 import board.backend.domain.Article;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("test")
-@Import({TestcontainersConfiguration.class, CustomArticleRepositoryImpl.class, QueryDSLConfig.class})
-@DataJpaTest
-class ArticleRepositoryTest {
+@Import(CustomArticleRepositoryImpl.class)
+class ArticleRepositoryTest extends TestRepository {
 
     @Autowired
     private ArticleRepository articleRepository;
@@ -34,7 +29,7 @@ class ArticleRepositoryTest {
                 100L + i,
                 "제목 " + i,
                 "내용 " + i,
-                LocalDateTime.of(2024, 1, i, 10, 0)
+                LocalDateTime.now()
             );
             articleRepository.save(article);
         }

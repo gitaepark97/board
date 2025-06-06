@@ -1,27 +1,18 @@
 package board.backend.infra;
 
-import board.backend.TestcontainersConfiguration;
 import board.backend.domain.Comment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@ActiveProfiles("test")
-@Import({
-    TestcontainersConfiguration.class,
-    QueryDSLConfig.class,
-    CustomCommentRepositoryImpl.class
-})
-@DataJpaTest
-class CommentRepositoryTest {
+@Import(CustomCommentRepositoryImpl.class)
+class CommentRepositoryTest extends TestRepository {
 
     private final Long articleId = 1L;
     private final Long parentId = 100L;

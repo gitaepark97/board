@@ -39,8 +39,6 @@ class AuthControllerTest extends TestController {
         // given
         RegisterRequest request = new RegisterRequest("user@example.com", "Password123!", "닉네임1");
 
-        doNothing().when(authService).register(anyString(), anyString(), anyString());
-
         // when & then
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)

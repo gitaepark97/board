@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -36,8 +35,6 @@ class ArticleLikeControllerTest extends TestController {
         Long userId = 1L;
         String accessToken = "valid-access-token";
         Long articleId = 1L;
-
-        doNothing().when(articleLikeService).like(articleId, userId);
 
         // when & then
         mockMvc.perform(post("/api/article-likes/articles/{articleId}", articleId)
@@ -67,8 +64,6 @@ class ArticleLikeControllerTest extends TestController {
         Long userId = 1L;
         String accessToken = "valid-access-token";
         Long articleId = 1L;
-
-        doNothing().when(articleLikeService).unlike(articleId, userId);
 
         // when & then
         mockMvc.perform(delete("/api/article-likes/articles/{articleId}", articleId)

@@ -1,26 +1,17 @@
 package board.backend.infra;
 
-import board.backend.TestcontainersConfiguration;
 import board.backend.domain.ArticleCommentCount;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@ActiveProfiles("test")
-@Import({
-    TestcontainersConfiguration.class,
-    QueryDSLConfig.class,
-    CustomArticleCommentCountRepositoryImpl.class
-})
-@DataJpaTest
-class ArticleCommentCountRepositoryTest {
+@Import(CustomArticleCommentCountRepositoryImpl.class)
+class ArticleCommentCountRepositoryTest extends TestRepository {
 
     private final Long articleId = 1L;
     @Autowired

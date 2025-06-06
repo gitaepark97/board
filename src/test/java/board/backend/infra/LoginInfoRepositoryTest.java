@@ -1,29 +1,20 @@
 package board.backend.infra;
 
-import board.backend.TestcontainersConfiguration;
 import board.backend.domain.LoginInfo;
 import board.backend.domain.LoginMethod;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
-@ActiveProfiles("test")
-@Import({
-    TestcontainersConfiguration.class,
-    QueryDSLConfig.class,
-    CustomLoginInfoRepositoryImpl.class
-})
-@DataJpaTest
-class LoginInfoRepositoryTest {
+@Import(CustomLoginInfoRepositoryImpl.class)
+class LoginInfoRepositoryTest extends TestRepository {
 
     private final String email = "user1@example.com";
     @Autowired
