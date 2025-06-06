@@ -56,25 +56,11 @@ class CommentRepositoryTest {
     @Test
     @DisplayName("댓글 수가 limit보다 적을 경우 전체 개수를 반환한다")
     void countBy_underLimit() {
-        // given
-        commentRepository.deleteAll();
-        for (int i = 0; i < 3; i++) {
-            Comment comment = Comment.create(
-                (long) i + 100,
-                articleId,
-                300L + i,
-                parentId,
-                "적은 댓글 " + i,
-                LocalDateTime.now()
-            );
-            commentRepository.save(comment);
-        }
-
         // when
-        int count = commentRepository.countBy(articleId, parentId, 5);
+        int count = commentRepository.countBy(articleId, parentId, 12);
 
         // then
-        assertThat(count).isEqualTo(3);
+        assertThat(count).isEqualTo(10);
     }
 
     @Test
