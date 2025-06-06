@@ -77,9 +77,45 @@ docker-compose up -d
 
 ```text
 board.backend/
-├── application/    # 비즈니스 로직
-├── domain/         # 핵심 도메인 (Article 등)
-├── infra/          # 인프라(외부 API, 라이브러리 등)
-├── support/        # 공통 유틸 (IdProvider, TimeProvider 등)
-└── web/            # REST API
+├── article/                        # [모듈] 게시글 도메인
+│   ├── application/               # 비즈니스 로직 (Reader/Writer 등 유스케이스)
+│   │   ├── ArticleReader.java
+│   │   ├── ArticleWriter.java
+│   │   └── ArticleService.java
+│   ├── domain/                    # 도메인 엔티티, VO, 도메인 정책
+│   │   └── Article.java
+│   ├── infra/                     # DB, 외부 API, 라이브러리 연동
+│   │   └── ArticleRepositoryImpl.java
+│   └── web/                       # REST Controller (Request, Response 포함)
+│       ├── ArticleController.java
+│       └── request/
+│       └── response/
+│
+├── comment/                       # [모듈] 댓글 도메인 (동일한 구조)
+│   └── ...
+│
+├── like/                          # [모듈] 좋아요 도메인
+│   └── ...
+│
+├── user/
+│   └── ...
+│
+├── view/
+│   └── ...
+│
+└── common/                        # [공통 코드]
+    ├── support/                   # 공통 유틸, 예외, 인터페이스 등
+    │   ├── IdProvider.java
+    │   ├── TimeProvider.java
+    │   ├── BaseEntity.java
+    │   └── ApplicationException.java
+    ├── infra/                     # Config 등
+    │   └── QueryDSLConfig.java
+    └── web/                       # 공통 응답 포맷, security
+        ├── response
+        │   ├── ApiResponse.java
+        │   └── ApiResponseHandler.java
+        └── security
+            ├── SecurityConfig.java
+            └── TokenFilter.java
 ```
