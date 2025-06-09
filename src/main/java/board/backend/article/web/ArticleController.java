@@ -5,6 +5,7 @@ import board.backend.article.web.request.ArticleCreateRequest;
 import board.backend.article.web.request.ArticleUpdateRequest;
 import board.backend.article.web.response.ArticleResponse;
 import board.backend.article.web.response.ArticleSummaryResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,8 +34,8 @@ class ArticleController {
     }
 
     @GetMapping("/{articleId}")
-    ArticleResponse read(@PathVariable Long articleId) {
-        return ArticleResponse.from(articleService.read(articleId));
+    ArticleResponse read(@PathVariable Long articleId, HttpServletRequest request) {
+        return ArticleResponse.from(articleService.read(articleId, request.getRemoteAddr()));
     }
 
     @PostMapping

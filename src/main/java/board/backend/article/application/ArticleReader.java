@@ -65,12 +65,12 @@ public class ArticleReader {
             .collect(Collectors.toList());
     }
 
-    Article read(Long articleId) {
+    Article read(Long articleId, String ip) {
         // 게시글 조회
         Article article = articleRepository.findById(articleId).orElseThrow(ArticleNotFound::new);
 
         // 조회수 증가
-        articleViewWriter.increaseCount(articleId);
+        articleViewWriter.increaseCount(articleId, ip);
 
         return article;
     }

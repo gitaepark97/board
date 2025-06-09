@@ -19,6 +19,7 @@
 - 공통 Response 적용
 - REST API + REST Docs 문서화
 - Testcontainers 기반 통합 테스트 환경 구성
+- 게시글 조회 수 어뷰징 방지
 
 ## 💻 기술 스택
 
@@ -36,6 +37,7 @@
 **Database**
 
 <img src="https://img.shields.io/badge/MySQL-4479A1?logo=MySQL&logoColor=white" />
+<img src="https://img.shields.io/badge/Redis-FF4438?logo=Redis&logoColor=white" />
 
 **Containerization**
 

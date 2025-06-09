@@ -20,8 +20,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -110,7 +109,7 @@ class ArticleControllerTest extends TestController {
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
         Article response = Article.create(articleId, 1L, 100L, "조회 제목", "조회 내용", now);
 
-        when(articleService.read(articleId)).thenReturn(response);
+        when(articleService.read(eq(articleId), anyString())).thenReturn(response);
 
         // when & then
         mockMvc.perform(get("/api/articles/{articleId}", articleId)

@@ -134,10 +134,11 @@ class ArticleReaderTest {
             articleId, 10L, 100L, "조회 제목", "조회 내용",
             LocalDateTime.of(2024, 1, 1, 10, 0)
         );
+        String ip = "0:0:0:0";
         when(articleRepository.findById(articleId)).thenReturn(Optional.of(article));
 
         // when
-        Article result = articleReader.read(articleId);
+        Article result = articleReader.read(articleId, ip);
 
         // then
         assertThat(result).isEqualTo(article);
@@ -148,10 +149,11 @@ class ArticleReaderTest {
     void read_failWhenNotFound() {
         // given
         Long invalidId = 999L;
+        String ip = "0:0:0:0";
         when(articleRepository.findById(invalidId)).thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> articleReader.read(invalidId))
+        assertThatThrownBy(() -> articleReader.read(invalidId, ip))
             .isInstanceOf(ArticleNotFound.class);
     }
 

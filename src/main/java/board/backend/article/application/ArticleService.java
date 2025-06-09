@@ -19,8 +19,8 @@ public class ArticleService {
         return articleReader.readAll(boardId, pageSize, lastArticleId);
     }
 
-    public Article read(Long articleId) {
-        return articleReader.read(articleId);
+    public Article read(Long articleId, String ip) {
+        return articleReader.read(articleId, ip);
     }
 
     public Article create(Long boardId, Long writerId, String title, String content) {

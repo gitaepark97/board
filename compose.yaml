@@ -7,8 +7,6 @@ services:
       - '3306:3306'
 
   redis:
-    image: bitnami/redis:7.2
-    env_file:
-      - .env
+    image: 'redis:8.0'
     ports:
       - '6379:6379'
