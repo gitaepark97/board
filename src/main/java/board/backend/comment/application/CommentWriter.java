@@ -27,12 +27,12 @@ public class CommentWriter {
     private final UserReader userReader;
 
     @Transactional
-    Comment create(Long articleId, Long writerId, Long parentCommentId, String content) {
+    Comment create(Long articleId, Long userId, Long parentCommentId, String content) {
         // 게시글 존재 확인
         articleReader.checkArticleExistsOrThrow(articleId);
 
         // 회원 존재 확인
-        userReader.checkUserExists(articleId);
+        userReader.checkUserExists(userId);
 
         // 부모 댓글 확인
         if (parentCommentId != null) {
@@ -40,7 +40,7 @@ public class CommentWriter {
         }
 
         // 댓글 생성
-        Comment newComment = Comment.create(idProvider.nextId(), articleId, writerId, parentCommentId, content, timeProvider.now());
+        Comment newComment = Comment.create(idProvider.nextId(), articleId, userId, parentCommentId, content, timeProvider.now());
         // 댓글 저장
         commentRepository.save(newComment);
 

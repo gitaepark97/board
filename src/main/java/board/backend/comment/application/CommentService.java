@@ -23,8 +23,8 @@ public class CommentService {
         return commentReader.readAll(articleId, pageSize, lastParentCommentId, lastCommentId);
     }
 
-    public Comment create(Long articleId, Long writerId, Long parentCommentId, String content) {
-        return commentWriter.create(articleId, writerId, parentCommentId, content);
+    public Comment create(Long articleId, Long userId, Long parentCommentId, String content) {
+        return commentWriter.create(articleId, userId, parentCommentId, content);
     }
 
     public void delete(Long commentId, Long userId) {
