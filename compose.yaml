@@ -5,3 +5,10 @@ services:
       - .env
     ports:
       - '3306:3306'
+
+  redis:
+    image: bitnami/redis:7.2
+    env_file:
+      - .env
+    ports:
+      - '6379:6379'
