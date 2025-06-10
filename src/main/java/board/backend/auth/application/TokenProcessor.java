@@ -23,9 +23,9 @@ class TokenProcessor {
     Token issueToken(Session session) {
         return new Token(
             // access token 발급
-            tokenProvider.issueToken(Map.of("userId", session.getUserId().toString()), ACCESS_TOKEN_DURATION),
+            tokenProvider.issueToken(Map.of("userId", session.userId().toString()), ACCESS_TOKEN_DURATION),
             // 세션 ID 사용
-            session.getId()
+            session.id()
         );
     }
 

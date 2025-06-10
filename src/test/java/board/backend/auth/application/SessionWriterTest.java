@@ -44,10 +44,9 @@ class SessionWriterTest {
         Session result = sessionWriter.create(userId);
 
         // then
-        assertThat(result.getId()).isEqualTo(sessionId);
-        assertThat(result.getUserId()).isEqualTo(userId);
-        assertThat(result.getCreatedAt()).isEqualTo(now);
-        assertThat(result.getExpiredAt()).isEqualTo(now.plus(Session.SESSION_DURATION));
+        assertThat(result.id()).isEqualTo(sessionId);
+        assertThat(result.userId()).isEqualTo(userId);
+        assertThat(result.createdAt()).isEqualTo(now);
     }
 
     @Test

@@ -18,7 +18,6 @@ class SessionReader {
         Session session = sessionRepository.findById(sessionId).orElseThrow(SessionInvalid::new);
 
         session.checkBlocked();
-        session.checkExpired(timeProvider.now());
 
         return session;
     }
