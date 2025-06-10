@@ -18,12 +18,3 @@ create table login_info
     updated_at   datetime       not null,
     unique (login_method, login_key)
 );
-
-create table user_session
-(
-    id         char(36) not null primary key,
-    user_id    bigint   not null,
-    is_block   bool     not null,
-    expired_at datetime not null,
-    created_at datetime not null
-);
