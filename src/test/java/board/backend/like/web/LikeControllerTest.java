@@ -23,8 +23,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(ArticleLikeController.class)
-class ArticleLikeControllerTest extends TestController {
+@WebMvcTest(LikeController.class)
+class LikeControllerTest extends TestController {
 
     @MockitoBean
     private ArticleLikeService articleLikeService;
@@ -38,7 +38,7 @@ class ArticleLikeControllerTest extends TestController {
         Long articleId = 1L;
 
         // when & then
-        mockMvc.perform(post("/api/article-likes/articles/{articleId}", articleId)
+        mockMvc.perform(post("/api/likes/articles/{articleId}", articleId)
                 .with(authentication(new UsernamePasswordAuthenticationToken(userId, null, null)))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
             .andExpect(status().isOk())
@@ -67,7 +67,7 @@ class ArticleLikeControllerTest extends TestController {
         Long articleId = 1L;
 
         // when & then
-        mockMvc.perform(delete("/api/article-likes/articles/{articleId}", articleId)
+        mockMvc.perform(delete("/api/likes/articles/{articleId}", articleId)
                 .with(authentication(new UsernamePasswordAuthenticationToken(userId, null, null)))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
             .andExpect(status().isOk())
