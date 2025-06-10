@@ -5,9 +5,9 @@ import board.backend.comment.domain.Comment;
 import java.time.LocalDateTime;
 
 public record CommentResponse(
-    Long id,
-    Long writerId,
-    Long parentId,
+    String id,
+    String writerId,
+    String parentId,
     String content,
     LocalDateTime createdAt,
     Boolean isDeleted
@@ -15,9 +15,9 @@ public record CommentResponse(
 
     public static CommentResponse from(Comment comment) {
         return new CommentResponse(
-            comment.getId(),
-            comment.getWriterId(),
-            comment.getParentId(),
+            comment.getId().toString(),
+            comment.getWriterId().toString(),
+            comment.getParentId().toString(),
             comment.getContent(),
             comment.getCreatedAt(),
             comment.getIsDeleted()

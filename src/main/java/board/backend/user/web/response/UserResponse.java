@@ -5,7 +5,7 @@ import board.backend.user.domain.User;
 import java.time.LocalDateTime;
 
 public record UserResponse(
-    Long id,
+    String id,
     String email,
     String nickname,
     LocalDateTime createdAt,
@@ -13,7 +13,13 @@ public record UserResponse(
 ) {
 
     public static UserResponse from(User user) {
-        return new UserResponse(user.getId(), user.getEmail(), user.getNickname(), user.getCreatedAt(), user.getUpdatedAt());
+        return new UserResponse(
+            user.getId().toString(),
+            user.getEmail(),
+            user.getNickname(),
+            user.getCreatedAt(),
+            user.getUpdatedAt()
+        );
     }
 
 }

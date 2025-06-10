@@ -1,11 +1,12 @@
 package board.backend.article.web.request;
 
+import board.backend.common.web.request.NumericString;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 public record ArticleCreateRequest(
-    @NotNull
-    Long boardId,
+    @NotBlank
+    @NumericString
+    String boardId,
 
     @NotBlank
     String title,
@@ -13,5 +14,9 @@ public record ArticleCreateRequest(
     @NotBlank
     String content
 ) {
+
+    public Long boardIdAsLong() {
+        return Long.valueOf(boardId);
+    }
 
 }

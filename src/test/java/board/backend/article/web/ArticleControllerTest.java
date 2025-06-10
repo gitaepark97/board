@@ -65,15 +65,15 @@ class ArticleControllerTest extends TestController {
             .andExpect(jsonPath("$.status").value(HttpStatus.OK.name()))
             .andExpect(jsonPath("$.message").value("성공"))
             .andExpect(jsonPath("$.data.length()").value(responses.size()))
-            .andExpect(jsonPath("$.data[0].id").value(6L))
+            .andExpect(jsonPath("$.data[0].id").value("6"))
             .andExpect(jsonPath("$.data[0].title").value("제목1"))
-            .andExpect(jsonPath("$.data[0].writer.id").value(1L))
+            .andExpect(jsonPath("$.data[0].writer.id").value("1"))
             .andExpect(jsonPath("$.data[0].writer.nickname").value("회원1"))
             .andExpect(jsonPath("$.data[0].likeCount").value(1L))
             .andExpect(jsonPath("$.data[0].viewCount").value(1L))
             .andExpect(jsonPath("$.data[0].commentCount").value(1L))
-            .andExpect(jsonPath("$.data[1].id").value(7L))
-            .andExpect(jsonPath("$.data[1].writer.id").value(2L))
+            .andExpect(jsonPath("$.data[1].id").value("7"))
+            .andExpect(jsonPath("$.data[1].writer.id").value("2"))
             .andExpect(jsonPath("$.data[1].writer.nickname").value("회원2"))
             .andExpect(jsonPath("$.data[1].title").value("제목2"))
             .andExpect(jsonPath("$.data[1].likeCount").value(0L))
@@ -88,9 +88,9 @@ class ArticleControllerTest extends TestController {
                 responseFields(
                     fieldWithPath("status").description("HTTP 상태"),
                     fieldWithPath("message").description("응답 메시지"),
-                    fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("게시글 ID"),
-                    fieldWithPath("data[].boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
-                    fieldWithPath("data[].writer.id").type(JsonFieldType.NUMBER).description("작성자 ID"),
+                    fieldWithPath("data[].id").type(JsonFieldType.STRING).description("게시글 ID"),
+                    fieldWithPath("data[].boardId").type(JsonFieldType.STRING).description("게시판 ID"),
+                    fieldWithPath("data[].writer.id").type(JsonFieldType.STRING).description("작성자 ID"),
                     fieldWithPath("data[].writer.nickname").type(JsonFieldType.STRING).description("작성자 닉네임"),
                     fieldWithPath("data[].title").type(JsonFieldType.STRING).description("제목"),
                     fieldWithPath("data[].createdAt").type(JsonFieldType.STRING).description("생성 시각"),
@@ -126,9 +126,9 @@ class ArticleControllerTest extends TestController {
                 responseFields(
                     fieldWithPath("status").description("HTTP 상태"),
                     fieldWithPath("message").description("응답 메시지"),
-                    fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("게시글 ID"),
-                    fieldWithPath("data.boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
-                    fieldWithPath("data.writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
+                    fieldWithPath("data.id").type(JsonFieldType.STRING).description("게시글 ID"),
+                    fieldWithPath("data.boardId").type(JsonFieldType.STRING).description("게시판 ID"),
+                    fieldWithPath("data.writerId").type(JsonFieldType.STRING).description("작성자 ID"),
                     fieldWithPath("data.title").type(JsonFieldType.STRING).description("제목"),
                     fieldWithPath("data.content").type(JsonFieldType.STRING).description("내용"),
                     fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("생성 시각"),
@@ -143,7 +143,7 @@ class ArticleControllerTest extends TestController {
         // given
         Long userId = 1L;
         String accessToken = "valid-access-token";
-        ArticleCreateRequest request = new ArticleCreateRequest(1L, "제목입니다", "내용입니다");
+        ArticleCreateRequest request = new ArticleCreateRequest("1", "제목입니다", "내용입니다");
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
         Article response = Article.create(1L, 1L, userId, "제목입니다", "내용입니다", now);
 
@@ -159,23 +159,23 @@ class ArticleControllerTest extends TestController {
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.status").value(HttpStatus.CREATED.name()))
             .andExpect(jsonPath("$.message").value("성공"))
-            .andExpect(jsonPath("$.data.id").value(1L))
+            .andExpect(jsonPath("$.data.id").value("1"))
             .andExpect(jsonPath("$.data.title").value("제목입니다"))
             .andDo(document("articles/create",
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access Token: Bearer 타입")
                 ),
                 requestFields(
-                    fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
+                    fieldWithPath("boardId").type(JsonFieldType.STRING).description("게시판 ID"),
                     fieldWithPath("title").type(JsonFieldType.STRING).description("제목"),
                     fieldWithPath("content").type(JsonFieldType.STRING).description("내용")
                 ),
                 responseFields(
                     fieldWithPath("status").description("HTTP 상태"),
                     fieldWithPath("message").description("응답 메시지"),
-                    fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("게시글 ID"),
-                    fieldWithPath("data.boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
-                    fieldWithPath("data.writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
+                    fieldWithPath("data.id").type(JsonFieldType.STRING).description("게시글 ID"),
+                    fieldWithPath("data.boardId").type(JsonFieldType.STRING).description("게시판 ID"),
+                    fieldWithPath("data.writerId").type(JsonFieldType.STRING).description("작성자 ID"),
                     fieldWithPath("data.title").type(JsonFieldType.STRING).description("제목"),
                     fieldWithPath("data.content").type(JsonFieldType.STRING).description("내용"),
                     fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("생성 시각"),
@@ -209,7 +209,7 @@ class ArticleControllerTest extends TestController {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value(HttpStatus.OK.name()))
             .andExpect(jsonPath("$.message").value("성공"))
-            .andExpect(jsonPath("$.data.id").value(articleId))
+            .andExpect(jsonPath("$.data.id").value(articleId.toString()))
             .andExpect(jsonPath("$.data.title").value("수정된 제목"))
             .andDo(document("articles/update",
                 requestHeaders(
@@ -225,9 +225,9 @@ class ArticleControllerTest extends TestController {
                 responseFields(
                     fieldWithPath("status").description("HTTP 상태"),
                     fieldWithPath("message").description("응답 메시지"),
-                    fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("게시글 ID"),
-                    fieldWithPath("data.boardId").type(JsonFieldType.NUMBER).description("게시판 ID"),
-                    fieldWithPath("data.writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
+                    fieldWithPath("data.id").type(JsonFieldType.STRING).description("게시글 ID"),
+                    fieldWithPath("data.boardId").type(JsonFieldType.STRING).description("게시판 ID"),
+                    fieldWithPath("data.writerId").type(JsonFieldType.STRING).description("작성자 ID"),
                     fieldWithPath("data.title").type(JsonFieldType.STRING).description("제목"),
                     fieldWithPath("data.content").type(JsonFieldType.STRING).description("내용"),
                     fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("생성 시각"),

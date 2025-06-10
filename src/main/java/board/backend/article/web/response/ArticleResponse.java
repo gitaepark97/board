@@ -5,9 +5,9 @@ import board.backend.article.domain.Article;
 import java.time.LocalDateTime;
 
 public record ArticleResponse(
-    Long id,
-    Long boardId,
-    Long writerId,
+    String id,
+    String boardId,
+    String writerId,
     String title,
     String content,
     LocalDateTime createdAt,
@@ -16,9 +16,9 @@ public record ArticleResponse(
 
     public static ArticleResponse from(Article article) {
         return new ArticleResponse(
-            article.getId(),
-            article.getBoardId(),
-            article.getWriterId(),
+            article.getId().toString(),
+            article.getBoardId().toString(),
+            article.getWriterId().toString(),
             article.getTitle(),
             article.getContent(),
             article.getCreatedAt(),

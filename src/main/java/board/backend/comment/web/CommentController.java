@@ -36,7 +36,7 @@ class CommentController {
     @ResponseStatus(HttpStatus.CREATED)
     CommentResponse create(@AuthenticationPrincipal Long userId, @RequestBody @Valid CommentCreateRequest request) {
 
-        return CommentResponse.from(commentService.create(request.articleId(), userId, request.parentCommentId(), request.content()));
+        return CommentResponse.from(commentService.create(request.articleIdAsLong(), userId, request.parentCommentIdAsLong(), request.content()));
     }
 
     @DeleteMapping("/{commentId}")

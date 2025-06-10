@@ -6,8 +6,8 @@ import board.backend.user.web.response.UserSummaryResponse;
 import java.time.LocalDateTime;
 
 public record ArticleSummaryResponse(
-    Long id,
-    Long boardId,
+    String id,
+    String boardId,
     UserSummaryResponse writer,
     String title,
     LocalDateTime createdAt,
@@ -18,8 +18,8 @@ public record ArticleSummaryResponse(
 
     public static ArticleSummaryResponse from(ArticleWithWriterAndCounts articleWithWriterAndCounts) {
         return new ArticleSummaryResponse(
-            articleWithWriterAndCounts.article().getId(),
-            articleWithWriterAndCounts.article().getBoardId(),
+            articleWithWriterAndCounts.article().getId().toString(),
+            articleWithWriterAndCounts.article().getBoardId().toString(),
             UserSummaryResponse.from(articleWithWriterAndCounts.writer()),
             articleWithWriterAndCounts.article().getTitle(),
             articleWithWriterAndCounts.article().getCreatedAt(),

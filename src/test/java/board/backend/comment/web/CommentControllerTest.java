@@ -64,12 +64,12 @@ class CommentControllerTest extends TestController {
             .andExpect(jsonPath("$.status").value("OK"))
             .andExpect(jsonPath("$.message").value("성공"))
             .andExpect(jsonPath("$.data.length()").value(2))
-            .andExpect(jsonPath("$.data[0].id").value(8L))
-            .andExpect(jsonPath("$.data[0].writer.id").value(1L))
+            .andExpect(jsonPath("$.data[0].id").value("8"))
+            .andExpect(jsonPath("$.data[0].writer.id").value("1"))
             .andExpect(jsonPath("$.data[0].writer.nickname").value("회원1"))
             .andExpect(jsonPath("$.data[0].content").value("댓글1"))
-            .andExpect(jsonPath("$.data[1].id").value(9L))
-            .andExpect(jsonPath("$.data[1].writer.id").value(2L))
+            .andExpect(jsonPath("$.data[1].id").value("9"))
+            .andExpect(jsonPath("$.data[1].writer.id").value("2"))
             .andExpect(jsonPath("$.data[1].writer.nickname").value("회원2"))
             .andExpect(jsonPath("$.data[1].content").value("댓글2"))
             .andDo(document("comments/read-all",
@@ -82,10 +82,10 @@ class CommentControllerTest extends TestController {
                 responseFields(
                     fieldWithPath("status").description("HTTP 상태"),
                     fieldWithPath("message").description("응답 메시지"),
-                    fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("댓글 ID"),
-                    fieldWithPath("data[].writer.id").type(JsonFieldType.NUMBER).description("작성자 ID"),
+                    fieldWithPath("data[].id").type(JsonFieldType.STRING).description("댓글 ID"),
+                    fieldWithPath("data[].writer.id").type(JsonFieldType.STRING).description("작성자 ID"),
                     fieldWithPath("data[].writer.nickname").type(JsonFieldType.STRING).description("작성자 닉네임"),
-                    fieldWithPath("data[].parentId").type(JsonFieldType.NUMBER).description("부모 댓글 ID"),
+                    fieldWithPath("data[].parentId").type(JsonFieldType.STRING).description("부모 댓글 ID"),
                     fieldWithPath("data[].content").type(JsonFieldType.STRING).description("댓글 내용"),
                     fieldWithPath("data[].createdAt").type(JsonFieldType.STRING).description("작성 시각"),
                     fieldWithPath("data[].isDeleted").type(JsonFieldType.BOOLEAN).description("삭제 여부")
@@ -100,8 +100,8 @@ class CommentControllerTest extends TestController {
         Long userId = 1L;
         String accessToken = "valid-access-token";
         CommentCreateRequest request = new CommentCreateRequest(
-            1L,
-            100L,
+            "1",
+            "100",
             "댓글 내용"
         );
 
@@ -125,23 +125,23 @@ class CommentControllerTest extends TestController {
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.status").value("CREATED"))
             .andExpect(jsonPath("$.message").value("성공"))
-            .andExpect(jsonPath("$.data.id").value(10L))
+            .andExpect(jsonPath("$.data.id").value("10"))
             .andExpect(jsonPath("$.data.content").value("댓글 내용"))
             .andDo(document("comments/create",
                 requestHeaders(
                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access Token: Bearer 타입")
                 ),
                 requestFields(
-                    fieldWithPath("articleId").type(JsonFieldType.NUMBER).description("댓글을 작성할 게시글 ID"),
-                    fieldWithPath("parentCommentId").type(JsonFieldType.NUMBER).optional().description("부모 댓글 ID"),
+                    fieldWithPath("articleId").type(JsonFieldType.STRING).description("댓글을 작성할 게시글 ID"),
+                    fieldWithPath("parentCommentId").type(JsonFieldType.STRING).optional().description("부모 댓글 ID"),
                     fieldWithPath("content").type(JsonFieldType.STRING).description("댓글 내용")
                 ),
                 responseFields(
                     fieldWithPath("status").description("HTTP 상태"),
                     fieldWithPath("message").description("응답 메시지"),
-                    fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("댓글 ID"),
-                    fieldWithPath("data.writerId").type(JsonFieldType.NUMBER).description("작성자 ID"),
-                    fieldWithPath("data.parentId").type(JsonFieldType.NUMBER).description("부모 댓글 ID"),
+                    fieldWithPath("data.id").type(JsonFieldType.STRING).description("댓글 ID"),
+                    fieldWithPath("data.writerId").type(JsonFieldType.STRING).description("작성자 ID"),
+                    fieldWithPath("data.parentId").type(JsonFieldType.STRING).description("부모 댓글 ID"),
                     fieldWithPath("data.content").type(JsonFieldType.STRING).description("댓글 내용"),
                     fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("작성 시각"),
                     fieldWithPath("data.isDeleted").type(JsonFieldType.BOOLEAN).description("삭제 여부")

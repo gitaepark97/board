@@ -41,7 +41,7 @@ class ArticleController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     ArticleResponse create(@AuthenticationPrincipal Long userId, @RequestBody @Valid ArticleCreateRequest request) {
-        return ArticleResponse.from(articleService.create(request.boardId(), userId, request.title(), request.content()));
+        return ArticleResponse.from(articleService.create(request.boardIdAsLong(), userId, request.title(), request.content()));
     }
 
     @PutMapping("/{articleId}")

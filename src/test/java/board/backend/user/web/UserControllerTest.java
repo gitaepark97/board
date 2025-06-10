@@ -63,7 +63,7 @@ class UserControllerTest extends TestController {
                 responseFields(
                     fieldWithPath("status").description("HTTP 상태"),
                     fieldWithPath("message").description("응답 메시지"),
-                    fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("사용자 ID"),
+                    fieldWithPath("data.id").type(JsonFieldType.STRING).description("사용자 ID"),
                     fieldWithPath("data.email").type(JsonFieldType.STRING).description("이메일"),
                     fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("닉네임"),
                     fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("가입 시각"),
@@ -88,7 +88,7 @@ class UserControllerTest extends TestController {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value("OK"))
             .andExpect(jsonPath("$.message").value("성공"))
-            .andExpect(jsonPath("$.data.id").value(userId))
+            .andExpect(jsonPath("$.data.id").value(userId.toString()))
             .andExpect(jsonPath("$.data.nickname").value("닉네임"))
             .andDo(document("users/read",
                 pathParameters(
@@ -97,7 +97,7 @@ class UserControllerTest extends TestController {
                 responseFields(
                     fieldWithPath("status").description("HTTP 상태"),
                     fieldWithPath("message").description("응답 메시지"),
-                    fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("사용자 ID"),
+                    fieldWithPath("data.id").type(JsonFieldType.STRING).description("사용자 ID"),
                     fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("닉네임")
                 )
             ));
@@ -137,7 +137,7 @@ class UserControllerTest extends TestController {
                 responseFields(
                     fieldWithPath("status").description("HTTP 상태"),
                     fieldWithPath("message").description("응답 메시지"),
-                    fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("사용자 ID"),
+                    fieldWithPath("data.id").type(JsonFieldType.STRING).description("사용자 ID"),
                     fieldWithPath("data.email").type(JsonFieldType.STRING).description("이메일"),
                     fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("닉네임"),
                     fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("가입 시각"),
