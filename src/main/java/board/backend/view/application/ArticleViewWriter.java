@@ -19,13 +19,17 @@ public class ArticleViewWriter {
     private final ArticleViewDistributedLockRepository articleViewDistributedLockRepository;
 
     @Transactional
+    public void saveCount(Long articleId) {
+        articleViewCountRepository.save(ArticleViewCount.init(articleId));
+    }
+
+    @Transactional
     public void increaseCount(Long articleId, String ip) {
         if (!articleViewDistributedLockRepository.lock(articleId, ip, TTL)) {
             return;
         }
 
-        ArticleViewCount articleViewCount = ArticleViewCount.init(articleId);
-        articleViewCountRepository.upsert(articleViewCount.getArticleId(), articleViewCount.getViewCount());
+        articleViewCountRepository.increase(articleId);
     }
 
     @Transactional

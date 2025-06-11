@@ -11,16 +11,16 @@ class ArticleViewDistributedLockRepositoryImpl implements ArticleViewDistributed
 
     private static final String KEY_FORMAT = "view::article::%s::ip::%s::lock";
 
-    private final StringRedisTemplate locks;
+    private final StringRedisTemplate distributedLocks;
 
-    ArticleViewDistributedLockRepositoryImpl(@Qualifier("lockRedisTemplate") StringRedisTemplate locks) {
-        this.locks = locks;
+    ArticleViewDistributedLockRepositoryImpl(@Qualifier("lockRedisTemplate") StringRedisTemplate redisTemplate) {
+        this.distributedLocks = redisTemplate;
     }
 
     @Override
     public Boolean lock(Long articleId, String ip, Duration ttl) {
         String key = generateKey(articleId, ip);
-        return locks.opsForValue().setIfAbsent(key, "", ttl);
+        return distributedLocks.opsForValue().setIfAbsent(key, "", ttl);
     }
 
     private String generateKey(Long articleId, String ip) {

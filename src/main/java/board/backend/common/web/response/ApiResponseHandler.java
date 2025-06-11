@@ -80,6 +80,7 @@ class ApiResponseHandler implements ResponseBodyAdvice<Object> {
 
     @ExceptionHandler(ApplicationException.class)
     ApiResponse<?> handleApplicationException(ApplicationException e) {
+        log.warn(e.getMessage(), e);
         return ApiResponse.of(e);
     }
 

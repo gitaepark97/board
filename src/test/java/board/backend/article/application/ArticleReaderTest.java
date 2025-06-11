@@ -3,6 +3,7 @@ package board.backend.article.application;
 import board.backend.article.application.dto.ArticleWithWriterAndCounts;
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
+import board.backend.article.infra.ArticleCacheRepository;
 import board.backend.article.infra.ArticleRepository;
 import board.backend.comment.application.CommentReader;
 import board.backend.like.application.ArticleLikeReader;
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.when;
 
 class ArticleReaderTest {
 
+    private ArticleCacheRepository articleCacheRepository;
     private ArticleRepository articleRepository;
     private UserReader userReader;
     private ArticleLikeReader articleLikeReader;
@@ -37,13 +39,14 @@ class ArticleReaderTest {
 
     @BeforeEach
     void setUp() {
+        articleCacheRepository = mock(ArticleCacheRepository.class);
         articleRepository = mock(ArticleRepository.class);
         userReader = mock(UserReader.class);
         articleLikeReader = mock(ArticleLikeReader.class);
         articleViewReader = mock(ArticleViewReader.class);
         commentReader = mock(CommentReader.class);
         ArticleViewWriter articleViewWriter = mock(ArticleViewWriter.class);
-        articleReader = new ArticleReader(articleRepository, userReader, articleLikeReader, articleViewReader, commentReader, articleViewWriter);
+        articleReader = new ArticleReader(articleCacheRepository, articleRepository, userReader, articleLikeReader, articleViewReader, commentReader, articleViewWriter);
     }
 
     @Test
@@ -126,6 +129,25 @@ class ArticleReaderTest {
     }
 
     @Test
+    @DisplayName("캐싱된 게시글 단건 조회에 성공한다")
+    void read_success_withCache() {
+        // given
+        Long articleId = 1L;
+        Article article = Article.create(
+            articleId, 10L, 100L, "조회 제목", "조회 내용",
+            LocalDateTime.of(2024, 1, 1, 10, 0)
+        );
+        String ip = "0:0:0:0";
+        when(articleCacheRepository.get(articleId)).thenReturn(Optional.of(article));
+
+        // when
+        Article result = articleReader.read(articleId, ip);
+
+        // then
+        assertThat(result).isEqualTo(article);
+    }
+
+    @Test
     @DisplayName("게시글 단건 조회에 성공한다")
     void read_success() {
         // given
@@ -135,6 +157,7 @@ class ArticleReaderTest {
             LocalDateTime.of(2024, 1, 1, 10, 0)
         );
         String ip = "0:0:0:0";
+        when(articleCacheRepository.get(articleId)).thenReturn(Optional.empty());
         when(articleRepository.findById(articleId)).thenReturn(Optional.of(article));
 
         // when
@@ -150,6 +173,7 @@ class ArticleReaderTest {
         // given
         Long invalidId = 999L;
         String ip = "0:0:0:0";
+        when(articleCacheRepository.get(invalidId)).thenReturn(Optional.empty());
         when(articleRepository.findById(invalidId)).thenReturn(Optional.empty());
 
         // when & then

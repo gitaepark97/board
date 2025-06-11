@@ -3,6 +3,7 @@ package board.backend.article.application;
 import board.backend.article.application.dto.ArticleWithWriterAndCounts;
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
+import board.backend.article.infra.ArticleCacheRepository;
 import board.backend.article.infra.ArticleRepository;
 import board.backend.comment.application.CommentReader;
 import board.backend.like.application.ArticleLikeReader;
@@ -13,6 +14,7 @@ import board.backend.view.application.ArticleViewWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +22,9 @@ import java.util.Map;
 @Component
 public class ArticleReader {
 
+    private static final Duration CACHE_TTL = Duration.ofMinutes(5);
+
+    private final ArticleCacheRepository articleCacheRepository;
     private final ArticleRepository articleRepository;
     private final UserReader userReader;
     private final ArticleLikeReader articleLikeReader;
@@ -66,12 +71,21 @@ public class ArticleReader {
 
     Article read(Long articleId, String ip) {
         // 게시글 조회
-        Article article = articleRepository.findById(articleId).orElseThrow(ArticleNotFound::new);
+        Article article = read(articleId);
 
         // 조회수 증가
         articleViewWriter.increaseCount(articleId, ip);
 
         return article;
+    }
+
+    private Article read(Long articleId) {
+        return articleCacheRepository.get(articleId)
+            .orElseGet(() -> {
+                Article article = articleRepository.findById(articleId).orElseThrow(ArticleNotFound::new);
+                articleCacheRepository.set(article, CACHE_TTL);
+                return article;
+            });
     }
 
 }
