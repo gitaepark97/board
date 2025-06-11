@@ -3,11 +3,13 @@ package board.backend.article.application;
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
 import board.backend.article.infra.ArticleRepository;
+import board.backend.board.application.BoardReader;
 import board.backend.comment.application.CommentWriter;
 import board.backend.common.infra.CacheRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
 import board.backend.like.application.ArticleLikeWriter;
+import board.backend.user.application.UserReader;
 import board.backend.view.application.ArticleViewWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,10 +36,12 @@ class ArticleWriterTest {
         timeProvider = mock(TimeProvider.class);
         CacheRepository<Article, Long> articleCacheRepository = mock(CacheRepository.class);
         articleRepository = mock(ArticleRepository.class);
+        BoardReader boardReader = mock(BoardReader.class);
+        UserReader userReader = mock(UserReader.class);
         ArticleLikeWriter articleLikeWriter = mock(ArticleLikeWriter.class);
         ArticleViewWriter articleViewWriter = mock(ArticleViewWriter.class);
         CommentWriter commentWriter = mock(CommentWriter.class);
-        articleWriter = new ArticleWriter(idProvider, timeProvider, articleCacheRepository, articleRepository, articleLikeWriter, articleViewWriter, commentWriter);
+        articleWriter = new ArticleWriter(idProvider, timeProvider, articleCacheRepository, articleRepository, boardReader, userReader, articleLikeWriter, articleViewWriter, commentWriter);
     }
 
 

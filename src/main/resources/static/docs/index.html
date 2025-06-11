@@ -461,6 +461,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_본인_수정">본인 수정</a></li>
 </ul>
 </li>
+<li><a href="#_board">Board</a>
+<ul class="sectlevel2">
+<li><a href="#_게시판_목록_조회">게시판 목록 조회</a></li>
+</ul>
+</li>
 <li><a href="#_article">Article</a>
 <ul class="sectlevel2">
 <li><a href="#_게시글_목록_조회">게시글 목록 조회</a></li>
@@ -636,7 +641,7 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Set-Cookie: refreshToken=refresh-token-value; Path=/; Max-Age=604800000; Expires=Tue, 9 Aug 2044 16:37:45 GMT; Secure; HttpOnly; SameSite=None
+Set-Cookie: refreshToken=refresh-token-value; Path=/; Max-Age=604800000; Expires=Wed, 10 Aug 2044 15:19:07 GMT; Secure; HttpOnly; SameSite=None
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -796,7 +801,7 @@ Content-Type: application/x-www-form-urlencoded</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Set-Cookie: refreshToken=new-refresh-token; Path=/; Max-Age=604800000; Expires=Tue, 9 Aug 2044 16:37:45 GMT; Secure; HttpOnly; SameSite=None
+Set-Cookie: refreshToken=new-refresh-token; Path=/; Max-Age=604800000; Expires=Wed, 10 Aug 2044 15:19:07 GMT; Secure; HttpOnly; SameSite=None
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -1165,12 +1170,83 @@ Content-Length: 173
 </div>
 </div>
 <div class="sect1">
+<h2 id="_board"><a class="link" href="#_board">Board</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_게시판_목록_조회"><a class="link" href="#_게시판_목록_조회">게시판 목록 조회</a></h3>
+<div class="sect3">
+<h4 id="_요청_8"><a class="link" href="#_요청_8">요청</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/boards HTTP/1.1
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_8"><a class="link" href="#_응답_8">응답</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 75
+
+{"status":"OK","message":"성공","data":[{"id":"1","title":"게시판1"}]}</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP 상태</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시판 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data[].title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시판명</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_article"><a class="link" href="#_article">Article</a></h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_게시글_목록_조회"><a class="link" href="#_게시글_목록_조회">게시글 목록 조회</a></h3>
 <div class="sect3">
-<h4 id="_요청_8"><a class="link" href="#_요청_8">요청</a></h4>
+<h4 id="_요청_9"><a class="link" href="#_요청_9">요청</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/articles?boardId=1&amp;pageSize=10&amp;lastArticleId=5 HTTP/1.1
@@ -1211,7 +1287,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_8"><a class="link" href="#_응답_8">응답</a></h4>
+<h4 id="_응답_9"><a class="link" href="#_응답_9">응답</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
@@ -1303,7 +1379,7 @@ Content-Length: 369
 <div class="sect2">
 <h3 id="_게시글_조회"><a class="link" href="#_게시글_조회">게시글 조회</a></h3>
 <div class="sect3">
-<h4 id="_요청_9"><a class="link" href="#_요청_9">요청</a></h4>
+<h4 id="_요청_10"><a class="link" href="#_요청_10">요청</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/articles/1 HTTP/1.1
@@ -1332,7 +1408,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_9"><a class="link" href="#_응답_9">응답</a></h4>
+<h4 id="_응답_10"><a class="link" href="#_응답_10">응답</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
@@ -1414,7 +1490,7 @@ Content-Length: 201
 <div class="sect2">
 <h3 id="_게시글_생성"><a class="link" href="#_게시글_생성">게시글 생성</a></h3>
 <div class="sect3">
-<h4 id="_요청_10"><a class="link" href="#_요청_10">요청</a></h4>
+<h4 id="_요청_11"><a class="link" href="#_요청_11">요청</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/articles HTTP/1.1
@@ -1482,7 +1558,7 @@ Host: localhost:8080
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_10"><a class="link" href="#_응답_10">응답</a></h4>
+<h4 id="_응답_11"><a class="link" href="#_응답_11">응답</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 201 Created
@@ -1564,7 +1640,7 @@ Content-Length: 208
 <div class="sect2">
 <h3 id="_게시글_수정"><a class="link" href="#_게시글_수정">게시글 수정</a></h3>
 <div class="sect3">
-<h4 id="_요청_11"><a class="link" href="#_요청_11">요청</a></h4>
+<h4 id="_요청_12"><a class="link" href="#_요청_12">요청</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PUT /api/articles/1 HTTP/1.1
@@ -1645,7 +1721,7 @@ Host: localhost:8080
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_11"><a class="link" href="#_응답_11">응답</a></h4>
+<h4 id="_응답_12"><a class="link" href="#_응답_12">응답</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
@@ -1727,7 +1803,7 @@ Content-Length: 205
 <div class="sect2">
 <h3 id="_게시글_삭제"><a class="link" href="#_게시글_삭제">게시글 삭제</a></h3>
 <div class="sect3">
-<h4 id="_요청_12"><a class="link" href="#_요청_12">요청</a></h4>
+<h4 id="_요청_13"><a class="link" href="#_요청_13">요청</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /api/articles/1 HTTP/1.1
@@ -1774,7 +1850,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_12"><a class="link" href="#_응답_12">응답</a></h4>
+<h4 id="_응답_13"><a class="link" href="#_응답_13">응답</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
@@ -1800,7 +1876,7 @@ Content-Length: 34
 <div class="sect2">
 <h3 id="_게시글_좋아요_생성"><a class="link" href="#_게시글_좋아요_생성">게시글 좋아요 생성</a></h3>
 <div class="sect3">
-<h4 id="_요청_13"><a class="link" href="#_요청_13">요청</a></h4>
+<h4 id="_요청_14"><a class="link" href="#_요청_14">요청</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/likes/articles/1 HTTP/1.1
@@ -1848,7 +1924,7 @@ Content-Type: application/x-www-form-urlencoded</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_13"><a class="link" href="#_응답_13">응답</a></h4>
+<h4 id="_응답_14"><a class="link" href="#_응답_14">응답</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
@@ -1895,7 +1971,7 @@ Content-Length: 34
 <div class="sect2">
 <h3 id="_게시글_좋아요_삭제"><a class="link" href="#_게시글_좋아요_삭제">게시글 좋아요 삭제</a></h3>
 <div class="sect3">
-<h4 id="_요청_14"><a class="link" href="#_요청_14">요청</a></h4>
+<h4 id="_요청_15"><a class="link" href="#_요청_15">요청</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /api/likes/articles/1 HTTP/1.1
@@ -1942,7 +2018,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_14"><a class="link" href="#_응답_14">응답</a></h4>
+<h4 id="_응답_15"><a class="link" href="#_응답_15">응답</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
@@ -1994,7 +2070,7 @@ Content-Length: 34
 <div class="sect2">
 <h3 id="_댓글_목록_조회"><a class="link" href="#_댓글_목록_조회">댓글 목록 조회</a></h3>
 <div class="sect3">
-<h4 id="_요청_15"><a class="link" href="#_요청_15">요청</a></h4>
+<h4 id="_요청_16"><a class="link" href="#_요청_16">요청</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/comments?articleId=1&amp;pageSize=10&amp;lastParentCommentId=5&amp;lastCommentId=7 HTTP/1.1
@@ -2040,7 +2116,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_15"><a class="link" href="#_응답_15">응답</a></h4>
+<h4 id="_응답_16"><a class="link" href="#_응답_16">응답</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
@@ -2122,7 +2198,7 @@ Content-Length: 321
 <div class="sect2">
 <h3 id="_댓글_생성"><a class="link" href="#_댓글_생성">댓글 생성</a></h3>
 <div class="sect3">
-<h4 id="_요청_16"><a class="link" href="#_요청_16">요청</a></h4>
+<h4 id="_요청_17"><a class="link" href="#_요청_17">요청</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/comments HTTP/1.1
@@ -2190,7 +2266,7 @@ Host: localhost:8080
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_16"><a class="link" href="#_응답_16">응답</a></h4>
+<h4 id="_응답_17"><a class="link" href="#_응답_17">응답</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 201 Created
@@ -2267,7 +2343,7 @@ Content-Length: 168
 <div class="sect2">
 <h3 id="_댓글_삭제"><a class="link" href="#_댓글_삭제">댓글 삭제</a></h3>
 <div class="sect3">
-<h4 id="_요청_17"><a class="link" href="#_요청_17">요청</a></h4>
+<h4 id="_요청_18"><a class="link" href="#_요청_18">요청</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /api/comments/10 HTTP/1.1
@@ -2314,7 +2390,7 @@ Host: localhost:8080</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_17"><a class="link" href="#_응답_17">응답</a></h4>
+<h4 id="_응답_18"><a class="link" href="#_응답_18">응답</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
@@ -2364,7 +2440,7 @@ Content-Length: 34
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2025-06-05 15:02:28 +0900
+Last updated 2025-06-11 23:57:33 +0900
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

@@ -3,11 +3,13 @@ package board.backend.article.application;
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
 import board.backend.article.infra.ArticleRepository;
+import board.backend.board.application.BoardReader;
 import board.backend.comment.application.CommentWriter;
 import board.backend.common.infra.CacheRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
 import board.backend.like.application.ArticleLikeWriter;
+import board.backend.user.application.UserReader;
 import board.backend.view.application.ArticleViewWriter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +23,22 @@ class ArticleWriter {
     private final TimeProvider timeProvider;
     private final CacheRepository<Article, Long> articleCacheRepository;
     private final ArticleRepository articleRepository;
+    private final BoardReader boardReader;
+    private final UserReader userReader;
     private final ArticleLikeWriter articleLikeWriter;
     private final ArticleViewWriter articleViewWriter;
     private final CommentWriter commentWriter;
 
     @Transactional
-    public Article create(Long boardId, Long writerId, String title, String content) {
+    public Article create(Long boardId, Long userId, String title, String content) {
+        // 게시판 존재 확인
+        boardReader.checkBoardExistsOrThrow(boardId);
+
+        // 회원 존재 확인
+        userReader.checkUserExistsOrThrow(userId);
+
         // 게시글 생성
-        Article newArticle = Article.create(idProvider.nextId(), boardId, writerId, title, content, timeProvider.now());
+        Article newArticle = Article.create(idProvider.nextId(), boardId, userId, title, content, timeProvider.now());
         // 게시글 저장
         articleRepository.save(newArticle);
         // 게시글 조회 수 저장

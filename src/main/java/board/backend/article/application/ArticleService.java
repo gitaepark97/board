@@ -24,8 +24,8 @@ public class ArticleService {
         return articleReader.read(articleId, ip);
     }
 
-    public Article create(Long boardId, Long writerId, String title, String content) {
-        return articleWriter.create(boardId, writerId, title, content);
+    public Article create(Long boardId, Long userId, String title, String content) {
+        return articleWriter.create(boardId, userId, title, content);
     }
 
     public Article update(Long articleId, Long userId, String title, String content) {

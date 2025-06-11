@@ -92,6 +92,19 @@ include::{snippets}/users/update-my/request-fields.adoc[]
 include::{snippets}/users/update-my/http-response.adoc[]
 include::{snippets}/users/update-my/response-fields.adoc[]
 
+== Board
+
+=== 게시판 목록 조회
+
+==== 요청
+
+include::{snippets}/boards/read-all/http-request.adoc[]
+
+==== 응답
+
+include::{snippets}/boards/read-all/http-response.adoc[]
+include::{snippets}/boards/read-all/response-fields.adoc[]
+
 == Article
 
 === 게시글 목록 조회
