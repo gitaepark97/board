@@ -7,9 +7,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+@Import(CustomArticleViewCountRepositoryImpl.class)
 class ArticleViewCountRepositoryTest extends TestRepository {
 
     private final Long articleId = 1L;
@@ -27,32 +29,15 @@ class ArticleViewCountRepositoryTest extends TestRepository {
     }
 
     @Test
-    @DisplayName("존재하지 않으면 insert 된다")
-    void upsert_insert() {
-        // given
-        Long newArticleId = 2L;
-
+    @DisplayName("조회 수를 1 증가시킨다")
+    void increaseLikeCount() {
         // when
-        articleViewCountRepository.upsert(newArticleId, 1L);
-        em.flush();
+        articleViewCountRepository.increase(articleId);
         em.clear();
 
         // then
-        var saved = articleViewCountRepository.findById(newArticleId).orElseThrow();
-        assertThat(saved.getViewCount()).isEqualTo(1L);
-    }
-
-    @Test
-    @DisplayName("이미 존재하면 view_count가 1 증가한다")
-    void upsert_update() {
-        // when
-        articleViewCountRepository.upsert(articleId, 1L);
-        em.flush();
-        em.clear();
-
-        // then
-        var updated = articleViewCountRepository.findById(articleId).orElseThrow();
-        assertThat(updated.getViewCount()).isEqualTo(2L);
+        ArticleViewCount updated = articleViewCountRepository.findById(articleId).orElseThrow();
+        assertThat(updated.getViewCount()).isEqualTo(2);
     }
 
 }
