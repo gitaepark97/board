@@ -3,9 +3,9 @@ package board.backend.article.application;
 import board.backend.article.application.dto.ArticleWithWriterAndCounts;
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
-import board.backend.article.infra.ArticleCacheRepository;
 import board.backend.article.infra.ArticleRepository;
 import board.backend.comment.application.CommentReader;
+import board.backend.common.infra.CacheRepository;
 import board.backend.like.application.ArticleLikeReader;
 import board.backend.user.application.UserReader;
 import board.backend.user.domain.User;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 
 class ArticleReaderTest {
 
-    private ArticleCacheRepository articleCacheRepository;
+    private CacheRepository<Article, Long> articleCacheRepository;
     private ArticleRepository articleRepository;
     private UserReader userReader;
     private ArticleLikeReader articleLikeReader;
@@ -39,7 +39,7 @@ class ArticleReaderTest {
 
     @BeforeEach
     void setUp() {
-        articleCacheRepository = mock(ArticleCacheRepository.class);
+        articleCacheRepository = mock(CacheRepository.class);
         articleRepository = mock(ArticleRepository.class);
         userReader = mock(UserReader.class);
         articleLikeReader = mock(ArticleLikeReader.class);

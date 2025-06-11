@@ -3,9 +3,9 @@ package board.backend.article.application;
 import board.backend.article.application.dto.ArticleWithWriterAndCounts;
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
-import board.backend.article.infra.ArticleCacheRepository;
 import board.backend.article.infra.ArticleRepository;
 import board.backend.comment.application.CommentReader;
+import board.backend.common.infra.CacheRepository;
 import board.backend.like.application.ArticleLikeReader;
 import board.backend.user.application.UserReader;
 import board.backend.user.domain.User;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
@@ -24,7 +25,7 @@ public class ArticleReader {
 
     private static final Duration CACHE_TTL = Duration.ofMinutes(5);
 
-    private final ArticleCacheRepository articleCacheRepository;
+    private final CacheRepository<Article, Long> articleCacheRepository;
     private final ArticleRepository articleRepository;
     private final UserReader userReader;
     private final ArticleLikeReader articleLikeReader;
@@ -66,7 +67,7 @@ public class ArticleReader {
                 viewCountMap.getOrDefault(article.getId(), 0L),
                 commentCountMap.getOrDefault(article.getId(), 0L))
             )
-            .toList();
+            .collect(Collectors.toList());
     }
 
     Article read(Long articleId, String ip) {
@@ -83,7 +84,7 @@ public class ArticleReader {
         return articleCacheRepository.get(articleId)
             .orElseGet(() -> {
                 Article article = articleRepository.findById(articleId).orElseThrow(ArticleNotFound::new);
-                articleCacheRepository.set(article, CACHE_TTL);
+                articleCacheRepository.set(articleId, article, CACHE_TTL);
                 return article;
             });
     }

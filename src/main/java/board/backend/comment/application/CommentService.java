@@ -1,8 +1,9 @@
 package board.backend.comment.application;
 
-import board.backend.auth.application.dto.CommentWithWriter;
+import board.backend.comment.application.dto.CommentWithWriter;
 import board.backend.comment.domain.Comment;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +15,7 @@ public class CommentService {
     private final CommentReader commentReader;
     private final CommentWriter commentWriter;
 
+    @Cacheable(value = "commentList::article", key = "#articleId", condition = "#pageSize.equals(10L) && #lastParentCommentId == null && #lastCommentId == null")
     public List<CommentWithWriter> readAll(
         Long articleId,
         Long pageSize,

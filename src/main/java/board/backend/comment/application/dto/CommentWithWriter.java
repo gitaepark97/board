@@ -1,4 +1,4 @@
-package board.backend.auth.application.dto;
+package board.backend.comment.application.dto;
 
 import board.backend.comment.domain.Comment;
 import board.backend.user.domain.User;

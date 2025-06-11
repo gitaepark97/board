@@ -81,6 +81,9 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
+    // JSON
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
     //  Loki
     implementation 'com.github.loki4j:loki-logback-appender:1.4.0'
 }

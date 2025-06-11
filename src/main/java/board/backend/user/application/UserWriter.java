@@ -1,5 +1,6 @@
 package board.backend.user.application;
 
+import board.backend.common.infra.CacheRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
 import board.backend.user.domain.User;
@@ -16,6 +17,7 @@ public class UserWriter {
 
     private final IdProvider idProvider;
     private final TimeProvider timeProvider;
+    private final CacheRepository<User, Long> userLongCacheRepository;
     private final UserRepository userRepository;
 
     @Transactional
@@ -35,6 +37,8 @@ public class UserWriter {
     User update(Long userId, String nickname) {
         // 회원 조회
         User user = userRepository.findById(userId).orElseThrow(UserNotFound::new);
+        // 캐시 삭제
+        userLongCacheRepository.delete(userId);
 
         // 회원 수정
         User updatedUser = user.update(nickname, timeProvider.now());

@@ -1,6 +1,7 @@
 package board.backend.comment.domain;
 
 import board.backend.common.support.Forbidden;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -50,6 +51,7 @@ public class Comment {
             .build();
     }
 
+    @JsonIgnore
     public boolean isRoot() {
         return parentId.longValue() == id.longValue();
     }

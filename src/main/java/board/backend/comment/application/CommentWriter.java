@@ -6,6 +6,7 @@ import board.backend.comment.domain.Comment;
 import board.backend.comment.domain.CommentNotFound;
 import board.backend.comment.infra.ArticleCommentCountRepository;
 import board.backend.comment.infra.CommentRepository;
+import board.backend.common.infra.CacheRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
 import board.backend.user.application.UserReader;
@@ -22,6 +23,7 @@ public class CommentWriter {
     private final IdProvider idProvider;
     private final TimeProvider timeProvider;
     private final CommentRepository commentRepository;
+    private final CacheRepository<ArticleCommentCount, Long> articleCommentCountLongCacheRepository;
     private final ArticleCommentCountRepository articleCommentCountRepository;
     private final ArticleReader articleReader;
     private final UserReader userReader;
@@ -48,6 +50,9 @@ public class CommentWriter {
         ArticleCommentCount articleCommentCount = ArticleCommentCount.init(articleId);
         articleCommentCountRepository.increaseOrSave(articleCommentCount.getArticleId(), articleCommentCount.getCommentCount());
 
+        // 게시글 댓글 수 캐시 삭제
+        articleCommentCountLongCacheRepository.delete(articleId);
+
         return newComment;
     }
 
@@ -55,6 +60,8 @@ public class CommentWriter {
     void delete(Long commentId, Long userId) {
         commentRepository.findById(commentId).filter(not(Comment::getIsDeleted)).ifPresent(comment -> {
             comment.checkIsWriter(userId);
+            // 게시글 댓글 수 캐시 삭제
+            articleCommentCountLongCacheRepository.delete(comment.getArticleId());
 
             if (hasChildren(comment)) {
                 // 댓글 삭제
@@ -74,6 +81,9 @@ public class CommentWriter {
 
         // 게시글 댓글 수 삭제
         articleCommentCountRepository.deleteById(articleId);
+
+        // 게시글 댓글 수 캐시 삭제
+        articleCommentCountLongCacheRepository.delete(articleId);
     }
 
     private void checkCommentExistsOrThrow(Long commentId) {

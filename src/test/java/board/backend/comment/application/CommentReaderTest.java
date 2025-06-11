@@ -1,10 +1,11 @@
 package board.backend.comment.application;
 
-import board.backend.auth.application.dto.CommentWithWriter;
+import board.backend.comment.application.dto.CommentWithWriter;
 import board.backend.comment.domain.ArticleCommentCount;
 import board.backend.comment.domain.Comment;
 import board.backend.comment.infra.ArticleCommentCountRepository;
 import board.backend.comment.infra.CommentRepository;
+import board.backend.common.infra.CacheRepository;
 import board.backend.user.application.UserReader;
 import board.backend.user.domain.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.when;
 class CommentReaderTest {
 
     private CommentRepository commentRepository;
+    private CacheRepository<ArticleCommentCount, Long> articleCommentCountCacheRepository;
     private ArticleCommentCountRepository articleCommentCountRepository;
     private UserReader userReader;
     private CommentReader commentReader;
@@ -30,9 +32,10 @@ class CommentReaderTest {
     @BeforeEach
     void setUp() {
         commentRepository = mock(CommentRepository.class);
+        articleCommentCountCacheRepository = mock(CacheRepository.class);
         articleCommentCountRepository = mock(ArticleCommentCountRepository.class);
         userReader = mock(UserReader.class);
-        commentReader = new CommentReader(commentRepository, articleCommentCountRepository, userReader);
+        commentReader = new CommentReader(commentRepository, articleCommentCountCacheRepository, articleCommentCountRepository, userReader);
     }
 
     @Test
@@ -84,15 +87,58 @@ class CommentReaderTest {
     }
 
     @Test
-    @DisplayName("게시글 ID 목록에 대한 댓글 수를 조회한다")
-    void count_success() {
+    @DisplayName("캐시에 존재하는 댓글 수는 DB 조회 없이 반환한다")
+    void count_allCacheHit_success() {
         // given
         List<Long> articleIds = List.of(1L, 2L);
-        List<ArticleCommentCount> counts = List.of(
+        List<ArticleCommentCount> cached = List.of(
             ArticleCommentCount.init(1L),
             ArticleCommentCount.init(2L)
         );
-        when(articleCommentCountRepository.findAllById(articleIds)).thenReturn(counts);
+        when(articleCommentCountCacheRepository.getAll(articleIds)).thenReturn(cached);
+
+        // when
+        Map<Long, Long> result = commentReader.count(articleIds);
+
+        // then
+        assertThat(result).containsEntry(1L, 1L).containsEntry(2L, 1L);
+    }
+
+    @Test
+    @DisplayName("일부 캐시 미스 시 DB에서 조회하고, 캐시에 저장한 뒤 합쳐서 반환한다")
+    void count_partialCacheMiss_success() {
+        // given
+        List<Long> articleIds = List.of(1L, 2L, 3L);
+        List<ArticleCommentCount> cached = List.of(
+            ArticleCommentCount.init(1L),
+            ArticleCommentCount.init(3L)
+        );
+        List<ArticleCommentCount> uncached = List.of(
+            ArticleCommentCount.init(2L)
+        );
+        when(articleCommentCountCacheRepository.getAll(articleIds)).thenReturn(cached);
+        when(articleCommentCountRepository.findAllById(List.of(2L))).thenReturn(uncached);
+
+        // when
+        Map<Long, Long> result = commentReader.count(articleIds);
+
+        // then
+        assertThat(result).containsEntry(1L, 1L)
+            .containsEntry(2L, 1L)
+            .containsEntry(3L, 1L);
+    }
+
+    @Test
+    @DisplayName("모두 캐시 미스일 경우 DB에서 모두 조회하고 캐시에 저장 후 반환한다")
+    void count_allCacheMiss_success() {
+        // given
+        List<Long> articleIds = List.of(1L, 2L);
+        List<ArticleCommentCount> fromDb = List.of(
+            ArticleCommentCount.init(1L),
+            ArticleCommentCount.init(2L)
+        );
+        when(articleCommentCountCacheRepository.getAll(articleIds)).thenReturn(List.of());
+        when(articleCommentCountRepository.findAllById(articleIds)).thenReturn(fromDb);
 
         // when
         Map<Long, Long> result = commentReader.count(articleIds);

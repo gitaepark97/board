@@ -1,6 +1,6 @@
 package board.backend.comment.web.response;
 
-import board.backend.auth.application.dto.CommentWithWriter;
+import board.backend.comment.application.dto.CommentWithWriter;
 import board.backend.user.web.response.UserSummaryResponse;
 
 import java.time.LocalDateTime;

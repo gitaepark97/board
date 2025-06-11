@@ -2,9 +2,9 @@ package board.backend.article.application;
 
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
-import board.backend.article.infra.ArticleCacheRepository;
 import board.backend.article.infra.ArticleRepository;
 import board.backend.comment.application.CommentWriter;
+import board.backend.common.infra.CacheRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
 import board.backend.like.application.ArticleLikeWriter;
@@ -32,7 +32,7 @@ class ArticleWriterTest {
     void setUp() {
         idProvider = mock(IdProvider.class);
         timeProvider = mock(TimeProvider.class);
-        ArticleCacheRepository articleCacheRepository = mock(ArticleCacheRepository.class);
+        CacheRepository<Article, Long> articleCacheRepository = mock(CacheRepository.class);
         articleRepository = mock(ArticleRepository.class);
         ArticleLikeWriter articleLikeWriter = mock(ArticleLikeWriter.class);
         ArticleViewWriter articleViewWriter = mock(ArticleViewWriter.class);

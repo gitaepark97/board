@@ -1,5 +1,6 @@
 package board.backend.user.application;
 
+import board.backend.common.infra.CacheRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
 import board.backend.user.domain.User;
@@ -29,8 +30,9 @@ class UserWriterTest {
     void setUp() {
         idProvider = mock(IdProvider.class);
         timeProvider = mock(TimeProvider.class);
+        CacheRepository<User, Long> userCacheRepository = mock(CacheRepository.class);
         userRepository = mock(UserRepository.class);
-        userWriter = new UserWriter(idProvider, timeProvider, userRepository);
+        userWriter = new UserWriter(idProvider, timeProvider, userCacheRepository, userRepository);
     }
 
     @Test

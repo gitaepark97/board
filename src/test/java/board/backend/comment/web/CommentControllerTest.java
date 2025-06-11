@@ -1,7 +1,7 @@
 package board.backend.comment.web;
 
-import board.backend.auth.application.dto.CommentWithWriter;
 import board.backend.comment.application.CommentService;
+import board.backend.comment.application.dto.CommentWithWriter;
 import board.backend.comment.domain.Comment;
 import board.backend.comment.web.request.CommentCreateRequest;
 import board.backend.common.web.TestController;

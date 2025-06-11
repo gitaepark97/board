@@ -2,9 +2,9 @@ package board.backend.article.application;
 
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
-import board.backend.article.infra.ArticleCacheRepository;
 import board.backend.article.infra.ArticleRepository;
 import board.backend.comment.application.CommentWriter;
+import board.backend.common.infra.CacheRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
 import board.backend.like.application.ArticleLikeWriter;
@@ -19,7 +19,7 @@ class ArticleWriter {
 
     private final IdProvider idProvider;
     private final TimeProvider timeProvider;
-    private final ArticleCacheRepository articleCacheRepository;
+    private final CacheRepository<Article, Long> articleCacheRepository;
     private final ArticleRepository articleRepository;
     private final ArticleLikeWriter articleLikeWriter;
     private final ArticleViewWriter articleViewWriter;
@@ -59,16 +59,18 @@ class ArticleWriter {
             // 작성자 확인
             article.checkIsWriter(userId);
             articleRepository.delete(article);
+            // 게시글 캐시 삭제
+            articleCacheRepository.delete(articleId);
+
+            // 게시글 좋아요 삭제
+            articleLikeWriter.deleteArticle(articleId);
+
+            // 게시글 조회수 삭제
+            articleViewWriter.deleteArticle(articleId);
+
+            // 게시글 댓글 삭제
+            commentWriter.deleteArticle(articleId);
         }));
-
-        // 게시글 좋아요 삭제
-        articleLikeWriter.deleteArticle(articleId);
-
-        // 게시글 조회수 삭제
-        articleViewWriter.deleteArticle(articleId);
-
-        // 게시글 댓글 삭제
-        commentWriter.deleteArticle(articleId);
     }
 
 }

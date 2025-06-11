@@ -1,5 +1,6 @@
 package board.backend.like.application;
 
+import board.backend.common.infra.CacheRepository;
 import board.backend.like.domain.ArticleLikeCount;
 import board.backend.like.infra.ArticleLikeCountRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,29 +16,76 @@ import static org.mockito.Mockito.when;
 
 class ArticleLikeReaderTest {
 
+    private CacheRepository<ArticleLikeCount, Long> articleLikeCountLongCacheRepository;
     private ArticleLikeCountRepository articleLikeCountRepository;
     private ArticleLikeReader articleLikeReader;
 
     @BeforeEach
     void setUp() {
+        articleLikeCountLongCacheRepository = mock(CacheRepository.class);
         articleLikeCountRepository = mock(ArticleLikeCountRepository.class);
-        articleLikeReader = new ArticleLikeReader(articleLikeCountRepository);
+        articleLikeReader = new ArticleLikeReader(articleLikeCountLongCacheRepository, articleLikeCountRepository);
     }
 
     @Test
-    @DisplayName("게시글 ID 목록으로 좋아요 수를 조회한다")
-    void count_success() {
+    @DisplayName("캐시에 존재하는 좋아요 수는 DB 조회 없이 반환한다")
+    void count_allCacheHit_success() {
         // given
-        ArticleLikeCount like1 = ArticleLikeCount.init(1L);
-        ArticleLikeCount like2 = ArticleLikeCount.init(2L);
-        when(articleLikeCountRepository.findAllById(List.of(1L, 2L))).thenReturn(List.of(like1, like2));
+        List<Long> articleIds = List.of(1L, 2L);
+        List<ArticleLikeCount> cached = List.of(
+            ArticleLikeCount.init(1L),
+            ArticleLikeCount.init(2L)
+        );
+        when(articleLikeCountLongCacheRepository.getAll(articleIds)).thenReturn(cached);
 
         // when
-        Map<Long, Long> result = articleLikeReader.count(List.of(1L, 2L));
+        Map<Long, Long> result = articleLikeReader.count(articleIds);
 
         // then
-        assertThat(result.get(1L)).isEqualTo(1L);
-        assertThat(result.get(2L)).isEqualTo(1L);
+        assertThat(result).containsEntry(1L, 1L).containsEntry(2L, 1L);
+    }
+
+    @Test
+    @DisplayName("일부 캐시 미스 시 DB에서 조회하고, 캐시에 저장한 뒤 합쳐서 반환한다")
+    void count_partialCacheMiss_success() {
+        // given
+        List<Long> articleIds = List.of(1L, 2L, 3L);
+        List<ArticleLikeCount> cached = List.of(
+            ArticleLikeCount.init(1L),
+            ArticleLikeCount.init(3L)
+        );
+        List<ArticleLikeCount> uncached = List.of(
+            ArticleLikeCount.init(2L)
+        );
+        when(articleLikeCountLongCacheRepository.getAll(articleIds)).thenReturn(cached);
+        when(articleLikeCountRepository.findAllById(List.of(2L))).thenReturn(uncached);
+
+        // when
+        Map<Long, Long> result = articleLikeReader.count(articleIds);
+
+        // then
+        assertThat(result).containsEntry(1L, 1L)
+            .containsEntry(2L, 1L)
+            .containsEntry(3L, 1L);
+    }
+
+    @Test
+    @DisplayName("모두 캐시 미스일 경우 DB에서 모두 조회하고 캐시에 저장 후 반환한다")
+    void count_allCacheMiss_success() {
+        // given
+        List<Long> articleIds = List.of(1L, 2L);
+        List<ArticleLikeCount> fromDb = List.of(
+            ArticleLikeCount.init(1L),
+            ArticleLikeCount.init(2L)
+        );
+        when(articleLikeCountLongCacheRepository.getAll(articleIds)).thenReturn(List.of());
+        when(articleLikeCountRepository.findAllById(articleIds)).thenReturn(fromDb);
+
+        // when
+        Map<Long, Long> result = articleLikeReader.count(articleIds);
+
+        // then
+        assertThat(result).containsEntry(1L, 1L).containsEntry(2L, 1L);
     }
 
 }
