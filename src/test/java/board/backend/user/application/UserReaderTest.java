@@ -33,49 +33,49 @@ class UserReaderTest {
 
     @Test
     @DisplayName("회원이 캐시에 존재하면 예외 없이 통과한다")
-    void checkUserExists_whenCacheHit_shouldPass() {
+    void checkUserExists_OrThrow_whenCacheHit_shouldPass() {
         // given
         Long userId = 1L;
         when(userCacheRepository.get(userId)).thenReturn(Optional.of(mock(User.class)));
 
         // when
-        userReader.checkUserExists(userId);
+        userReader.checkUserExistsOrThrow(userId);
     }
 
     @Test
     @DisplayName("회원이 캐시에 없지만 DB에 존재하면 예외가 발생하지 않는다")
-    void checkUserExists_successByDB() {
+    void checkUserExistsOrThrow_OrThrow_successByDB() {
         // given
         Long userId = 1L;
         when(userCacheRepository.get(userId)).thenReturn(Optional.empty());
         when(userRepository.customExistsById(userId)).thenReturn(true);
 
         // when
-        userReader.checkUserExists(userId);
+        userReader.checkUserExistsOrThrow(userId);
     }
 
     @Test
     @DisplayName("회원이 캐시에 없고 DB에는 존재하면 예외 없이 통과한다")
-    void checkUserExists_whenCacheMissAndDbHit_shouldPass() {
+    void checkUserExistsOrThrow_whenCacheMissAndDbHit_shouldPass() {
         // given
         Long userId = 1L;
         when(userCacheRepository.get(userId)).thenReturn(Optional.empty());
         when(userRepository.customExistsById(userId)).thenReturn(true);
 
         // when
-        userReader.checkUserExists(userId);
+        userReader.checkUserExistsOrThrow(userId);
     }
 
     @Test
     @DisplayName("회원이 캐시와 DB에 모두 없으면 예외가 발생한다")
-    void checkUserExists_whenCacheAndDbMiss_shouldThrow() {
+    void checkUserExistsOrThrow_whenCacheAndDbMiss_shouldThrow() {
         // given
         Long userId = 1L;
         when(userCacheRepository.get(userId)).thenReturn(Optional.empty());
         when(userRepository.customExistsById(userId)).thenReturn(false);
 
         // when & then
-        assertThatThrownBy(() -> userReader.checkUserExists(userId))
+        assertThatThrownBy(() -> userReader.checkUserExistsOrThrow(userId))
             .isInstanceOf(UserNotFound.class);
     }
 

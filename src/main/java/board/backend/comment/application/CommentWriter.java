@@ -34,7 +34,7 @@ public class CommentWriter {
         articleReader.checkArticleExistsOrThrow(articleId);
 
         // 회원 존재 확인
-        userReader.checkUserExists(userId);
+        userReader.checkUserExistsOrThrow(userId);
 
         // 부모 댓글 확인
         if (parentCommentId != null) {

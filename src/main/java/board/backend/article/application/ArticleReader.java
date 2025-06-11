@@ -34,7 +34,7 @@ public class ArticleReader {
     private final ArticleViewWriter articleViewWriter;
 
     public void checkArticleExistsOrThrow(Long articleId) {
-        if (!articleRepository.customExistsById(articleId)) {
+        if (articleCacheRepository.get(articleId).isEmpty() && !articleRepository.customExistsById(articleId)) {
             throw new ArticleNotFound();
         }
     }

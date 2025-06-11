@@ -23,7 +23,7 @@ public class UserReader {
     private final CacheRepository<User, Long> userCacheRepository;
     private final UserRepository userRepository;
 
-    public void checkUserExists(Long userId) {
+    public void checkUserExistsOrThrow(Long userId) {
         if (userCacheRepository.get(userId).isEmpty() && !userRepository.customExistsById(userId)) {
             throw new UserNotFound();
         }

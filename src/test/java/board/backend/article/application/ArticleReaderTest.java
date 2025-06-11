@@ -11,6 +11,7 @@ import board.backend.user.application.UserReader;
 import board.backend.user.domain.User;
 import board.backend.view.application.ArticleViewReader;
 import board.backend.view.application.ArticleViewWriter;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,10 +51,22 @@ class ArticleReaderTest {
     }
 
     @Test
-    @DisplayName("게시글이 존재하면 예외가 발생하지 않는다")
-    void checkArticleExists_success() {
+    @DisplayName("회원이 캐시에 존재하면 예외 없이 통과한다")
+    void checkArticleExistsOrThrow_whenCacheHit_shouldPass() {
         // given
         Long articleId = 1L;
+        when(articleCacheRepository.get(articleId)).thenReturn(Optional.of(mock(Article.class)));
+
+        // when
+        articleReader.checkArticleExistsOrThrow(articleId);
+    }
+
+    @Test
+    @DisplayName("회원이 캐시에 없지만 DB에 존재하면 예외가 발생하지 않는다")
+    void checkArticleExistsOrThrow_successByDB() {
+        // given
+        Long articleId = 1L;
+        when(articleCacheRepository.get(articleId)).thenReturn(Optional.empty());
         when(articleRepository.customExistsById(articleId)).thenReturn(true);
 
         // when
@@ -61,14 +74,27 @@ class ArticleReaderTest {
     }
 
     @Test
-    @DisplayName("게시글이 존재하지 않으면 예외가 발생한다")
-    void checkArticleExists_fail() {
+    @DisplayName("회원이 캐시에 없고 DB에는 존재하면 예외 없이 통과한다")
+    void checkArticleExistsOrThrow_whenCacheMissAndDbHit_shouldPass() {
         // given
-        Long articleId = 999L;
+        Long articleId = 1L;
+        when(articleCacheRepository.get(articleId)).thenReturn(Optional.empty());
+        when(articleRepository.customExistsById(articleId)).thenReturn(true);
+
+        // when
+        articleReader.checkArticleExistsOrThrow(articleId);
+    }
+
+    @Test
+    @DisplayName("회원이 캐시와 DB에 모두 없으면 예외가 발생한다")
+    void checkArticleExistsOrThrow_whenCacheAndDbMiss_shouldThrow() {
+        // given
+        Long articleId = 1L;
+        when(articleCacheRepository.get(articleId)).thenReturn(Optional.empty());
         when(articleRepository.customExistsById(articleId)).thenReturn(false);
 
         // when & then
-        assertThatThrownBy(() -> articleReader.checkArticleExistsOrThrow(articleId))
+        Assertions.assertThatThrownBy(() -> articleReader.checkArticleExistsOrThrow(articleId))
             .isInstanceOf(ArticleNotFound.class);
     }
 
