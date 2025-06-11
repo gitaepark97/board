@@ -24,10 +24,8 @@ public class ArticleViewWriter {
             return;
         }
 
-        long result = articleViewCountRepository.increase(articleId);
-        if (result == 0) {
-            articleViewCountRepository.save(ArticleViewCount.init(articleId));
-        }
+        ArticleViewCount articleViewCount = ArticleViewCount.init(articleId);
+        articleViewCountRepository.upsert(articleViewCount.getArticleId(), articleViewCount.getViewCount());
     }
 
     @Transactional

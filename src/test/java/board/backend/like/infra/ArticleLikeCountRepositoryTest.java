@@ -29,16 +29,32 @@ class ArticleLikeCountRepositoryTest extends TestRepository {
     }
 
     @Test
-    @DisplayName("좋아요 수를 1 증가시킨다")
-    void increaseLikeCount() {
+    @DisplayName("존재하지 않으면 insert 된다")
+    void increaseOrSave_insert() {
+        // given
+        Long newArticleId = 2L;
+
         // when
-        long result = articleLikeCountRepository.increase(articleId);
+        articleLikeCountRepository.increaseOrSave(newArticleId, 1L);
+        em.flush();
         em.clear();
 
         // then
-        assertThat(result).isEqualTo(1L);
-        ArticleLikeCount updated = articleLikeCountRepository.findById(articleId).orElseThrow();
-        assertThat(updated.getLikeCount()).isEqualTo(2);
+        var saved = articleLikeCountRepository.findById(newArticleId).orElseThrow();
+        assertThat(saved.getLikeCount()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("이미 존재하면 comment_count가 1 증가한다")
+    void increaseOrSave_update() {
+        // when
+        articleLikeCountRepository.increaseOrSave(articleId, 1L);
+        em.flush();
+        em.clear();
+
+        // then
+        var updated = articleLikeCountRepository.findById(articleId).orElseThrow();
+        assertThat(updated.getLikeCount()).isEqualTo(2L);
     }
 
     @Test

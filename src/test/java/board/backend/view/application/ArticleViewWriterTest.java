@@ -13,13 +13,12 @@ import static org.mockito.Mockito.when;
 
 class ArticleViewWriterTest {
 
-    private ArticleViewCountRepository articleViewCountRepository;
     private ArticleViewDistributedLockRepository articleViewDistributedLockRepository;
     private ArticleViewWriter articleViewWriter;
 
     @BeforeEach
     void setUp() {
-        articleViewCountRepository = mock(ArticleViewCountRepository.class);
+        ArticleViewCountRepository articleViewCountRepository = mock(ArticleViewCountRepository.class);
         articleViewDistributedLockRepository = mock(ArticleViewDistributedLockRepository.class);
         articleViewWriter = new ArticleViewWriter(articleViewCountRepository, articleViewDistributedLockRepository);
     }
@@ -43,7 +42,6 @@ class ArticleViewWriterTest {
         Long articleId = 1L;
         String ip = "127.0.0.1";
         when(articleViewDistributedLockRepository.lock(articleId, ip, Duration.ofMinutes(10))).thenReturn(true);
-        when(articleViewCountRepository.increase(articleId)).thenReturn(0L);
 
         // when
         articleViewWriter.increaseCount(articleId, ip);
@@ -56,7 +54,6 @@ class ArticleViewWriterTest {
         Long articleId = 1L;
         String ip = "127.0.0.1";
         when(articleViewDistributedLockRepository.lock(articleId, ip, Duration.ofMinutes(10))).thenReturn(true);
-        when(articleViewCountRepository.increase(articleId)).thenReturn(1L);
 
         // when
         articleViewWriter.increaseCount(articleId, ip);

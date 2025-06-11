@@ -45,10 +45,8 @@ public class CommentWriter {
         commentRepository.save(newComment);
 
         // 게시글 댓글 수 증가
-        long result = articleCommentCountRepository.increase(articleId);
-        if (result == 0) {
-            articleCommentCountRepository.save(ArticleCommentCount.init(articleId));
-        }
+        ArticleCommentCount articleCommentCount = ArticleCommentCount.init(articleId);
+        articleCommentCountRepository.increaseOrSave(articleCommentCount.getArticleId(), articleCommentCount.getCommentCount());
 
         return newComment;
     }

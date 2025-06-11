@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
@@ -62,7 +61,7 @@ public class ArticleReader {
                 viewCountMap.getOrDefault(article.getId(), 0L),
                 commentCountMap.getOrDefault(article.getId(), 0L))
             )
-            .collect(Collectors.toList());
+            .toList();
     }
 
     Article read(Long articleId, String ip) {

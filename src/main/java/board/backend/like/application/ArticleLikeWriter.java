@@ -31,10 +31,8 @@ public class ArticleLikeWriter {
             articleLikeRepository.save(articleLike);
 
             // 게시글 좋아요 수 증가
-            long result = articleLikeCountRepository.increase(articleId);
-            if (result == 0) {
-                articleLikeCountRepository.save(ArticleLikeCount.init(articleId));
-            }
+            ArticleLikeCount articleLikeCount = ArticleLikeCount.init(articleId);
+            articleLikeCountRepository.increaseOrSave(articleLikeCount.getArticleId(), articleLikeCount.getLikeCount());
         }
     }
 

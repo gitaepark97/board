@@ -25,7 +25,6 @@ class CommentWriterTest {
     private IdProvider idProvider;
     private TimeProvider timeProvider;
     private CommentRepository commentRepository;
-    private ArticleCommentCountRepository articleCommentCountRepository;
     private CommentWriter commentWriter;
 
     @BeforeEach
@@ -33,7 +32,7 @@ class CommentWriterTest {
         idProvider = mock(IdProvider.class);
         timeProvider = mock(TimeProvider.class);
         commentRepository = mock(CommentRepository.class);
-        articleCommentCountRepository = mock(ArticleCommentCountRepository.class);
+        ArticleCommentCountRepository articleCommentCountRepository = mock(ArticleCommentCountRepository.class);
         ArticleReader articleReader = mock(ArticleReader.class);
         UserReader userReader = mock(UserReader.class);
         commentWriter = new CommentWriter(idProvider, timeProvider, commentRepository, articleCommentCountRepository, articleReader, userReader);
@@ -51,7 +50,6 @@ class CommentWriterTest {
 
         when(idProvider.nextId()).thenReturn(newCommentId);
         when(timeProvider.now()).thenReturn(now);
-        when(articleCommentCountRepository.increase(articleId)).thenReturn(1L);
 
         // when
         Comment comment = commentWriter.create(articleId, writerId, null, content);

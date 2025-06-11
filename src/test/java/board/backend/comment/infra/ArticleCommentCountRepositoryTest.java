@@ -27,10 +27,26 @@ class ArticleCommentCountRepositoryTest extends TestRepository {
     }
 
     @Test
-    @DisplayName("댓글 수를 1 증가시킨다")
-    void increaseCommentCount() {
+    @DisplayName("존재하지 않으면 insert 된다")
+    void increaseOrSave_insert() {
+        // given
+        Long newArticleId = 2L;
+
         // when
-        articleCommentCountRepository.increase(articleId);
+        articleCommentCountRepository.increaseOrSave(newArticleId, 1L);
+        em.flush();
+        em.clear();
+
+        // then
+        var saved = articleCommentCountRepository.findById(newArticleId).orElseThrow();
+        assertThat(saved.getCommentCount()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("이미 존재하면 comment_count가 1 증가한다")
+    void increaseOrSave_update() {
+        // when
+        articleCommentCountRepository.increaseOrSave(articleId, 1L);
         em.flush();
         em.clear();
 
@@ -42,11 +58,6 @@ class ArticleCommentCountRepositoryTest extends TestRepository {
     @Test
     @DisplayName("댓글 수를 1 감소시킨다")
     void decreaseCommentCount() {
-        // given
-        articleCommentCountRepository.increase(articleId); // 1 -> 2
-        em.flush();
-        em.clear();
-
         // when
         articleCommentCountRepository.decrease(articleId);
         em.flush();
@@ -54,7 +65,7 @@ class ArticleCommentCountRepositoryTest extends TestRepository {
 
         // then
         var updated = articleCommentCountRepository.findById(articleId).orElseThrow();
-        assertThat(updated.getCommentCount()).isEqualTo(1L);
+        assertThat(updated.getCommentCount()).isEqualTo(0L);
     }
 
 }

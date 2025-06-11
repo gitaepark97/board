@@ -12,16 +12,6 @@ class CustomArticleLikeCountRepositoryImpl implements CustomArticleLikeCountRepo
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public long increase(Long articleId) {
-        QArticleLikeCount articleLikeCount = QArticleLikeCount.articleLikeCount;
-
-        return queryFactory.update(articleLikeCount)
-            .set(articleLikeCount.likeCount, articleLikeCount.likeCount.add(1))
-            .where(articleLikeCount.articleId.eq(articleId))
-            .execute();
-    }
-
-    @Override
     public void decrease(Long articleId) {
         QArticleLikeCount articleLikeCount = QArticleLikeCount.articleLikeCount;
 

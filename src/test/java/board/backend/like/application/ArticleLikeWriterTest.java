@@ -19,14 +19,13 @@ class ArticleLikeWriterTest {
 
     private TimeProvider timeProvider;
     private ArticleLikeRepository articleLikeRepository;
-    private ArticleLikeCountRepository articleLikeCountRepository;
     private ArticleLikeWriter articleLikeWriter;
 
     @BeforeEach
     void setUp() {
         timeProvider = mock(TimeProvider.class);
         articleLikeRepository = mock(ArticleLikeRepository.class);
-        articleLikeCountRepository = mock(ArticleLikeCountRepository.class);
+        ArticleLikeCountRepository articleLikeCountRepository = mock(ArticleLikeCountRepository.class);
         ArticleReader articleReader = mock(ArticleReader.class);
         articleLikeWriter = new ArticleLikeWriter(timeProvider, articleLikeRepository, articleLikeCountRepository, articleReader);
     }
@@ -40,7 +39,6 @@ class ArticleLikeWriterTest {
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 12, 0);
         when(articleLikeRepository.existsByArticleIdAndUserId(articleId, userId)).thenReturn(false);
         when(timeProvider.now()).thenReturn(now);
-        when(articleLikeCountRepository.increase(articleId)).thenReturn(1L);
 
         // when
         articleLikeWriter.like(articleId, userId);
