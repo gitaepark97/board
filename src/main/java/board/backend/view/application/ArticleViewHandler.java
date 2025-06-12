@@ -4,7 +4,9 @@ import board.backend.common.event.ArticleCreatedEvent;
 import board.backend.common.event.ArticleDeletedEvent;
 import board.backend.common.event.ArticleReaderEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.modulith.events.ApplicationModuleListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
@@ -13,7 +15,8 @@ class ArticleViewHandler {
 
     private final ArticleViewWriter articleViewWriter;
 
-    @ApplicationModuleListener
+    @Async
+    @EventListener
     void handle(ArticleReaderEvent event) {
         articleViewWriter.increaseCount(event.articleId(), event.ip());
     }

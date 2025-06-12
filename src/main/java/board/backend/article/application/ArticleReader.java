@@ -2,7 +2,7 @@ package board.backend.article.application;
 
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
-import board.backend.article.infra.ArticleRepository;
+import board.backend.article.infra.jpa.ArticleRepository;
 import board.backend.common.event.ArticleReaderEvent;
 import board.backend.common.infra.CacheRepository;
 import lombok.RequiredArgsConstructor;

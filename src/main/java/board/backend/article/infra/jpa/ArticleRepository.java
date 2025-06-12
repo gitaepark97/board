@@ -1,4 +1,4 @@
-package board.backend.article.infra;
+package board.backend.article.infra.jpa;
 
 import board.backend.article.domain.Article;
 import org.springframework.data.jpa.repository.JpaRepository;
