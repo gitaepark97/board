@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class ArticleLikeWriter {
+class ArticleLikeWriter {
 
     private final TimeProvider timeProvider;
     private final ArticleLikeRepository articleLikeRepository;
@@ -48,7 +48,7 @@ public class ArticleLikeWriter {
     }
 
     @Transactional
-    public void deleteArticle(Long articleId) {
+    void deleteArticle(Long articleId) {
         // 게시글 좋아요 삭제
         articleLikeRepository.deleteByArticleId(articleId);
 

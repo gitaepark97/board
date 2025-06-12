@@ -5,6 +5,10 @@ plugins {
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
+ext {
+    springModulithVersion = "1.4.0"
+}
+
 group = 'board'
 version = '0.0.1-SNAPSHOT'
 
@@ -25,7 +29,19 @@ repositories {
     mavenCentral()
 }
 
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.modulith:spring-modulith-bom:${springModulithVersion}"
+    }
+}
+
 dependencies {
+    implementation 'org.springframework.modulith:spring-modulith-starter-core'
+    implementation 'org.springframework.modulith:spring-modulith-starter-jpa'
+    testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
+    runtimeOnly 'org.springframework.modulith:spring-modulith-actuator'
+    runtimeOnly 'org.springframework.modulith:spring-modulith-observability'
+
     // ---------- SPRING BOOT ----------
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
@@ -100,14 +116,27 @@ tasks.named('asciidoctor') {
 tasks.register('copyApiDocument', Copy) {
     dependsOn asciidoctor
     doFirst {
-        delete file("src/main/resources/static/docs")
+        delete file("src/main/resources/static/docs/api")
     }
     from asciidoctor.outputDir
-    into file("src/main/resources/static/docs")
+    into file("src/main/resources/static/docs/api")
+}
+
+tasks.register('copyModuleDocumentation', Copy) {
+    doFirst {
+        delete file("src/main/resources/static/docs/modulith")
+    }
+
+    from("build/spring-modulith-docs") {
+        include "**/*.adoc"
+        include "**/*.puml"
+    }
+    into("src/main/resources/static/docs/modulith")
 }
 
 build {
     dependsOn copyApiDocument
+    dependsOn copyModuleDocumentation
 }
 
 clean {

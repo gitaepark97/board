@@ -5,15 +5,17 @@ import board.backend.auth.domain.Session;
 import board.backend.auth.infra.TokenProvider;
 import board.backend.user.application.UserReader;
 import lombok.RequiredArgsConstructor;
+import org.springframework.modulith.NamedInterface;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
 
+@NamedInterface
 @RequiredArgsConstructor
 @Component
-class TokenProcessor {
+public class TokenProcessor {
 
     private static final Duration ACCESS_TOKEN_DURATION = Duration.ofHours(1);
 
@@ -29,7 +31,7 @@ class TokenProcessor {
         );
     }
 
-    Optional<Long> getUserId(String token) {
+    public Optional<Long> getUserId(String token) {
         try {
             Map<String, Object> payload = tokenProvider.getPayload(token);
             return Optional.of(Long.parseLong(payload.get("userId").toString())).filter(userReader::isUserExists);

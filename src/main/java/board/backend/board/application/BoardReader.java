@@ -4,10 +4,12 @@ import board.backend.board.domain.Board;
 import board.backend.board.domain.BoardNotFound;
 import board.backend.board.infra.BoardRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.modulith.NamedInterface;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@NamedInterface
 @RequiredArgsConstructor
 @Component
 public class BoardReader {

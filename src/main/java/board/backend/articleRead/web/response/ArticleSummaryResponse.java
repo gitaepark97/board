@@ -1,6 +1,6 @@
-package board.backend.article.web.response;
+package board.backend.articleRead.web.response;
 
-import board.backend.article.application.dto.ArticleWithWriterAndCounts;
+import board.backend.articleRead.application.dto.ArticleWithWriterAndCounts;
 import board.backend.user.web.response.UserSummaryResponse;
 
 import java.time.LocalDateTime;

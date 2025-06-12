@@ -1,0 +1,20 @@
+@startuml
+set separator none
+title View
+
+top to bottom direction
+
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Component>
+
+Container_Boundary("BoardApplication.BoardApplication_boundary", "BoardApplication", $tags="") {
+  Component(BoardApplication.BoardApplication.View, "View", $techn="Module", $descr="", $tags="", $link="")
+  Component(BoardApplication.BoardApplication.Common, "Common", $techn="Module", $descr="", $tags="", $link="")
+}
+
+Rel(BoardApplication.BoardApplication.View, BoardApplication.BoardApplication.Common, "listens to", $techn="", $tags="", $link="")
+Rel(BoardApplication.BoardApplication.View, BoardApplication.BoardApplication.Common, "uses", $techn="", $tags="", $link="")
+
+SHOW_LEGEND(true)
+@enduml

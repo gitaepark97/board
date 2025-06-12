@@ -7,6 +7,13 @@ spring:
   jpa:
     open-in-view: false
 
+  modulith:
+    events:
+      jdbc:
+        schema-initialization:
+          enabled: true
+      republish-outstanding-events-on-restart: true
+
 management:
   endpoints:
     web:

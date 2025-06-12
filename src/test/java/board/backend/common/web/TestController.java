@@ -1,6 +1,6 @@
 package board.backend.common.web;
 
-import board.backend.common.web.security.SecurityConfig;
+import board.backend.security.SecurityConfig;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import org.junit.jupiter.api.BeforeEach;

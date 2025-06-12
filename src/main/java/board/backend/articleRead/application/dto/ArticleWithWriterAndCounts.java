@@ -1,4 +1,4 @@
-package board.backend.article.application.dto;
+package board.backend.articleRead.application.dto;
 
 import board.backend.article.domain.Article;
 import board.backend.user.domain.User;

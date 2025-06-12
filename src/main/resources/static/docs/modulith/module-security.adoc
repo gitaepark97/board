@@ -1,0 +1,7 @@
+[%autowidth.stretch, cols="h,a"]
+|===
+|Base package
+|`board.backend.security`
+|Bean references
+|* `b.b.a.application.AuthService` (in Auth)
+|===

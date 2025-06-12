@@ -32,7 +32,7 @@ class RedisConfig {
 
     @Value("${spring.data.redis.password}")
     private String password;
-    
+
     static ObjectMapper redisObjectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());

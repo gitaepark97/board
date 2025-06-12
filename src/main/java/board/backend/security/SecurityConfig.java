@@ -1,6 +1,6 @@
-package board.backend.common.web.security;
+package board.backend.security;
 
-import board.backend.auth.application.AuthService;
+import board.backend.auth.application.TokenProcessor;
 import board.backend.common.support.ApplicationException;
 import board.backend.common.web.response.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,7 +27,7 @@ import java.util.List;
 class SecurityConfig {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final AuthService authService;
+    private final TokenProcessor tokenProcessor;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -46,7 +46,7 @@ class SecurityConfig {
                 .permitAll()
                 .anyRequest()
                 .authenticated())
-            .addFilterBefore(new TokenFilter(authService), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new TokenFilter(tokenProcessor), UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint()))
             .build();
     }

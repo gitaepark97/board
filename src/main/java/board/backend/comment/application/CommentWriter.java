@@ -18,7 +18,7 @@ import static java.util.function.Predicate.not;
 
 @RequiredArgsConstructor
 @Component
-public class CommentWriter {
+class CommentWriter {
 
     private final IdProvider idProvider;
     private final TimeProvider timeProvider;
@@ -75,7 +75,7 @@ public class CommentWriter {
     }
 
     @Transactional
-    public void deleteArticle(Long articleId) {
+    void deleteArticle(Long articleId) {
         // 게시글 댓글 삭제
         commentRepository.deleteByArticleId(articleId);
 

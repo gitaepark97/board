@@ -1,0 +1,39 @@
+== BoardApplication
+plantuml::components.puml[,,format=svg]
+
+== Article
+plantuml::module-article.puml[,,format=svg]
+include::module-article.adoc[]
+
+== Auth
+plantuml::module-auth.puml[,,format=svg]
+include::module-auth.adoc[]
+
+== Board
+plantuml::module-board.puml[,,format=svg]
+include::module-board.adoc[]
+
+== Comment
+plantuml::module-comment.puml[,,format=svg]
+include::module-comment.adoc[]
+
+== Common
+plantuml::module-common.puml[,,format=svg]
+include::module-common.adoc[]
+
+== Like
+plantuml::module-like.puml[,,format=svg]
+include::module-like.adoc[]
+
+== Security
+plantuml::module-security.puml[,,format=svg]
+include::module-security.adoc[]
+
+== User
+plantuml::module-user.puml[,,format=svg]
+include::module-user.adoc[]
+
+== View
+plantuml::module-view.puml[,,format=svg]
+include::module-view.adoc[]
+

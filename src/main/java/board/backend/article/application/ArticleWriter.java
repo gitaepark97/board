@@ -4,15 +4,15 @@ import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
 import board.backend.article.infra.ArticleRepository;
 import board.backend.board.application.BoardReader;
-import board.backend.comment.application.CommentWriter;
+import board.backend.common.event.ArticleCreatedEvent;
+import board.backend.common.event.ArticleDeletedEvent;
 import board.backend.common.infra.CacheRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
-import board.backend.like.application.ArticleLikeWriter;
 import board.backend.user.application.UserReader;
-import board.backend.view.application.ArticleViewWriter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
@@ -23,11 +23,9 @@ class ArticleWriter {
     private final TimeProvider timeProvider;
     private final CacheRepository<Article, Long> articleCacheRepository;
     private final ArticleRepository articleRepository;
+    private final ApplicationEventPublisher eventPublisher;
     private final BoardReader boardReader;
     private final UserReader userReader;
-    private final ArticleLikeWriter articleLikeWriter;
-    private final ArticleViewWriter articleViewWriter;
-    private final CommentWriter commentWriter;
 
     @Transactional
     public Article create(Long boardId, Long userId, String title, String content) {
@@ -41,8 +39,9 @@ class ArticleWriter {
         Article newArticle = Article.create(idProvider.nextId(), boardId, userId, title, content, timeProvider.now());
         // 게시글 저장
         articleRepository.save(newArticle);
-        // 게시글 조회 수 저장
-        articleViewWriter.saveCount(newArticle.getId());
+
+        // 게시글 생 이벤트 발행
+        eventPublisher.publishEvent(new ArticleCreatedEvent(newArticle.getId()));
 
         return newArticle;
     }
@@ -72,14 +71,8 @@ class ArticleWriter {
             // 게시글 캐시 삭제
             articleCacheRepository.delete(articleId);
 
-            // 게시글 좋아요 삭제
-            articleLikeWriter.deleteArticle(articleId);
-
-            // 게시글 조회수 삭제
-            articleViewWriter.deleteArticle(articleId);
-
-            // 게시글 댓글 삭제
-            commentWriter.deleteArticle(articleId);
+            // 게시글 삭제 이벤트 발행
+            eventPublisher.publishEvent(new ArticleDeletedEvent(articleId));
         }));
     }
 

@@ -1,0 +1,11 @@
+[%autowidth.stretch, cols="h,a"]
+|===
+|Base package
+|`board.backend.comment`
+|Bean references
+|* `b.b.c.infra.CacheRepository` (in Common)
+* `b.b.u.application.UserReader` (in User)
+* `b.b.c.support.IdProvider` (in Common)
+* `b.b.c.support.TimeProvider` (in Common)
+* `b.b.a.application.ArticleReader` (in Article)
+|===

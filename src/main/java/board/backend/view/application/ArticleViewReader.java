@@ -4,6 +4,7 @@ import board.backend.common.infra.CacheRepository;
 import board.backend.view.domain.ArticleViewCount;
 import board.backend.view.infra.ArticleViewCountRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.modulith.NamedInterface;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@NamedInterface
 @RequiredArgsConstructor
 @Component
 public class ArticleViewReader {

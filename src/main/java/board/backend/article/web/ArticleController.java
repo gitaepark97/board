@@ -4,7 +4,6 @@ import board.backend.article.application.ArticleService;
 import board.backend.article.web.request.ArticleCreateRequest;
 import board.backend.article.web.request.ArticleUpdateRequest;
 import board.backend.article.web.response.ArticleResponse;
-import board.backend.article.web.response.ArticleSummaryResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,26 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/articles")
 class ArticleController {
 
     private final ArticleService articleService;
-
-    @GetMapping
-    List<ArticleSummaryResponse> readAll(
-        @RequestParam Long boardId,
-        @RequestParam(required = false, defaultValue = "10") Long pageSize,
-        @RequestParam(required = false) Long lastArticleId
-    ) {
-        return articleService.readAll(boardId, pageSize, lastArticleId)
-            .stream()
-            .map(ArticleSummaryResponse::from)
-            .toList();
-    }
 
     @GetMapping("/{articleId}")
     ArticleResponse read(@PathVariable Long articleId, HttpServletRequest request) {

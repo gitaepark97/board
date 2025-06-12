@@ -6,8 +6,6 @@ import board.backend.auth.domain.Session;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @RequiredArgsConstructor
 @Service
 public class AuthService {
@@ -44,11 +42,6 @@ public class AuthService {
 
         // 토큰 발급
         return tokenProcessor.issueToken(session);
-    }
-
-    public Optional<Long> getUserId(String accessToken) {
-        // 회원 ID 추출
-        return tokenProcessor.getUserId(accessToken);
     }
 
 }

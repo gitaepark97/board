@@ -1,6 +1,6 @@
-package board.backend.common.web.security;
+package board.backend.security;
 
-import board.backend.auth.application.AuthService;
+import board.backend.auth.application.TokenProcessor;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,13 +20,13 @@ import static org.mockito.Mockito.when;
 
 class TokenFilterTest {
 
-    private AuthService authService;
+    private TokenProcessor tokenProcessor;
     private TokenFilter tokenFilter;
 
     @BeforeEach
     void setUp() {
-        authService = mock(AuthService.class);
-        tokenFilter = new TokenFilter(authService);
+        tokenProcessor = mock(TokenProcessor.class);
+        tokenFilter = new TokenFilter(tokenProcessor);
         SecurityContextHolder.clearContext();
     }
 
@@ -55,7 +55,7 @@ class TokenFilterTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         FilterChain chain = mock(FilterChain.class);
 
-        when(authService.getUserId(token)).thenReturn(Optional.empty());
+        when(tokenProcessor.getUserId(token)).thenReturn(Optional.empty());
 
         // when
         tokenFilter.doFilterInternal(request, response, chain);
@@ -75,7 +75,7 @@ class TokenFilterTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         FilterChain chain = mock(FilterChain.class);
 
-        when(authService.getUserId(token)).thenReturn(Optional.of(userId));
+        when(tokenProcessor.getUserId(token)).thenReturn(Optional.of(userId));
 
         // when
         tokenFilter.doFilterInternal(request, response, chain);

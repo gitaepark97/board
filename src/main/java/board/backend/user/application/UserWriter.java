@@ -9,8 +9,10 @@ import board.backend.user.domain.UserNotFound;
 import board.backend.user.infra.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.modulith.NamedInterface;
 import org.springframework.stereotype.Component;
 
+@NamedInterface
 @RequiredArgsConstructor
 @Component
 public class UserWriter {

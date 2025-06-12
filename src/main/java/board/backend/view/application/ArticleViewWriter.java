@@ -11,7 +11,7 @@ import java.time.Duration;
 
 @RequiredArgsConstructor
 @Component
-public class ArticleViewWriter {
+class ArticleViewWriter {
 
     private static final Duration TTL = Duration.ofMinutes(10);
 
@@ -19,12 +19,12 @@ public class ArticleViewWriter {
     private final ArticleViewDistributedLockRepository articleViewDistributedLockRepository;
 
     @Transactional
-    public void saveCount(Long articleId) {
+    void saveCount(Long articleId) {
         articleViewCountRepository.save(ArticleViewCount.init(articleId));
     }
 
     @Transactional
-    public void increaseCount(Long articleId, String ip) {
+    void increaseCount(Long articleId, String ip) {
         if (!articleViewDistributedLockRepository.lock(articleId, ip, TTL)) {
             return;
         }
@@ -33,7 +33,7 @@ public class ArticleViewWriter {
     }
 
     @Transactional
-    public void deleteArticle(Long articleId) {
+    void deleteArticle(Long articleId) {
         articleViewCountRepository.deleteById(articleId);
     }
 

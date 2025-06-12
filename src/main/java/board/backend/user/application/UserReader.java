@@ -5,6 +5,7 @@ import board.backend.user.domain.User;
 import board.backend.user.domain.UserNotFound;
 import board.backend.user.infra.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.modulith.NamedInterface;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@NamedInterface
 @RequiredArgsConstructor
 @Component
 public class UserReader {

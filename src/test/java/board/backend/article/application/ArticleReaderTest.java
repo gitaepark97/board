@@ -1,29 +1,21 @@
 package board.backend.article.application;
 
-import board.backend.article.application.dto.ArticleWithWriterAndCounts;
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
 import board.backend.article.infra.ArticleRepository;
-import board.backend.comment.application.CommentReader;
 import board.backend.common.infra.CacheRepository;
-import board.backend.like.application.ArticleLikeReader;
-import board.backend.user.application.UserReader;
-import board.backend.user.domain.User;
-import board.backend.view.application.ArticleViewReader;
-import board.backend.view.application.ArticleViewWriter;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -32,22 +24,14 @@ class ArticleReaderTest {
 
     private CacheRepository<Article, Long> articleCacheRepository;
     private ArticleRepository articleRepository;
-    private UserReader userReader;
-    private ArticleLikeReader articleLikeReader;
-    private ArticleViewReader articleViewReader;
-    private CommentReader commentReader;
     private ArticleReader articleReader;
 
     @BeforeEach
     void setUp() {
         articleCacheRepository = mock(CacheRepository.class);
         articleRepository = mock(ArticleRepository.class);
-        userReader = mock(UserReader.class);
-        articleLikeReader = mock(ArticleLikeReader.class);
-        articleViewReader = mock(ArticleViewReader.class);
-        commentReader = mock(CommentReader.class);
-        ArticleViewWriter articleViewWriter = mock(ArticleViewWriter.class);
-        articleReader = new ArticleReader(articleCacheRepository, articleRepository, userReader, articleLikeReader, articleViewReader, commentReader, articleViewWriter);
+        ApplicationEventPublisher applicationEventPublisher = mock(ApplicationEventPublisher.class);
+        articleReader = new ArticleReader(articleCacheRepository, articleRepository, applicationEventPublisher);
     }
 
     @Test
@@ -109,18 +93,10 @@ class ArticleReaderTest {
             Article.create(3L, boardId, 1L, "제목1", "내용1", LocalDateTime.now()),
             Article.create(2L, boardId, 2L, "제목2", "내용2", LocalDateTime.now())
         );
-        Map<Long, User> writerMap = Map.of(
-            1L, User.create(1L, "user1@email.com", "user1", LocalDateTime.now()),
-            2L, User.create(2L, "user2@email.com", "user2", LocalDateTime.now())
-        );
         when(articleRepository.findAllByBoardId(anyLong(), anyLong())).thenReturn(articles);
-        when(userReader.readAll(anyList())).thenReturn(writerMap);
-        when(articleLikeReader.count(anyList())).thenReturn(Map.of());
-        when(articleViewReader.count(anyList())).thenReturn(Map.of());
-        when(commentReader.count(anyList())).thenReturn(Map.of());
 
         // when
-        List<ArticleWithWriterAndCounts> result = articleReader.readAll(boardId, pageSize, lastArticleId);
+        List<Article> result = articleReader.readAll(boardId, pageSize, lastArticleId);
 
         // then
         assertThat(result.size()).isEqualTo(2);
@@ -137,18 +113,10 @@ class ArticleReaderTest {
             Article.create(9L, boardId, 100L, "제목3", "내용3", LocalDateTime.now()),
             Article.create(8L, boardId, 101L, "제목4", "내용4", LocalDateTime.now())
         );
-        Map<Long, User> writerMap = Map.of(
-            100L, User.create(100L, "user100@email.com", "user100", LocalDateTime.now()),
-            101L, User.create(101L, "user101@email.com", "user101", LocalDateTime.now())
-        );
         when(articleRepository.findAllByBoardId(boardId, pageSize, lastArticleId)).thenReturn(articles);
-        when(userReader.readAll(anyList())).thenReturn(writerMap);
-        when(articleLikeReader.count(anyList())).thenReturn(Map.of());
-        when(articleViewReader.count(anyList())).thenReturn(Map.of());
-        when(commentReader.count(anyList())).thenReturn(Map.of());
 
         // when
-        List<ArticleWithWriterAndCounts> result = articleReader.readAll(boardId, pageSize, lastArticleId);
+        List<Article> result = articleReader.readAll(boardId, pageSize, lastArticleId);
 
         // then
         assertThat(result.size()).isEqualTo(2);

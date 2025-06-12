@@ -1,0 +1,7 @@
+[%autowidth.stretch, cols="h,a"]
+|===
+|Base package
+|`board.backend.view`
+|Bean references
+|* `b.b.c.infra.CacheRepository` (in Common)
+|===
