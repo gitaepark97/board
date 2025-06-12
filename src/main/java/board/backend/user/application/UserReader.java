@@ -26,7 +26,7 @@ public class UserReader {
     private final UserRepository userRepository;
 
     public void checkUserExistsOrThrow(Long userId) {
-        if (cachedUserRepository.existsByKey(userId) && !userRepository.customExistsById(userId)) {
+        if (!cachedUserRepository.existsByKey(userId) && !userRepository.customExistsById(userId)) {
             throw new UserNotFound();
         }
         cachedUserRepository.save(userId, null, CACHE_TTL);

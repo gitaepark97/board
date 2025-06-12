@@ -84,7 +84,7 @@ class UserReaderTest {
     void isUserExists_whenCacheHit_shouldReturnTrue() {
         // given
         Long userId = 1L;
-        when(cachedUserRepository.findByKey(userId)).thenReturn(Optional.of(mock(User.class)));
+        when(cachedUserRepository.existsByKey(userId)).thenReturn(true);
 
         // when
         boolean result = userReader.isUserExists(userId);
@@ -98,7 +98,7 @@ class UserReaderTest {
     void isUserExists_whenDbHit_shouldReturnTrue() {
         // given
         Long userId = 1L;
-        when(cachedUserRepository.findByKey(userId)).thenReturn(Optional.empty());
+        when(cachedUserRepository.existsByKey(userId)).thenReturn(false);
         when(userRepository.customExistsById(userId)).thenReturn(true);
 
         // when
