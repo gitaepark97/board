@@ -6,13 +6,13 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class AbstractRedisCacheRepository<V, K> implements CacheRepository<V, K> {
+public abstract class AbstractRedisCachedRepository<V, K> implements CachedRepository<V, K> {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final String keyPrefix;
     private final Class<V> valueType;
 
-    protected AbstractRedisCacheRepository(
+    protected AbstractRedisCachedRepository(
         RedisTemplate<String, Object> redisTemplate,
         String keyPrefix,
         Class<V> valueType
@@ -23,7 +23,12 @@ public abstract class AbstractRedisCacheRepository<V, K> implements CacheReposit
     }
 
     @Override
-    public Optional<V> get(K key) {
+    public boolean existsByKey(K key) {
+        return redisTemplate.hasKey(generateKey(key));
+    }
+
+    @Override
+    public Optional<V> findByKey(K key) {
         Object value = redisTemplate.opsForValue().get(generateKey(key));
         if (valueType.isInstance(value)) {
             return Optional.of(valueType.cast(value));
@@ -32,7 +37,7 @@ public abstract class AbstractRedisCacheRepository<V, K> implements CacheReposit
     }
 
     @Override
-    public List<V> getAll(List<K> keys) {
+    public List<V> finalAllByKey(List<K> keys) {
         List<String> redisKeys = keys.stream()
             .map(this::generateKey)
             .toList();
@@ -47,7 +52,7 @@ public abstract class AbstractRedisCacheRepository<V, K> implements CacheReposit
     }
 
     @Override
-    public void set(K key, V value, Duration ttl) {
+    public void save(K key, V value, Duration ttl) {
         redisTemplate.opsForValue().set(generateKey(key), value, ttl);
     }
 

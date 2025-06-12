@@ -2,8 +2,8 @@ package board.backend.article.application;
 
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
-import board.backend.article.infra.jpa.ArticleRepository;
-import board.backend.common.infra.CacheRepository;
+import board.backend.article.infra.ArticleRepository;
+import board.backend.common.infra.CachedRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,16 +22,16 @@ import static org.mockito.Mockito.when;
 
 class ArticleReaderTest {
 
-    private CacheRepository<Article, Long> articleCacheRepository;
+    private CachedRepository<Article, Long> articleCachedRepository;
     private ArticleRepository articleRepository;
     private ArticleReader articleReader;
 
     @BeforeEach
     void setUp() {
-        articleCacheRepository = mock(CacheRepository.class);
+        articleCachedRepository = mock(CachedRepository.class);
         articleRepository = mock(ArticleRepository.class);
         ApplicationEventPublisher applicationEventPublisher = mock(ApplicationEventPublisher.class);
-        articleReader = new ArticleReader(articleCacheRepository, articleRepository, applicationEventPublisher);
+        articleReader = new ArticleReader(articleCachedRepository, articleRepository, applicationEventPublisher);
     }
 
     @Test
@@ -39,7 +39,7 @@ class ArticleReaderTest {
     void checkArticleExistsOrThrow_whenCacheHit_shouldPass() {
         // given
         Long articleId = 1L;
-        when(articleCacheRepository.get(articleId)).thenReturn(Optional.of(mock(Article.class)));
+        when(articleCachedRepository.findByKey(articleId)).thenReturn(Optional.of(mock(Article.class)));
 
         // when
         articleReader.checkArticleExistsOrThrow(articleId);
@@ -50,7 +50,7 @@ class ArticleReaderTest {
     void checkArticleExistsOrThrow_successByDB() {
         // given
         Long articleId = 1L;
-        when(articleCacheRepository.get(articleId)).thenReturn(Optional.empty());
+        when(articleCachedRepository.findByKey(articleId)).thenReturn(Optional.empty());
         when(articleRepository.customExistsById(articleId)).thenReturn(true);
 
         // when
@@ -62,7 +62,7 @@ class ArticleReaderTest {
     void checkArticleExistsOrThrow_whenCacheMissAndDbHit_shouldPass() {
         // given
         Long articleId = 1L;
-        when(articleCacheRepository.get(articleId)).thenReturn(Optional.empty());
+        when(articleCachedRepository.findByKey(articleId)).thenReturn(Optional.empty());
         when(articleRepository.customExistsById(articleId)).thenReturn(true);
 
         // when
@@ -74,7 +74,7 @@ class ArticleReaderTest {
     void checkArticleExistsOrThrow_whenCacheAndDbMiss_shouldThrow() {
         // given
         Long articleId = 1L;
-        when(articleCacheRepository.get(articleId)).thenReturn(Optional.empty());
+        when(articleCachedRepository.findByKey(articleId)).thenReturn(Optional.empty());
         when(articleRepository.customExistsById(articleId)).thenReturn(false);
 
         // when & then
@@ -132,7 +132,7 @@ class ArticleReaderTest {
             LocalDateTime.of(2024, 1, 1, 10, 0)
         );
         String ip = "0:0:0:0";
-        when(articleCacheRepository.get(articleId)).thenReturn(Optional.of(article));
+        when(articleCachedRepository.findByKey(articleId)).thenReturn(Optional.of(article));
 
         // when
         Article result = articleReader.read(articleId, ip);
@@ -151,7 +151,7 @@ class ArticleReaderTest {
             LocalDateTime.of(2024, 1, 1, 10, 0)
         );
         String ip = "0:0:0:0";
-        when(articleCacheRepository.get(articleId)).thenReturn(Optional.empty());
+        when(articleCachedRepository.findByKey(articleId)).thenReturn(Optional.empty());
         when(articleRepository.findById(articleId)).thenReturn(Optional.of(article));
 
         // when
@@ -167,7 +167,7 @@ class ArticleReaderTest {
         // given
         Long invalidId = 999L;
         String ip = "0:0:0:0";
-        when(articleCacheRepository.get(invalidId)).thenReturn(Optional.empty());
+        when(articleCachedRepository.findByKey(invalidId)).thenReturn(Optional.empty());
         when(articleRepository.findById(invalidId)).thenReturn(Optional.empty());
 
         // when & then

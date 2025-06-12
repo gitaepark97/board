@@ -1,4 +1,4 @@
-package board.backend.article.infra.jpa;
+package board.backend.article.infra;
 
 import board.backend.article.domain.Article;
 import board.backend.article.domain.QArticle;

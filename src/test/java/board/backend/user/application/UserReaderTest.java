@@ -1,6 +1,6 @@
 package board.backend.user.application;
 
-import board.backend.common.infra.CacheRepository;
+import board.backend.common.infra.CachedRepository;
 import board.backend.user.domain.User;
 import board.backend.user.domain.UserNotFound;
 import board.backend.user.infra.UserRepository;
@@ -20,15 +20,15 @@ import static org.mockito.Mockito.when;
 
 class UserReaderTest {
 
-    private CacheRepository<User, Long> userCacheRepository;
+    private CachedRepository<User, Long> cachedUserRepository;
     private UserRepository userRepository;
     private UserReader userReader;
 
     @BeforeEach
     void setUp() {
-        userCacheRepository = mock(CacheRepository.class);
+        cachedUserRepository = mock(CachedRepository.class);
         userRepository = mock(UserRepository.class);
-        userReader = new UserReader(userCacheRepository, userRepository);
+        userReader = new UserReader(cachedUserRepository, userRepository);
     }
 
     @Test
@@ -36,7 +36,7 @@ class UserReaderTest {
     void checkUserExists_OrThrow_whenCacheHit_shouldPass() {
         // given
         Long userId = 1L;
-        when(userCacheRepository.get(userId)).thenReturn(Optional.of(mock(User.class)));
+        when(cachedUserRepository.findByKey(userId)).thenReturn(Optional.of(mock(User.class)));
 
         // when
         userReader.checkUserExistsOrThrow(userId);
@@ -47,7 +47,7 @@ class UserReaderTest {
     void checkUserExistsOrThrow_OrThrow_successByDB() {
         // given
         Long userId = 1L;
-        when(userCacheRepository.get(userId)).thenReturn(Optional.empty());
+        when(cachedUserRepository.existsByKey(userId)).thenReturn(false);
         when(userRepository.customExistsById(userId)).thenReturn(true);
 
         // when
@@ -59,7 +59,7 @@ class UserReaderTest {
     void checkUserExistsOrThrow_whenCacheMissAndDbHit_shouldPass() {
         // given
         Long userId = 1L;
-        when(userCacheRepository.get(userId)).thenReturn(Optional.empty());
+        when(cachedUserRepository.existsByKey(userId)).thenReturn(false);
         when(userRepository.customExistsById(userId)).thenReturn(true);
 
         // when
@@ -71,7 +71,7 @@ class UserReaderTest {
     void checkUserExistsOrThrow_whenCacheAndDbMiss_shouldThrow() {
         // given
         Long userId = 1L;
-        when(userCacheRepository.get(userId)).thenReturn(Optional.empty());
+        when(cachedUserRepository.existsByKey(userId)).thenReturn(false);
         when(userRepository.customExistsById(userId)).thenReturn(false);
 
         // when & then
@@ -84,7 +84,7 @@ class UserReaderTest {
     void isUserExists_whenCacheHit_shouldReturnTrue() {
         // given
         Long userId = 1L;
-        when(userCacheRepository.get(userId)).thenReturn(Optional.of(mock(User.class)));
+        when(cachedUserRepository.findByKey(userId)).thenReturn(Optional.of(mock(User.class)));
 
         // when
         boolean result = userReader.isUserExists(userId);
@@ -98,7 +98,7 @@ class UserReaderTest {
     void isUserExists_whenDbHit_shouldReturnTrue() {
         // given
         Long userId = 1L;
-        when(userCacheRepository.get(userId)).thenReturn(Optional.empty());
+        when(cachedUserRepository.findByKey(userId)).thenReturn(Optional.empty());
         when(userRepository.customExistsById(userId)).thenReturn(true);
 
         // when
@@ -129,7 +129,7 @@ class UserReaderTest {
         // given
         Long userId = 1L;
         User user = User.create(userId, "email@test.com", "nickname", LocalDateTime.now());
-        when(userCacheRepository.get(userId)).thenReturn(Optional.of(user));
+        when(cachedUserRepository.findByKey(userId)).thenReturn(Optional.of(user));
 
         // when
         User result = userReader.read(userId);
@@ -144,7 +144,7 @@ class UserReaderTest {
         // given
         Long userId = 1L;
         User user = User.create(userId, "email@test.com", "nickname", LocalDateTime.now());
-        when(userCacheRepository.get(userId)).thenReturn(Optional.empty());
+        when(cachedUserRepository.findByKey(userId)).thenReturn(Optional.empty());
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
         // when
@@ -159,7 +159,7 @@ class UserReaderTest {
     void read_whenCacheAndDbMiss_shouldThrow() {
         // given
         Long userId = 1L;
-        when(userCacheRepository.get(userId)).thenReturn(Optional.empty());
+        when(cachedUserRepository.findByKey(userId)).thenReturn(Optional.empty());
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         // when & then
@@ -177,7 +177,7 @@ class UserReaderTest {
         User user2 = User.create(user2Id, "user2@email.com", "user2", LocalDateTime.now());
 
         List<User> cachedUsers = List.of(user1, user2);
-        when(userCacheRepository.getAll(List.of(user1Id, user2Id))).thenReturn(cachedUsers);
+        when(cachedUserRepository.finalAllByKey(List.of(user1Id, user2Id))).thenReturn(cachedUsers);
 
         // when
         Map<Long, User> result = userReader.readAll(List.of(user1Id, user2Id));
@@ -195,7 +195,7 @@ class UserReaderTest {
         User user1 = User.create(user1Id, "user1@email.com", "user1", LocalDateTime.now());
         User user2 = User.create(user2Id, "user2@email.com", "user2", LocalDateTime.now());
 
-        when(userCacheRepository.getAll(List.of(user1Id, user2Id))).thenReturn(List.of());
+        when(cachedUserRepository.finalAllByKey(List.of(user1Id, user2Id))).thenReturn(List.of());
         when(userRepository.findAllById(List.of(user1Id, user2Id))).thenReturn(List.of(user1, user2));
 
         // when
@@ -214,7 +214,7 @@ class UserReaderTest {
         User user1 = User.create(user1Id, "user1@email.com", "user1", LocalDateTime.now());
         User user2 = User.create(user2Id, "user2@email.com", "user2", LocalDateTime.now());
 
-        when(userCacheRepository.getAll(List.of(user1Id, user2Id))).thenReturn(List.of(user1));
+        when(cachedUserRepository.finalAllByKey(List.of(user1Id, user2Id))).thenReturn(List.of(user1));
         when(userRepository.findAllById(List.of(user2Id))).thenReturn(List.of(user2));
 
         // when

@@ -1,15 +1,15 @@
 package board.backend.view.infra;
 
-import board.backend.common.infra.AbstractRedisCacheRepository;
+import board.backend.common.infra.AbstractRedisCachedRepository;
 import board.backend.view.domain.ArticleViewCount;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-class ArticleViewCountCacheRepositoryImpl extends AbstractRedisCacheRepository<ArticleViewCount, Long> {
+class ArticleViewCountCachedRepositoryImpl extends AbstractRedisCachedRepository<ArticleViewCount, Long> {
 
-    protected ArticleViewCountCacheRepositoryImpl(@Qualifier("cacheRedisTemplate") RedisTemplate<String, Object> redisTemplate) {
+    protected ArticleViewCountCachedRepositoryImpl(@Qualifier("cacheRedisTemplate") RedisTemplate<String, Object> redisTemplate) {
         super(redisTemplate, "view::article::%s", ArticleViewCount.class);
     }
 

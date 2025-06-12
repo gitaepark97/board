@@ -2,9 +2,9 @@ package board.backend.article.application;
 
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
-import board.backend.article.infra.jpa.ArticleRepository;
+import board.backend.article.infra.ArticleRepository;
 import board.backend.board.application.BoardReader;
-import board.backend.common.infra.CacheRepository;
+import board.backend.common.infra.CachedRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
 import board.backend.user.application.UserReader;
@@ -32,12 +32,12 @@ class ArticleWriterTest {
     void setUp() {
         idProvider = mock(IdProvider.class);
         timeProvider = mock(TimeProvider.class);
-        CacheRepository<Article, Long> articleCacheRepository = mock(CacheRepository.class);
+        CachedRepository<Article, Long> articleCachedRepository = mock(CachedRepository.class);
         articleRepository = mock(ArticleRepository.class);
         ApplicationEventPublisher applicationEventPublisher = mock(ApplicationEventPublisher.class);
         BoardReader boardReader = mock(BoardReader.class);
         UserReader userReader = mock(UserReader.class);
-        articleWriter = new ArticleWriter(idProvider, timeProvider, articleCacheRepository, articleRepository, applicationEventPublisher, boardReader, userReader);
+        articleWriter = new ArticleWriter(idProvider, timeProvider, articleCachedRepository, articleRepository, applicationEventPublisher, boardReader, userReader);
     }
 
 

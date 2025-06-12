@@ -1,6 +1,6 @@
 package board.backend.view.application;
 
-import board.backend.common.infra.CacheRepository;
+import board.backend.common.infra.CachedRepository;
 import board.backend.view.domain.ArticleViewCount;
 import board.backend.view.infra.ArticleViewCountRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,15 +16,15 @@ import static org.mockito.Mockito.when;
 
 class ArticleViewReaderTest {
 
-    private CacheRepository<ArticleViewCount, Long> articleViewCountLongCacheRepository;
+    private CachedRepository<ArticleViewCount, Long> articleViewCountLongCachedRepository;
     private ArticleViewCountRepository articleViewCountRepository;
     private ArticleViewReader articleViewReader;
 
     @BeforeEach
     void setUp() {
-        articleViewCountLongCacheRepository = mock(CacheRepository.class);
+        articleViewCountLongCachedRepository = mock(CachedRepository.class);
         articleViewCountRepository = mock(ArticleViewCountRepository.class);
-        articleViewReader = new ArticleViewReader(articleViewCountLongCacheRepository, articleViewCountRepository);
+        articleViewReader = new ArticleViewReader(articleViewCountLongCachedRepository, articleViewCountRepository);
     }
 
     @Test
@@ -36,7 +36,7 @@ class ArticleViewReaderTest {
             ArticleViewCount.init(1L),
             ArticleViewCount.init(2L)
         );
-        when(articleViewCountLongCacheRepository.getAll(articleIds)).thenReturn(cached);
+        when(articleViewCountLongCachedRepository.finalAllByKey(articleIds)).thenReturn(cached);
 
         // when
         Map<Long, Long> result = articleViewReader.count(articleIds);
@@ -57,7 +57,7 @@ class ArticleViewReaderTest {
         List<ArticleViewCount> uncached = List.of(
             ArticleViewCount.init(2L)
         );
-        when(articleViewCountLongCacheRepository.getAll(articleIds)).thenReturn(cached);
+        when(articleViewCountLongCachedRepository.finalAllByKey(articleIds)).thenReturn(cached);
         when(articleViewCountRepository.findAllById(List.of(2L))).thenReturn(uncached);
 
         // when
@@ -78,7 +78,7 @@ class ArticleViewReaderTest {
             ArticleViewCount.init(1L),
             ArticleViewCount.init(2L)
         );
-        when(articleViewCountLongCacheRepository.getAll(articleIds)).thenReturn(List.of());
+        when(articleViewCountLongCachedRepository.finalAllByKey(articleIds)).thenReturn(List.of());
         when(articleViewCountRepository.findAllById(articleIds)).thenReturn(fromDb);
 
         // when

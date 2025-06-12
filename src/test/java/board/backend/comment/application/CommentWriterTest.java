@@ -6,7 +6,7 @@ import board.backend.comment.domain.Comment;
 import board.backend.comment.domain.CommentNotFound;
 import board.backend.comment.infra.ArticleCommentCountRepository;
 import board.backend.comment.infra.CommentRepository;
-import board.backend.common.infra.CacheRepository;
+import board.backend.common.infra.CachedRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
 import board.backend.user.application.UserReader;
@@ -34,11 +34,11 @@ class CommentWriterTest {
         idProvider = mock(IdProvider.class);
         timeProvider = mock(TimeProvider.class);
         commentRepository = mock(CommentRepository.class);
-        CacheRepository<ArticleCommentCount, Long> articleCommentCountCacheRepository = mock(CacheRepository.class);
+        CachedRepository<ArticleCommentCount, Long> articleCommentCountCachedRepository = mock(CachedRepository.class);
         ArticleCommentCountRepository articleCommentCountRepository = mock(ArticleCommentCountRepository.class);
         ArticleReader articleReader = mock(ArticleReader.class);
         UserReader userReader = mock(UserReader.class);
-        commentWriter = new CommentWriter(idProvider, timeProvider, commentRepository, articleCommentCountCacheRepository, articleCommentCountRepository, articleReader, userReader);
+        commentWriter = new CommentWriter(idProvider, timeProvider, commentRepository, articleCommentCountCachedRepository, articleCommentCountRepository, articleReader, userReader);
     }
 
     @Test

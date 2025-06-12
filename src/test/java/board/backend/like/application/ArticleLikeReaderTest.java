@@ -1,6 +1,6 @@
 package board.backend.like.application;
 
-import board.backend.common.infra.CacheRepository;
+import board.backend.common.infra.CachedRepository;
 import board.backend.like.domain.ArticleLikeCount;
 import board.backend.like.infra.ArticleLikeCountRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,15 +16,15 @@ import static org.mockito.Mockito.when;
 
 class ArticleLikeReaderTest {
 
-    private CacheRepository<ArticleLikeCount, Long> articleLikeCountLongCacheRepository;
+    private CachedRepository<ArticleLikeCount, Long> articleLikeCountLongCachedRepository;
     private ArticleLikeCountRepository articleLikeCountRepository;
     private ArticleLikeReader articleLikeReader;
 
     @BeforeEach
     void setUp() {
-        articleLikeCountLongCacheRepository = mock(CacheRepository.class);
+        articleLikeCountLongCachedRepository = mock(CachedRepository.class);
         articleLikeCountRepository = mock(ArticleLikeCountRepository.class);
-        articleLikeReader = new ArticleLikeReader(articleLikeCountLongCacheRepository, articleLikeCountRepository);
+        articleLikeReader = new ArticleLikeReader(articleLikeCountLongCachedRepository, articleLikeCountRepository);
     }
 
     @Test
@@ -36,7 +36,7 @@ class ArticleLikeReaderTest {
             ArticleLikeCount.init(1L),
             ArticleLikeCount.init(2L)
         );
-        when(articleLikeCountLongCacheRepository.getAll(articleIds)).thenReturn(cached);
+        when(articleLikeCountLongCachedRepository.finalAllByKey(articleIds)).thenReturn(cached);
 
         // when
         Map<Long, Long> result = articleLikeReader.count(articleIds);
@@ -57,7 +57,7 @@ class ArticleLikeReaderTest {
         List<ArticleLikeCount> uncached = List.of(
             ArticleLikeCount.init(2L)
         );
-        when(articleLikeCountLongCacheRepository.getAll(articleIds)).thenReturn(cached);
+        when(articleLikeCountLongCachedRepository.finalAllByKey(articleIds)).thenReturn(cached);
         when(articleLikeCountRepository.findAllById(List.of(2L))).thenReturn(uncached);
 
         // when
@@ -78,7 +78,7 @@ class ArticleLikeReaderTest {
             ArticleLikeCount.init(1L),
             ArticleLikeCount.init(2L)
         );
-        when(articleLikeCountLongCacheRepository.getAll(articleIds)).thenReturn(List.of());
+        when(articleLikeCountLongCachedRepository.finalAllByKey(articleIds)).thenReturn(List.of());
         when(articleLikeCountRepository.findAllById(articleIds)).thenReturn(fromDb);
 
         // when

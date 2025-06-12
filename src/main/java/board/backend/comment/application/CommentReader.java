@@ -5,7 +5,7 @@ import board.backend.comment.domain.ArticleCommentCount;
 import board.backend.comment.domain.Comment;
 import board.backend.comment.infra.ArticleCommentCountRepository;
 import board.backend.comment.infra.CommentRepository;
-import board.backend.common.infra.CacheRepository;
+import board.backend.common.infra.CachedRepository;
 import board.backend.user.application.UserReader;
 import board.backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class CommentReader {
     private final static Duration CACHE_TTL = Duration.ofMinutes(5);
 
     private final CommentRepository commentRepository;
-    private final CacheRepository<ArticleCommentCount, Long> articleCommentCountCacheRepository;
+    private final CachedRepository<ArticleCommentCount, Long> cachedArticleCommentCountRepository;
     private final ArticleCommentCountRepository articleCommentCountRepository;
     private final UserReader userReader;
 
@@ -51,7 +51,7 @@ public class CommentReader {
 
     public Map<Long, Long> count(List<Long> articleIds) {
         // 캐시 조회
-        List<ArticleCommentCount> cached = articleCommentCountCacheRepository.getAll(articleIds);
+        List<ArticleCommentCount> cached = cachedArticleCommentCountRepository.finalAllByKey(articleIds);
 
         Map<Long, Long> map = cached.stream()
             .collect(Collectors.toMap(ArticleCommentCount::getArticleId, ArticleCommentCount::getCommentCount));
@@ -64,7 +64,7 @@ public class CommentReader {
             List<ArticleCommentCount> uncached = articleCommentCountRepository.findAllById(missed);
 
             // 캐시에 저장
-            uncached.forEach(articleCommentCount -> articleCommentCountCacheRepository.set(articleCommentCount.getArticleId(), articleCommentCount, CACHE_TTL));
+            uncached.forEach(articleCommentCount -> cachedArticleCommentCountRepository.save(articleCommentCount.getArticleId(), articleCommentCount, CACHE_TTL));
 
             // 합쳐서 반환
             uncached.forEach(articleCommentCount -> map.put(articleCommentCount.getArticleId(), articleCommentCount.getCommentCount()));

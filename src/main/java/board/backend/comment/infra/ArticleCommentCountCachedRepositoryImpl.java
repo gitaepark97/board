@@ -1,15 +1,15 @@
 package board.backend.comment.infra;
 
 import board.backend.comment.domain.ArticleCommentCount;
-import board.backend.common.infra.AbstractRedisCacheRepository;
+import board.backend.common.infra.AbstractRedisCachedRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-class ArticleCommentCountCacheRepositoryImpl extends AbstractRedisCacheRepository<ArticleCommentCount, Long> {
+class ArticleCommentCountCachedRepositoryImpl extends AbstractRedisCachedRepository<ArticleCommentCount, Long> {
 
-    protected ArticleCommentCountCacheRepositoryImpl(@Qualifier("cacheRedisTemplate") RedisTemplate<String, Object> redisTemplate) {
+    protected ArticleCommentCountCachedRepositoryImpl(@Qualifier("cacheRedisTemplate") RedisTemplate<String, Object> redisTemplate) {
         super(redisTemplate, "comment::article::%s", ArticleCommentCount.class);
     }
 

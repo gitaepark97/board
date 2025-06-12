@@ -1,6 +1,6 @@
 package board.backend.like.application;
 
-import board.backend.common.infra.CacheRepository;
+import board.backend.common.infra.CachedRepository;
 import board.backend.like.domain.ArticleLikeCount;
 import board.backend.like.infra.ArticleLikeCountRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +19,12 @@ public class ArticleLikeReader {
 
     private final static Duration CACHE_TTL = Duration.ofMinutes(1);
 
-    private final CacheRepository<ArticleLikeCount, Long> articleLikeCountCacheRepository;
+    private final CachedRepository<ArticleLikeCount, Long> cachedArticleLikeCountRepository;
     private final ArticleLikeCountRepository articleLikeCountRepository;
 
     public Map<Long, Long> count(List<Long> articleIds) {
         // 캐시 조회
-        List<ArticleLikeCount> cached = articleLikeCountCacheRepository.getAll(articleIds);
+        List<ArticleLikeCount> cached = cachedArticleLikeCountRepository.finalAllByKey(articleIds);
 
         Map<Long, Long> map = cached.stream()
             .collect(Collectors.toMap(ArticleLikeCount::getArticleId, ArticleLikeCount::getLikeCount));
@@ -37,7 +37,7 @@ public class ArticleLikeReader {
             List<ArticleLikeCount> uncached = articleLikeCountRepository.findAllById(missed);
 
             // 캐시에 저장
-            uncached.forEach(articleLikeCount -> articleLikeCountCacheRepository.set(articleLikeCount.getArticleId(), articleLikeCount, CACHE_TTL));
+            uncached.forEach(articleLikeCount -> cachedArticleLikeCountRepository.save(articleLikeCount.getArticleId(), articleLikeCount, CACHE_TTL));
 
             // 합쳐서 반환
             uncached.forEach(articleLikeCount -> map.put(articleLikeCount.getArticleId(), articleLikeCount.getLikeCount()));

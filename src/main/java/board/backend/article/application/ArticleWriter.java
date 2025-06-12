@@ -2,11 +2,11 @@ package board.backend.article.application;
 
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
-import board.backend.article.infra.jpa.ArticleRepository;
+import board.backend.article.infra.ArticleRepository;
 import board.backend.board.application.BoardReader;
 import board.backend.common.event.ArticleCreatedEvent;
 import board.backend.common.event.ArticleDeletedEvent;
-import board.backend.common.infra.CacheRepository;
+import board.backend.common.infra.CachedRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
 import board.backend.user.application.UserReader;
@@ -15,13 +15,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Component
 class ArticleWriter {
 
     private final IdProvider idProvider;
     private final TimeProvider timeProvider;
-    private final CacheRepository<Article, Long> articleCacheRepository;
+    private final CachedRepository<Article, Long> articleCachedRepository;
     private final ArticleRepository articleRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final BoardReader boardReader;
@@ -51,7 +53,7 @@ class ArticleWriter {
         // 게시글 조회
         Article article = articleRepository.findById(articleId).orElseThrow(ArticleNotFound::new);
         // 게시글 캐시 삭제
-        articleCacheRepository.delete(articleId);
+        articleCachedRepository.delete(articleId);
 
         // 게시글 수정
         Article updatedArticle = article.update(userId, title, content, timeProvider.now());
@@ -62,18 +64,20 @@ class ArticleWriter {
     }
 
     @Transactional
-    public void delete(Long articleId, Long userId) {
-        // 게시글 삭제
-        articleRepository.findById(articleId).ifPresent((article -> {
+    public Optional<Long> delete(Long articleId, Long userId) {
+        return articleRepository.findById(articleId).map(article -> {
             // 작성자 확인
             article.checkIsWriter(userId);
+            // 게시글 삭제
             articleRepository.delete(article);
             // 게시글 캐시 삭제
-            articleCacheRepository.delete(articleId);
+            articleCachedRepository.delete(articleId);
 
             // 게시글 삭제 이벤트 발행
             eventPublisher.publishEvent(new ArticleDeletedEvent(articleId));
-        }));
+
+            return article.getBoardId();
+        });
     }
 
 }

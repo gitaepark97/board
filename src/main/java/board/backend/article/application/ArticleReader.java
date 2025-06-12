@@ -2,9 +2,9 @@ package board.backend.article.application;
 
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
-import board.backend.article.infra.jpa.ArticleRepository;
+import board.backend.article.infra.ArticleRepository;
 import board.backend.common.event.ArticleReaderEvent;
-import board.backend.common.infra.CacheRepository;
+import board.backend.common.infra.CachedRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.modulith.NamedInterface;
@@ -20,12 +20,12 @@ public class ArticleReader {
 
     private static final Duration CACHE_TTL = Duration.ofMinutes(5);
 
-    private final CacheRepository<Article, Long> articleCacheRepository;
+    private final CachedRepository<Article, Long> articleCachedRepository;
     private final ArticleRepository articleRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     public void checkArticleExistsOrThrow(Long articleId) {
-        if (articleCacheRepository.get(articleId).isEmpty() && !articleRepository.customExistsById(articleId)) {
+        if (articleCachedRepository.findByKey(articleId).isEmpty() && !articleRepository.customExistsById(articleId)) {
             throw new ArticleNotFound();
         }
     }
@@ -47,10 +47,10 @@ public class ArticleReader {
     }
 
     private Article read(Long articleId) {
-        return articleCacheRepository.get(articleId)
+        return articleCachedRepository.findByKey(articleId)
             .orElseGet(() -> {
                 Article article = articleRepository.findById(articleId).orElseThrow(ArticleNotFound::new);
-                articleCacheRepository.set(articleId, article, CACHE_TTL);
+                articleCachedRepository.save(articleId, article, CACHE_TTL);
                 return article;
             });
     }
