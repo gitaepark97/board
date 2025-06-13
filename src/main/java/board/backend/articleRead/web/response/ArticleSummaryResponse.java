@@ -18,11 +18,11 @@ public record ArticleSummaryResponse(
 
     public static ArticleSummaryResponse from(ArticleWithWriterAndCounts articleWithWriterAndCounts) {
         return new ArticleSummaryResponse(
-            articleWithWriterAndCounts.article().getId().toString(),
-            articleWithWriterAndCounts.article().getBoardId().toString(),
+            articleWithWriterAndCounts.article().id().toString(),
+            articleWithWriterAndCounts.article().boardId().toString(),
             UserSummaryResponse.from(articleWithWriterAndCounts.writer()),
-            articleWithWriterAndCounts.article().getTitle(),
-            articleWithWriterAndCounts.article().getCreatedAt(),
+            articleWithWriterAndCounts.article().title(),
+            articleWithWriterAndCounts.article().createdAt(),
             articleWithWriterAndCounts.likeCount(),
             articleWithWriterAndCounts.viewCount(),
             articleWithWriterAndCounts.commentCount()

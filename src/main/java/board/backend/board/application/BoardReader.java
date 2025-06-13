@@ -1,8 +1,8 @@
 package board.backend.board.application;
 
+import board.backend.board.application.port.BoardRepository;
 import board.backend.board.domain.Board;
 import board.backend.board.domain.BoardNotFound;
-import board.backend.board.infra.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.modulith.NamedInterface;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ public class BoardReader {
     private final BoardRepository boardRepository;
 
     public void checkBoardExistsOrThrow(Long boardId) {
-        if (!boardRepository.customExistsById(boardId)) {
+        if (!boardRepository.existsById(boardId)) {
             throw new BoardNotFound();
         }
     }

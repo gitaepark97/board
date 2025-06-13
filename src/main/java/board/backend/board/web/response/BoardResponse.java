@@ -8,7 +8,7 @@ public record BoardResponse(
 ) {
 
     public static BoardResponse from(Board board) {
-        return new BoardResponse(board.getId().toString(), board.getTitle());
+        return new BoardResponse(board.id().toString(), board.title());
     }
 
 }

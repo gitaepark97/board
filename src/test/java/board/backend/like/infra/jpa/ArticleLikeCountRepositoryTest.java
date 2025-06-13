@@ -1,0 +1,74 @@
+package board.backend.like.infra.jpa;
+
+import board.backend.common.infra.TestRepository;
+import board.backend.like.application.port.ArticleLikeCountRepository;
+import board.backend.like.domain.ArticleLikeCount;
+import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+@Import(ArticleLikeCountRepositoryImpl.class)
+class ArticleLikeCountRepositoryTest extends TestRepository {
+
+    private final Long articleId = 1L;
+
+    @Autowired
+    private ArticleLikeCountRepository articleLikeCountRepository;
+    @Autowired
+    private ArticleLikeCountEntityRepository articleLikeCountEntityRepository;
+    @Autowired
+    private EntityManager em;
+
+    @BeforeEach
+    void setUp() {
+        ArticleLikeCount likeCount = ArticleLikeCount.init(articleId);
+        articleLikeCountEntityRepository.save(ArticleLikeCountEntity.from(likeCount));
+    }
+
+    @Test
+    @DisplayName("존재하지 않으면 insert 된다")
+    void increaseOrSave_insert() {
+        // given
+        Long newArticleId = 2L;
+
+        // when
+        articleLikeCountRepository.increaseOrSave(newArticleId, 1L);
+        em.flush();
+        em.clear();
+
+        // then
+        var saved = articleLikeCountEntityRepository.findById(newArticleId).orElseThrow();
+        assertThat(saved.toArticleLikeCount().likeCount()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("이미 존재하면 comment_count가 1 증가한다")
+    void increaseOrSave_update() {
+        // when
+        articleLikeCountRepository.increaseOrSave(articleId, 1L);
+        em.flush();
+        em.clear();
+
+        // then
+        var updated = articleLikeCountEntityRepository.findById(articleId).orElseThrow();
+        assertThat(updated.toArticleLikeCount().likeCount()).isEqualTo(2L);
+    }
+
+    @Test
+    @DisplayName("좋아요 수를 1 감소시킨다")
+    void decreaseLikeCount() {
+        // when
+        articleLikeCountRepository.decrease(articleId);
+        em.clear();
+
+        // then
+        var updated = articleLikeCountEntityRepository.findById(articleId).orElseThrow();
+        assertThat(updated.toArticleLikeCount().likeCount()).isEqualTo(0);
+    }
+
+}

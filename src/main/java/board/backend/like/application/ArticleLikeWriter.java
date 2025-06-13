@@ -2,10 +2,10 @@ package board.backend.like.application;
 
 import board.backend.article.application.ArticleReader;
 import board.backend.common.support.TimeProvider;
+import board.backend.like.application.port.ArticleLikeCountRepository;
+import board.backend.like.application.port.ArticleLikeRepository;
 import board.backend.like.domain.ArticleLike;
 import board.backend.like.domain.ArticleLikeCount;
-import board.backend.like.infra.ArticleLikeCountRepository;
-import board.backend.like.infra.ArticleLikeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -32,7 +32,7 @@ class ArticleLikeWriter {
 
             // 게시글 좋아요 수 증가
             ArticleLikeCount articleLikeCount = ArticleLikeCount.init(articleId);
-            articleLikeCountRepository.increaseOrSave(articleLikeCount.getArticleId(), articleLikeCount.getLikeCount());
+            articleLikeCountRepository.increaseOrSave(articleLikeCount.articleId(), articleLikeCount.likeCount());
         }
     }
 

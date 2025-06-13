@@ -1,13 +1,11 @@
 package board.backend.auth.domain;
 
 import lombok.Builder;
-import org.springframework.data.redis.core.RedisHash;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Builder
-@RedisHash(value = "session", timeToLive = 60 * 60 * 24 * 7L)
 public record Session(
     String id,
     Long userId,

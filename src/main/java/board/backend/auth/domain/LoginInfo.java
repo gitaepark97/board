@@ -1,33 +1,19 @@
 package board.backend.auth.domain;
 
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-@Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity
-@Table(name = "login_info")
-public class LoginInfo {
-
-    @Id
-    private Long id;
-
-    private Long userId;
-
-    @Enumerated(EnumType.STRING)
-    private LoginMethod loginMethod;
-
-    private String loginKey;
-
-    private String password;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
+public record LoginInfo(
+    Long id,
+    Long userId,
+    LoginMethod loginMethod,
+    String loginKey,
+    String password,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt
+) {
 
     public static LoginInfo create(Long id, String email, String password, Long userId, LocalDateTime now) {
         return LoginInfo.builder()

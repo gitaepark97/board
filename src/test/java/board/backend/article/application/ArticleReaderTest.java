@@ -1,8 +1,8 @@
 package board.backend.article.application;
 
+import board.backend.article.application.port.ArticleRepository;
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
-import board.backend.article.infra.ArticleRepository;
 import board.backend.common.infra.CachedRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,7 +51,7 @@ class ArticleReaderTest {
         // given
         Long articleId = 1L;
         when(articleCachedRepository.findByKey(articleId)).thenReturn(Optional.empty());
-        when(articleRepository.customExistsById(articleId)).thenReturn(true);
+        when(articleRepository.existsById(articleId)).thenReturn(true);
 
         // when
         articleReader.checkArticleExistsOrThrow(articleId);
@@ -63,7 +63,7 @@ class ArticleReaderTest {
         // given
         Long articleId = 1L;
         when(articleCachedRepository.findByKey(articleId)).thenReturn(Optional.empty());
-        when(articleRepository.customExistsById(articleId)).thenReturn(true);
+        when(articleRepository.existsById(articleId)).thenReturn(true);
 
         // when
         articleReader.checkArticleExistsOrThrow(articleId);
@@ -75,7 +75,7 @@ class ArticleReaderTest {
         // given
         Long articleId = 1L;
         when(articleCachedRepository.findByKey(articleId)).thenReturn(Optional.empty());
-        when(articleRepository.customExistsById(articleId)).thenReturn(false);
+        when(articleRepository.existsById(articleId)).thenReturn(false);
 
         // when & then
         Assertions.assertThatThrownBy(() -> articleReader.checkArticleExistsOrThrow(articleId))

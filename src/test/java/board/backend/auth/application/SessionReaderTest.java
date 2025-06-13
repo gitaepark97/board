@@ -1,8 +1,8 @@
 package board.backend.auth.application;
 
+import board.backend.auth.application.port.SessionRepository;
 import board.backend.auth.domain.Session;
 import board.backend.auth.domain.SessionInvalid;
-import board.backend.auth.infra.SessionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -22,11 +22,11 @@ class UserTest {
         User user = User.create(id, email, nickname, now);
 
         // then
-        assertThat(user.getId()).isEqualTo(id);
-        assertThat(user.getEmail()).isEqualTo(email);
-        assertThat(user.getNickname()).isEqualTo(nickname);
-        assertThat(user.getCreatedAt()).isEqualTo(now);
-        assertThat(user.getUpdatedAt()).isEqualTo(now);
+        assertThat(user.id()).isEqualTo(id);
+        assertThat(user.email()).isEqualTo(email);
+        assertThat(user.nickname()).isEqualTo(nickname);
+        assertThat(user.createdAt()).isEqualTo(now);
+        assertThat(user.updatedAt()).isEqualTo(now);
     }
 
     @Test
@@ -40,12 +40,12 @@ class UserTest {
         LocalDateTime updatedAt = LocalDateTime.of(2024, 1, 2, 15, 0);
 
         // when
-        user.update(newNickname, updatedAt);
+        User result = user.update(newNickname, updatedAt);
 
         // then
-        assertThat(user.getNickname()).isEqualTo(newNickname);
-        assertThat(user.getUpdatedAt()).isEqualTo(updatedAt);
-        assertThat(user.getCreatedAt()).isEqualTo(createdAt); // 생성 시각은 그대로 유지
+        assertThat(result.nickname()).isEqualTo(newNickname);
+        assertThat(result.updatedAt()).isEqualTo(updatedAt);
+        assertThat(result.createdAt()).isEqualTo(createdAt); // 생성 시각은 그대로 유지
     }
 
 }

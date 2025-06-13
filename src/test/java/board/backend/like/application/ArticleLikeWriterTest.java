@@ -2,9 +2,9 @@ package board.backend.like.application;
 
 import board.backend.article.application.ArticleReader;
 import board.backend.common.support.TimeProvider;
+import board.backend.like.application.port.ArticleLikeCountRepository;
+import board.backend.like.application.port.ArticleLikeRepository;
 import board.backend.like.domain.ArticleLike;
-import board.backend.like.infra.ArticleLikeCountRepository;
-import board.backend.like.infra.ArticleLikeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -16,12 +16,12 @@ public record CommentWithWriterResponse(
 
     public static CommentWithWriterResponse from(CommentWithWriter commentWithWriter) {
         return new CommentWithWriterResponse(
-            commentWithWriter.comment().getId().toString(),
-            commentWithWriter.comment().getParentId().toString(),
+            commentWithWriter.comment().id().toString(),
+            commentWithWriter.comment().parentId().toString(),
             UserSummaryResponse.from(commentWithWriter.writer()),
-            commentWithWriter.comment().getContent(),
-            commentWithWriter.comment().getCreatedAt(),
-            commentWithWriter.comment().getIsDeleted()
+            commentWithWriter.comment().content(),
+            commentWithWriter.comment().createdAt(),
+            commentWithWriter.comment().isDeleted()
         );
     }
 

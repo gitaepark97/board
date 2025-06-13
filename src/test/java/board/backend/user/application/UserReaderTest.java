@@ -1,9 +1,9 @@
 package board.backend.user.application;
 
 import board.backend.common.infra.CachedRepository;
+import board.backend.user.application.port.UserRepository;
 import board.backend.user.domain.User;
 import board.backend.user.domain.UserNotFound;
-import board.backend.user.infra.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ class UserReaderTest {
     void checkUserExists_OrThrow_whenCacheHit_shouldPass() {
         // given
         Long userId = 1L;
-        when(cachedUserRepository.findByKey(userId)).thenReturn(Optional.of(mock(User.class)));
+        when(cachedUserRepository.existsByKey(userId)).thenReturn(true);
 
         // when
         userReader.checkUserExistsOrThrow(userId);
@@ -48,7 +48,7 @@ class UserReaderTest {
         // given
         Long userId = 1L;
         when(cachedUserRepository.existsByKey(userId)).thenReturn(false);
-        when(userRepository.customExistsById(userId)).thenReturn(true);
+        when(userRepository.existsById(userId)).thenReturn(true);
 
         // when
         userReader.checkUserExistsOrThrow(userId);
@@ -60,7 +60,7 @@ class UserReaderTest {
         // given
         Long userId = 1L;
         when(cachedUserRepository.existsByKey(userId)).thenReturn(false);
-        when(userRepository.customExistsById(userId)).thenReturn(true);
+        when(userRepository.existsById(userId)).thenReturn(true);
 
         // when
         userReader.checkUserExistsOrThrow(userId);
@@ -72,7 +72,7 @@ class UserReaderTest {
         // given
         Long userId = 1L;
         when(cachedUserRepository.existsByKey(userId)).thenReturn(false);
-        when(userRepository.customExistsById(userId)).thenReturn(false);
+        when(userRepository.existsById(userId)).thenReturn(false);
 
         // when & then
         assertThatThrownBy(() -> userReader.checkUserExistsOrThrow(userId))
@@ -99,7 +99,7 @@ class UserReaderTest {
         // given
         Long userId = 1L;
         when(cachedUserRepository.existsByKey(userId)).thenReturn(false);
-        when(userRepository.customExistsById(userId)).thenReturn(true);
+        when(userRepository.existsById(userId)).thenReturn(true);
 
         // when
         boolean result = userReader.isUserExists(userId);

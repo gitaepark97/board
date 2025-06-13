@@ -3,10 +3,10 @@ package board.backend.user.application;
 import board.backend.common.infra.CachedRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
+import board.backend.user.application.port.UserRepository;
 import board.backend.user.domain.User;
 import board.backend.user.domain.UserEmailDuplicated;
 import board.backend.user.domain.UserNotFound;
-import board.backend.user.infra.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -52,9 +52,9 @@ class UserWriterTest {
         User result = userWriter.create(email, nickname);
 
         // then
-        assertThat(result.getId()).isEqualTo(id);
-        assertThat(result.getEmail()).isEqualTo(email);
-        assertThat(result.getNickname()).isEqualTo(nickname);
+        assertThat(result.id()).isEqualTo(id);
+        assertThat(result.email()).isEqualTo(email);
+        assertThat(result.nickname()).isEqualTo(nickname);
     }
 
     @Test
@@ -85,7 +85,7 @@ class UserWriterTest {
         User result = userWriter.update(userId, nickname);
 
         // then
-        assertThat(result.getNickname()).isEqualTo(nickname);
+        assertThat(result.nickname()).isEqualTo(nickname);
     }
 
     @Test

@@ -1,9 +1,9 @@
 package board.backend.user.application;
 
 import board.backend.common.infra.CachedRepository;
+import board.backend.user.application.port.UserRepository;
 import board.backend.user.domain.User;
 import board.backend.user.domain.UserNotFound;
-import board.backend.user.infra.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.modulith.NamedInterface;
 import org.springframework.stereotype.Component;
@@ -26,14 +26,14 @@ public class UserReader {
     private final UserRepository userRepository;
 
     public void checkUserExistsOrThrow(Long userId) {
-        if (!cachedUserRepository.existsByKey(userId) && !userRepository.customExistsById(userId)) {
+        if (!cachedUserRepository.existsByKey(userId) && !userRepository.existsById(userId)) {
             throw new UserNotFound();
         }
         cachedUserRepository.save(userId, null, CACHE_TTL);
     }
 
     public boolean isUserExists(Long userId) {
-        if (cachedUserRepository.existsByKey(userId) || userRepository.customExistsById(userId)) {
+        if (cachedUserRepository.existsByKey(userId) || userRepository.existsById(userId)) {
             cachedUserRepository.save(userId, null, CACHE_TTL);
             return true;
         }
@@ -59,7 +59,7 @@ public class UserReader {
         List<User> cached = cachedUserRepository.finalAllByKey(userIds);
 
         Map<Long, User> map = cached.stream()
-            .collect(Collectors.toMap(User::getId, Function.identity()));
+            .collect(Collectors.toMap(User::id, Function.identity()));
 
         // 캐시 미스만 조회
         List<Long> missed = userIds.stream()
@@ -69,10 +69,10 @@ public class UserReader {
             List<User> uncached = userRepository.findAllById(missed);
 
             // 캐시에 저장
-            uncached.forEach(user -> cachedUserRepository.save(user.getId(), user, CACHE_TTL));
+            uncached.forEach(user -> cachedUserRepository.save(user.id(), user, CACHE_TTL));
 
             // 합쳐서 반환
-            uncached.forEach(user -> map.put(user.getId(), user));
+            uncached.forEach(user -> map.put(user.id(), user));
         }
 
         return map;

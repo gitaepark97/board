@@ -1,22 +1,12 @@
 package board.backend.view.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.*;
+import lombok.Builder;
 
-@Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Entity
-@Table(name = "article_view_count")
-public class ArticleViewCount {
-
-    @Id
-    private Long articleId;
-
-    private Long viewCount;
+public record ArticleViewCount(
+    Long articleId,
+    Long viewCount
+) {
 
     public static ArticleViewCount init(Long articleId) {
         return ArticleViewCount.builder()

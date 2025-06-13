@@ -1,33 +1,19 @@
 package board.backend.user.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.*;
+import lombok.Builder;
 import org.springframework.modulith.NamedInterface;
 
 import java.time.LocalDateTime;
 
-
 @NamedInterface
-@Getter
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Entity
-@Table(name = "user")
-public class User {
-
-    @Id
-    private Long id;
-
-    private String email;
-
-    private String nickname;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
+@Builder(toBuilder = true)
+public record User(
+    Long id,
+    String email,
+    String nickname,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt
+) {
 
     public static User create(Long id, String email, String nickname, LocalDateTime now) {
         return User.builder()
@@ -40,10 +26,10 @@ public class User {
     }
 
     public User update(String nickname, LocalDateTime now) {
-        this.nickname = nickname;
-        this.updatedAt = now;
-
-        return this;
+        return toBuilder()
+            .nickname(nickname)
+            .updatedAt(now)
+            .build();
     }
 
 }

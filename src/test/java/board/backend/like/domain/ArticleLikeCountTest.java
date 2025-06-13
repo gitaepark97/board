@@ -17,8 +17,8 @@ class ArticleLikeCountTest {
         ArticleLikeCount likeCount = ArticleLikeCount.init(articleId);
 
         // then
-        assertThat(likeCount.getArticleId()).isEqualTo(articleId);
-        assertThat(likeCount.getLikeCount()).isEqualTo(1L);
+        assertThat(likeCount.articleId()).isEqualTo(articleId);
+        assertThat(likeCount.likeCount()).isEqualTo(1L);
     }
 
 }

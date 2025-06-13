@@ -1,8 +1,8 @@
 package board.backend.view.application;
 
+import board.backend.view.application.port.ArticleViewCountRepository;
+import board.backend.view.application.port.ArticleViewDistributedLockRepository;
 import board.backend.view.domain.ArticleViewCount;
-import board.backend.view.infra.ArticleViewCountRepository;
-import board.backend.view.infra.ArticleViewDistributedLockRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

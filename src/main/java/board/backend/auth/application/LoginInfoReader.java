@@ -1,10 +1,10 @@
 package board.backend.auth.application;
 
+import board.backend.auth.application.port.LoginInfoRepository;
 import board.backend.auth.domain.LoginInfo;
 import board.backend.auth.domain.LoginInfoNotFound;
 import board.backend.auth.domain.LoginMethod;
 import board.backend.auth.domain.WrongPassword;
-import board.backend.auth.infra.LoginInfoRepository;
 import board.backend.auth.infra.PasswordEncoderProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ class LoginInfoReader {
             .orElseThrow(LoginInfoNotFound::new);
 
         // 비밀번호 확인
-        if (!passwordEncoderProvider.matches(password, loginInfo.getPassword())) {
+        if (!passwordEncoderProvider.matches(password, loginInfo.password())) {
             throw new WrongPassword();
         }
 

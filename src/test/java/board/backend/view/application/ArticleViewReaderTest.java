@@ -1,8 +1,8 @@
 package board.backend.view.application;
 
 import board.backend.common.infra.CachedRepository;
+import board.backend.view.application.port.ArticleViewCountRepository;
 import board.backend.view.domain.ArticleViewCount;
-import board.backend.view.infra.ArticleViewCountRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

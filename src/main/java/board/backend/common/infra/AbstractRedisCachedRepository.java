@@ -1,5 +1,6 @@
 package board.backend.common.infra;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.Duration;
@@ -11,6 +12,8 @@ public abstract class AbstractRedisCachedRepository<V, K> implements CachedRepos
     private final RedisTemplate<String, Object> redisTemplate;
     private final String keyPrefix;
     private final Class<V> valueType;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     protected AbstractRedisCachedRepository(
         RedisTemplate<String, Object> redisTemplate,

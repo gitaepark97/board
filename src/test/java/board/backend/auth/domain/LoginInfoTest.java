@@ -23,13 +23,13 @@ class LoginInfoTest {
         LoginInfo loginInfo = LoginInfo.create(id, email, password, userId, now);
 
         // then
-        assertThat(loginInfo.getId()).isEqualTo(id);
-        assertThat(loginInfo.getUserId()).isEqualTo(userId);
-        assertThat(loginInfo.getLoginMethod()).isEqualTo(LoginMethod.EMAIL);
-        assertThat(loginInfo.getLoginKey()).isEqualTo(email);
-        assertThat(loginInfo.getPassword()).isEqualTo(password);
-        assertThat(loginInfo.getCreatedAt()).isEqualTo(now);
-        assertThat(loginInfo.getUpdatedAt()).isEqualTo(now);
+        assertThat(loginInfo.id()).isEqualTo(id);
+        assertThat(loginInfo.userId()).isEqualTo(userId);
+        assertThat(loginInfo.loginMethod()).isEqualTo(LoginMethod.EMAIL);
+        assertThat(loginInfo.loginKey()).isEqualTo(email);
+        assertThat(loginInfo.password()).isEqualTo(password);
+        assertThat(loginInfo.createdAt()).isEqualTo(now);
+        assertThat(loginInfo.updatedAt()).isEqualTo(now);
     }
 
 }

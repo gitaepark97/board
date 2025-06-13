@@ -1,22 +1,12 @@
 package board.backend.like.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.*;
+import lombok.Builder;
 
-@Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Entity
-@Table(name = "article_like_count")
-public class ArticleLikeCount {
-
-    @Id
-    Long articleId;
-
-    private Long likeCount;
+public record ArticleLikeCount(
+    Long articleId,
+    Long likeCount
+) {
 
     public static ArticleLikeCount init(Long articleId) {
         return ArticleLikeCount.builder()

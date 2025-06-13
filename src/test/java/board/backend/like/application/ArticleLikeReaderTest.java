@@ -1,8 +1,8 @@
 package board.backend.like.application;
 
 import board.backend.common.infra.CachedRepository;
+import board.backend.like.application.port.ArticleLikeCountRepository;
 import board.backend.like.domain.ArticleLikeCount;
-import board.backend.like.infra.ArticleLikeCountRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

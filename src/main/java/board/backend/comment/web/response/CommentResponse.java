@@ -15,12 +15,12 @@ public record CommentResponse(
 
     public static CommentResponse from(Comment comment) {
         return new CommentResponse(
-            comment.getId().toString(),
-            comment.getWriterId().toString(),
-            comment.getParentId().toString(),
-            comment.getContent(),
-            comment.getCreatedAt(),
-            comment.getIsDeleted()
+            comment.id().toString(),
+            comment.writerId().toString(),
+            comment.parentId().toString(),
+            comment.content(),
+            comment.createdAt(),
+            comment.isDeleted()
         );
     }
 

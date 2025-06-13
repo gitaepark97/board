@@ -14,11 +14,11 @@ public record UserResponse(
 
     public static UserResponse from(User user) {
         return new UserResponse(
-            user.getId().toString(),
-            user.getEmail(),
-            user.getNickname(),
-            user.getCreatedAt(),
-            user.getUpdatedAt()
+            user.id().toString(),
+            user.email(),
+            user.nickname(),
+            user.createdAt(),
+            user.updatedAt()
         );
     }
 

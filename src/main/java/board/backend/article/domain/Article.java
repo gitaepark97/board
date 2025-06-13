@@ -1,37 +1,22 @@
 package board.backend.article.domain;
 
 import board.backend.common.support.Forbidden;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.*;
+import lombok.Builder;
 import org.springframework.modulith.NamedInterface;
 
 import java.time.LocalDateTime;
 
 @NamedInterface
-@Getter
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Entity
-@Table(name = "article")
-public class Article {
-
-    @Id
-    private Long id;
-
-    private Long boardId;
-
-    private Long writerId;
-
-    private String title;
-
-    private String content;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
+@Builder(toBuilder = true)
+public record Article(
+    Long id,
+    Long boardId,
+    Long writerId,
+    String title,
+    String content,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt
+) {
 
     public static Article create(
         Long id,
@@ -55,11 +40,11 @@ public class Article {
     public Article update(Long userId, String title, String content, LocalDateTime now) {
         checkIsWriter(userId);
 
-        this.title = title;
-        this.content = content;
-        this.updatedAt = now;
-
-        return this;
+        return toBuilder()
+            .title(title)
+            .content(content)
+            .updatedAt(now)
+            .build();
     }
 
     public void checkIsWriter(Long userId) {

@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -30,8 +29,8 @@ public class ArticleReadService {
     public List<ArticleWithWriterAndCounts> readAll(Long boardId, Long pageSize, Long lastArticleId) {
         // 게시글 목록 조회
         List<Article> articles = articleReader.readAll(boardId, pageSize, lastArticleId);
-        List<Long> articleIds = articles.stream().map(Article::getId).toList();
-        List<Long> writerIds = articles.stream().map(Article::getWriterId).toList();
+        List<Long> articleIds = articles.stream().map(Article::id).toList();
+        List<Long> writerIds = articles.stream().map(Article::writerId).toList();
 
         // 작성자 조회
         Map<Long, User> writerMap = userReader.readAll(writerIds);
@@ -48,12 +47,12 @@ public class ArticleReadService {
         return articles.stream()
             .map(article -> new ArticleWithWriterAndCounts(
                 article,
-                writerMap.get(article.getWriterId()),
-                likeCountMap.getOrDefault(article.getId(), 0L),
-                viewCountMap.getOrDefault(article.getId(), 0L),
-                commentCountMap.getOrDefault(article.getId(), 0L))
+                writerMap.get(article.writerId()),
+                likeCountMap.getOrDefault(article.id(), 0L),
+                viewCountMap.getOrDefault(article.id(), 0L),
+                commentCountMap.getOrDefault(article.id(), 0L))
             )
-            .collect(Collectors.toList());
+            .toList();
     }
 
 }

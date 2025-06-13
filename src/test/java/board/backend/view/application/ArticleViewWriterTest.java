@@ -1,7 +1,7 @@
 package board.backend.view.application;
 
-import board.backend.view.infra.ArticleViewCountRepository;
-import board.backend.view.infra.ArticleViewDistributedLockRepository;
+import board.backend.view.application.port.ArticleViewCountRepository;
+import board.backend.view.application.port.ArticleViewDistributedLockRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

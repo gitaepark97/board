@@ -1,22 +1,12 @@
 package board.backend.comment.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.*;
+import lombok.Builder;
 
-@Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Entity
-@Table(name = "article_comment_count")
-public class ArticleCommentCount {
-
-    @Id
-    private Long articleId;
-
-    private Long commentCount;
+public record ArticleCommentCount(
+    Long articleId,
+    Long commentCount
+) {
 
     public static ArticleCommentCount init(Long articleId) {
         return ArticleCommentCount.builder()

@@ -26,14 +26,14 @@ class CommentTest {
         Comment comment = Comment.create(id, articleId, writerId, parentId, content, now);
 
         // then
-        assertThat(comment.getParentId()).isEqualTo(id);
+        assertThat(comment.parentId()).isEqualTo(id);
         assertThat(comment.isRoot()).isTrue();
-        assertThat(comment.getId()).isEqualTo(id);
-        assertThat(comment.getArticleId()).isEqualTo(articleId);
-        assertThat(comment.getWriterId()).isEqualTo(writerId);
-        assertThat(comment.getContent()).isEqualTo(content);
-        assertThat(comment.getCreatedAt()).isEqualTo(now);
-        assertThat(comment.getIsDeleted()).isFalse();
+        assertThat(comment.id()).isEqualTo(id);
+        assertThat(comment.articleId()).isEqualTo(articleId);
+        assertThat(comment.writerId()).isEqualTo(writerId);
+        assertThat(comment.content()).isEqualTo(content);
+        assertThat(comment.createdAt()).isEqualTo(now);
+        assertThat(comment.isDeleted()).isFalse();
     }
 
     @Test
@@ -52,9 +52,9 @@ class CommentTest {
         Comment comment = Comment.create(id, articleId, writerId, parentId, content, now);
 
         // then
-        assertThat(comment.getParentId()).isEqualTo(parentId);
+        assertThat(comment.parentId()).isEqualTo(parentId);
         assertThat(comment.isRoot()).isFalse();
-        assertThat(comment.getId()).isEqualTo(id);
+        assertThat(comment.id()).isEqualTo(id);
     }
 
     @Test
@@ -88,10 +88,10 @@ class CommentTest {
         Comment comment = Comment.create(1L, 10L, 100L, 1L, "삭제될 댓글", LocalDateTime.now());
 
         // when
-        comment.delete();
+        Comment result = comment.delete();
 
         // then
-        assertThat(comment.getIsDeleted()).isTrue();
+        assertThat(result.isDeleted()).isTrue();
     }
 
     @Test

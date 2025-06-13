@@ -1,8 +1,8 @@
 package board.backend.article.application;
 
+import board.backend.article.application.port.ArticleRepository;
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
-import board.backend.article.infra.ArticleRepository;
 import board.backend.board.application.BoardReader;
 import board.backend.common.event.ArticleCreatedEvent;
 import board.backend.common.event.ArticleDeletedEvent;
@@ -43,7 +43,7 @@ class ArticleWriter {
         articleRepository.save(newArticle);
 
         // 게시글 생 이벤트 발행
-        eventPublisher.publishEvent(new ArticleCreatedEvent(newArticle.getId()));
+        eventPublisher.publishEvent(new ArticleCreatedEvent(newArticle.id()));
 
         return newArticle;
     }
@@ -76,7 +76,7 @@ class ArticleWriter {
             // 게시글 삭제 이벤트 발행
             eventPublisher.publishEvent(new ArticleDeletedEvent(articleId));
 
-            return article.getBoardId();
+            return article.boardId();
         });
     }
 

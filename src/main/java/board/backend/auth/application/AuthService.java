@@ -25,7 +25,7 @@ public class AuthService {
         LoginInfo loginInfo = loginInfoReader.read(email, password);
 
         // 세션 생성
-        Session session = sessionWriter.create(loginInfo.getUserId());
+        Session session = sessionWriter.create(loginInfo.userId());
 
         // 토큰 발급
         return tokenProcessor.issueToken(session);

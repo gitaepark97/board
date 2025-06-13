@@ -1,8 +1,8 @@
 package board.backend.article.application;
 
+import board.backend.article.application.port.ArticleRepository;
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
-import board.backend.article.infra.ArticleRepository;
 import board.backend.common.event.ArticleReaderEvent;
 import board.backend.common.infra.CachedRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class ArticleReader {
     private final ApplicationEventPublisher eventPublisher;
 
     public void checkArticleExistsOrThrow(Long articleId) {
-        if (articleCachedRepository.findByKey(articleId).isEmpty() && !articleRepository.customExistsById(articleId)) {
+        if (articleCachedRepository.findByKey(articleId).isEmpty() && !articleRepository.existsById(articleId)) {
             throw new ArticleNotFound();
         }
     }

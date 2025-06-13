@@ -10,7 +10,7 @@ public record UserSummaryResponse(
 ) {
 
     public static UserSummaryResponse from(User user) {
-        return new UserSummaryResponse(user.getId().toString(), user.getNickname());
+        return new UserSummaryResponse(user.id().toString(), user.nickname());
     }
 
 }

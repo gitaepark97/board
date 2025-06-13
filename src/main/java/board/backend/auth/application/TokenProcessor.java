@@ -1,8 +1,8 @@
 package board.backend.auth.application;
 
 import board.backend.auth.application.dto.Token;
+import board.backend.auth.application.port.TokenProvider;
 import board.backend.auth.domain.Session;
-import board.backend.auth.infra.TokenProvider;
 import board.backend.user.application.UserReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.modulith.NamedInterface;

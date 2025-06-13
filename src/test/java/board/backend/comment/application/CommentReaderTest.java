@@ -1,10 +1,10 @@
 package board.backend.comment.application;
 
 import board.backend.comment.application.dto.CommentWithWriter;
+import board.backend.comment.application.port.ArticleCommentCountRepository;
+import board.backend.comment.application.port.CommentRepository;
 import board.backend.comment.domain.ArticleCommentCount;
 import board.backend.comment.domain.Comment;
-import board.backend.comment.infra.ArticleCommentCountRepository;
-import board.backend.comment.infra.CommentRepository;
 import board.backend.common.infra.CachedRepository;
 import board.backend.user.application.UserReader;
 import board.backend.user.domain.User;

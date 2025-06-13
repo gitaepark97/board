@@ -1,8 +1,8 @@
 package board.backend.article.application;
 
+import board.backend.article.application.port.ArticleRepository;
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
-import board.backend.article.infra.ArticleRepository;
 import board.backend.board.application.BoardReader;
 import board.backend.common.infra.CachedRepository;
 import board.backend.common.support.IdProvider;
@@ -59,9 +59,9 @@ class ArticleWriterTest {
         Article result = articleWriter.create(boardId, writerId, title, content);
 
         // then
-        assertThat(result.getId()).isEqualTo(newArticleId);
-        assertThat(result.getBoardId()).isEqualTo(boardId);
-        assertThat(result.getWriterId()).isEqualTo(writerId);
+        assertThat(result.id()).isEqualTo(newArticleId);
+        assertThat(result.boardId()).isEqualTo(boardId);
+        assertThat(result.writerId()).isEqualTo(writerId);
     }
 
     @Test

@@ -1,8 +1,8 @@
 package board.backend.view.application;
 
 import board.backend.common.infra.CachedRepository;
+import board.backend.view.application.port.ArticleViewCountRepository;
 import board.backend.view.domain.ArticleViewCount;
-import board.backend.view.infra.ArticleViewCountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.modulith.NamedInterface;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,7 @@ public class ArticleViewReader {
         List<ArticleViewCount> cached = CachedArticleViewCountRepository.finalAllByKey(articleIds);
 
         Map<Long, Long> map = cached.stream()
-            .collect(Collectors.toMap(ArticleViewCount::getArticleId, ArticleViewCount::getViewCount));
+            .collect(Collectors.toMap(ArticleViewCount::articleId, ArticleViewCount::viewCount));
 
         // 캐시 미스만 조회
         List<Long> missed = articleIds.stream()
@@ -37,10 +37,10 @@ public class ArticleViewReader {
             List<ArticleViewCount> uncached = articleViewCountRepository.findAllById(missed);
 
             // 캐시에 저장
-            uncached.forEach(articleViewCount -> CachedArticleViewCountRepository.save(articleViewCount.getArticleId(), articleViewCount, CACHE_TTL));
+            uncached.forEach(articleViewCount -> CachedArticleViewCountRepository.save(articleViewCount.articleId(), articleViewCount, CACHE_TTL));
 
             // 합쳐서 반환
-            uncached.forEach(articleViewCount -> map.put(articleViewCount.getArticleId(), articleViewCount.getViewCount()));
+            uncached.forEach(articleViewCount -> map.put(articleViewCount.articleId(), articleViewCount.viewCount()));
         }
 
         return map;

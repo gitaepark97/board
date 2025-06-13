@@ -1,8 +1,8 @@
 package board.backend.auth.application;
 
+import board.backend.auth.application.port.LoginInfoRepository;
 import board.backend.auth.domain.LoginInfoDuplicated;
 import board.backend.auth.domain.LoginMethod;
-import board.backend.auth.infra.LoginInfoRepository;
 import board.backend.auth.infra.PasswordEncoderProvider;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
@@ -55,7 +55,7 @@ class LoginInfoWriterTest {
 
         when(userReader.read(email)).thenReturn(Optional.empty());
         when(userWriter.create(email, nickname)).thenReturn(newUser);
-        when(loginInfoRepository.existsByLoginMethodAndLoginKey(LoginMethod.EMAIL, email)).thenReturn(false);
+        when(loginInfoRepository.existsBy(LoginMethod.EMAIL, email)).thenReturn(false);
         when(idProvider.nextId()).thenReturn(loginInfoId);
         when(passwordEncoderProvider.encode(password)).thenReturn("encoded");
         when(timeProvider.now()).thenReturn(now);
@@ -74,7 +74,7 @@ class LoginInfoWriterTest {
         User user = mock(User.class);
 
         when(userReader.read(email)).thenReturn(Optional.of(user));
-        when(loginInfoRepository.existsByLoginMethodAndLoginKey(LoginMethod.EMAIL, email)).thenReturn(true);
+        when(loginInfoRepository.existsBy(LoginMethod.EMAIL, email)).thenReturn(true);
 
         // when & then
         assertThatThrownBy(() -> loginInfoWriter.create(email, password, nickname))

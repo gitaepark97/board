@@ -1,7 +1,7 @@
 package board.backend.auth.application;
 
+import board.backend.auth.application.port.SessionRepository;
 import board.backend.auth.domain.Session;
-import board.backend.auth.infra.SessionRepository;
 import board.backend.common.support.TimeProvider;
 import board.backend.common.support.UUIDProvider;
 import org.junit.jupiter.api.BeforeEach;

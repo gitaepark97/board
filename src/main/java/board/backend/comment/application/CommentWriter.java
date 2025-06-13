@@ -1,11 +1,11 @@
 package board.backend.comment.application;
 
 import board.backend.article.application.ArticleReader;
+import board.backend.comment.application.port.ArticleCommentCountRepository;
+import board.backend.comment.application.port.CommentRepository;
 import board.backend.comment.domain.ArticleCommentCount;
 import board.backend.comment.domain.Comment;
 import board.backend.comment.domain.CommentNotFound;
-import board.backend.comment.infra.ArticleCommentCountRepository;
-import board.backend.comment.infra.CommentRepository;
 import board.backend.common.infra.CachedRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
@@ -48,7 +48,7 @@ class CommentWriter {
 
         // 게시글 댓글 수 증가
         ArticleCommentCount articleCommentCount = ArticleCommentCount.init(articleId);
-        articleCommentCountRepository.increaseOrSave(articleCommentCount.getArticleId(), articleCommentCount.getCommentCount());
+        articleCommentCountRepository.increaseOrSave(articleCommentCount.articleId(), articleCommentCount.commentCount());
 
         // 게시글 댓글 수 캐시 삭제
         cachedArticleCommentCountRepository.delete(articleId);
@@ -58,10 +58,10 @@ class CommentWriter {
 
     @Transactional
     void delete(Long commentId, Long userId) {
-        commentRepository.findById(commentId).filter(not(Comment::getIsDeleted)).ifPresent(comment -> {
+        commentRepository.findById(commentId).filter(not(Comment::isDeleted)).ifPresent(comment -> {
             comment.checkIsWriter(userId);
             // 게시글 댓글 수 캐시 삭제
-            cachedArticleCommentCountRepository.delete(comment.getArticleId());
+            cachedArticleCommentCountRepository.delete(comment.articleId());
 
             if (hasChildren(comment)) {
                 // 댓글 삭제
@@ -77,7 +77,7 @@ class CommentWriter {
     @Transactional
     void deleteArticle(Long articleId) {
         // 게시글 댓글 삭제
-        commentRepository.deleteByArticleId(articleId);
+        commentRepository.deleteByByArticleId(articleId);
 
         // 게시글 댓글 수 삭제
         articleCommentCountRepository.deleteById(articleId);
@@ -93,16 +93,16 @@ class CommentWriter {
     }
 
     private boolean hasChildren(Comment comment) {
-        return commentRepository.countBy(comment.getArticleId(), comment.getId(), 2) == 2;
+        return commentRepository.countBy(comment.articleId(), comment.id(), 2) == 2;
     }
 
     private void delete(Comment comment) {
         commentRepository.delete(comment);
-        articleCommentCountRepository.decrease(comment.getArticleId());
+        articleCommentCountRepository.decrease(comment.articleId());
         if (!comment.isRoot()) {
             // 부모 댓글 삭제
-            commentRepository.findById(comment.getParentId())
-                .filter(Comment::getIsDeleted)
+            commentRepository.findById(comment.parentId())
+                .filter(Comment::isDeleted)
                 .filter(not(this::hasChildren))
                 .ifPresent(this::delete);
         }

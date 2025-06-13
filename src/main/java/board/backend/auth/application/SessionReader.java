@@ -1,8 +1,8 @@
 package board.backend.auth.application;
 
+import board.backend.auth.application.port.SessionRepository;
 import board.backend.auth.domain.Session;
 import board.backend.auth.domain.SessionInvalid;
-import board.backend.auth.infra.SessionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

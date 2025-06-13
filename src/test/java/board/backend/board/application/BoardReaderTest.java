@@ -1,8 +1,8 @@
 package board.backend.board.application;
 
+import board.backend.board.application.port.BoardRepository;
 import board.backend.board.domain.Board;
 import board.backend.board.domain.BoardNotFound;
-import board.backend.board.infra.BoardRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class BoardReaderTest {
     void checkBoardExistsOrThrow_whenExists_shouldPass() {
         // given
         Long boardId = 1L;
-        when(boardRepository.customExistsById(boardId)).thenReturn(true);
+        when(boardRepository.existsById(boardId)).thenReturn(true);
 
         // when
         boardReader.checkBoardExistsOrThrow(boardId);
@@ -42,7 +42,7 @@ class BoardReaderTest {
     void checkBoardExistsOrThrow_whenNotExists_shouldThrow() {
         // given
         Long boardId = 1L;
-        when(boardRepository.customExistsById(boardId)).thenReturn(false);
+        when(boardRepository.existsById(boardId)).thenReturn(false);
 
         // when & then
         assertThatThrownBy(() -> boardReader.checkBoardExistsOrThrow(boardId))

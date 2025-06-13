@@ -27,13 +27,13 @@ class ArticleTest {
         Article article = Article.create(id, boardId, writerId, title, content, now);
 
         // then
-        assertThat(article.getId()).isEqualTo(id);
-        assertThat(article.getBoardId()).isEqualTo(boardId);
-        assertThat(article.getWriterId()).isEqualTo(writerId);
-        assertThat(article.getTitle()).isEqualTo(title);
-        assertThat(article.getContent()).isEqualTo(content);
-        assertThat(article.getCreatedAt()).isEqualTo(now);
-        assertThat(article.getUpdatedAt()).isEqualTo(now);
+        assertThat(article.id()).isEqualTo(id);
+        assertThat(article.boardId()).isEqualTo(boardId);
+        assertThat(article.writerId()).isEqualTo(writerId);
+        assertThat(article.title()).isEqualTo(title);
+        assertThat(article.content()).isEqualTo(content);
+        assertThat(article.createdAt()).isEqualTo(now);
+        assertThat(article.updatedAt()).isEqualTo(now);
     }
 
     @Test
@@ -52,10 +52,10 @@ class ArticleTest {
         Article updated = article.update(userId, newTitle, newContent, updatedAt);
 
         // then
-        assertThat(updated.getTitle()).isEqualTo(newTitle);
-        assertThat(updated.getContent()).isEqualTo(newContent);
-        assertThat(updated.getUpdatedAt()).isEqualTo(updatedAt);
-        assertThat(updated.getCreatedAt()).isEqualTo(createdAt);
+        assertThat(updated.title()).isEqualTo(newTitle);
+        assertThat(updated.content()).isEqualTo(newContent);
+        assertThat(updated.updatedAt()).isEqualTo(updatedAt);
+        assertThat(updated.createdAt()).isEqualTo(createdAt);
     }
 
     @Test

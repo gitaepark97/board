@@ -1,11 +1,11 @@
 package board.backend.comment.application;
 
 import board.backend.article.application.ArticleReader;
+import board.backend.comment.application.port.ArticleCommentCountRepository;
+import board.backend.comment.application.port.CommentRepository;
 import board.backend.comment.domain.ArticleCommentCount;
 import board.backend.comment.domain.Comment;
 import board.backend.comment.domain.CommentNotFound;
-import board.backend.comment.infra.ArticleCommentCountRepository;
-import board.backend.comment.infra.CommentRepository;
 import board.backend.common.infra.CachedRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
@@ -58,7 +58,7 @@ class CommentWriterTest {
         Comment comment = commentWriter.create(articleId, writerId, null, content);
 
         // then
-        assertThat(comment.getId()).isEqualTo(newCommentId);
+        assertThat(comment.id()).isEqualTo(newCommentId);
     }
 
     @Test
@@ -79,7 +79,7 @@ class CommentWriterTest {
         // given
         Long commentId = 1L;
         Comment comment = mock(Comment.class);
-        when(comment.getIsDeleted()).thenReturn(true);
+        when(comment.isDeleted()).thenReturn(true);
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
 
         // when
@@ -94,9 +94,9 @@ class CommentWriterTest {
         // given
         Long commentId = 1L;
         Comment comment = mock(Comment.class);
-        when(comment.getIsDeleted()).thenReturn(false);
-        when(comment.getArticleId()).thenReturn(10L);
-        when(comment.getId()).thenReturn(commentId);
+        when(comment.isDeleted()).thenReturn(false);
+        when(comment.articleId()).thenReturn(10L);
+        when(comment.id()).thenReturn(commentId);
         when(comment.delete()).thenReturn(comment);
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
         when(commentRepository.countBy(10L, commentId, 2)).thenReturn(2);
@@ -111,9 +111,9 @@ class CommentWriterTest {
         // given
         Long commentId = 1L;
         Comment comment = mock(Comment.class);
-        when(comment.getIsDeleted()).thenReturn(false);
-        when(comment.getArticleId()).thenReturn(10L);
-        when(comment.getId()).thenReturn(commentId);
+        when(comment.isDeleted()).thenReturn(false);
+        when(comment.articleId()).thenReturn(10L);
+        when(comment.id()).thenReturn(commentId);
         when(comment.isRoot()).thenReturn(true);
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
         when(commentRepository.countBy(10L, commentId, 2)).thenReturn(1);

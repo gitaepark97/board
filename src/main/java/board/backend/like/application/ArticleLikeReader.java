@@ -1,8 +1,8 @@
 package board.backend.like.application;
 
 import board.backend.common.infra.CachedRepository;
+import board.backend.like.application.port.ArticleLikeCountRepository;
 import board.backend.like.domain.ArticleLikeCount;
-import board.backend.like.infra.ArticleLikeCountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.modulith.NamedInterface;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,7 @@ public class ArticleLikeReader {
         List<ArticleLikeCount> cached = cachedArticleLikeCountRepository.finalAllByKey(articleIds);
 
         Map<Long, Long> map = cached.stream()
-            .collect(Collectors.toMap(ArticleLikeCount::getArticleId, ArticleLikeCount::getLikeCount));
+            .collect(Collectors.toMap(ArticleLikeCount::articleId, ArticleLikeCount::likeCount));
 
         // 캐시 미스만 조회
         List<Long> missed = articleIds.stream()
@@ -37,10 +37,10 @@ public class ArticleLikeReader {
             List<ArticleLikeCount> uncached = articleLikeCountRepository.findAllById(missed);
 
             // 캐시에 저장
-            uncached.forEach(articleLikeCount -> cachedArticleLikeCountRepository.save(articleLikeCount.getArticleId(), articleLikeCount, CACHE_TTL));
+            uncached.forEach(articleLikeCount -> cachedArticleLikeCountRepository.save(articleLikeCount.articleId(), articleLikeCount, CACHE_TTL));
 
             // 합쳐서 반환
-            uncached.forEach(articleLikeCount -> map.put(articleLikeCount.getArticleId(), articleLikeCount.getLikeCount()));
+            uncached.forEach(articleLikeCount -> map.put(articleLikeCount.articleId(), articleLikeCount.likeCount()));
         }
 
         return map;

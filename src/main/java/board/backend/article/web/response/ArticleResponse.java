@@ -16,13 +16,13 @@ public record ArticleResponse(
 
     public static ArticleResponse from(Article article) {
         return new ArticleResponse(
-            article.getId().toString(),
-            article.getBoardId().toString(),
-            article.getWriterId().toString(),
-            article.getTitle(),
-            article.getContent(),
-            article.getCreatedAt(),
-            article.getUpdatedAt()
+            article.id().toString(),
+            article.boardId().toString(),
+            article.writerId().toString(),
+            article.title(),
+            article.content(),
+            article.createdAt(),
+            article.updatedAt()
         );
     }
 

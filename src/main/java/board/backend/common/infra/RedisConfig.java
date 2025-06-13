@@ -39,7 +39,7 @@ class RedisConfig {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // ISO-8601 형식
         mapper.activateDefaultTyping(
             LaissezFaireSubTypeValidator.instance,
-            ObjectMapper.DefaultTyping.NON_FINAL,
+            ObjectMapper.DefaultTyping.EVERYTHING,
             JsonTypeInfo.As.PROPERTY
         );
         return mapper;

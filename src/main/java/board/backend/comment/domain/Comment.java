@@ -2,35 +2,20 @@ package board.backend.comment.domain;
 
 import board.backend.common.support.Forbidden;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.*;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Entity
-@Table(name = "comment")
-public class Comment {
-
-    @Id
-    private Long id;
-
-    private Long articleId;
-
-    private Long writerId;
-
-    private Long parentId;
-
-    private String content;
-
-    private LocalDateTime createdAt;
-
-    private Boolean isDeleted;
+@Builder(toBuilder = true)
+public record Comment(
+    Long id,
+    Long articleId,
+    Long writerId,
+    Long parentId,
+    String content,
+    LocalDateTime createdAt,
+    Boolean isDeleted
+) {
 
     public static Comment create(
         Long id,
@@ -57,8 +42,9 @@ public class Comment {
     }
 
     public Comment delete() {
-        this.isDeleted = true;
-        return this;
+        return toBuilder()
+            .isDeleted(true)
+            .build();
     }
 
     public void checkIsWriter(Long userId) {
