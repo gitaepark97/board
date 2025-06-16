@@ -2,9 +2,9 @@ package board.backend.common.event;
 
 import java.time.LocalDateTime;
 
-public record ArticleLikedEvent(
+public record ArticleCommentDecreasedEvent(
     Long articleId,
-    LocalDateTime likedAt
+    LocalDateTime createdAt
 ) {
 
 }

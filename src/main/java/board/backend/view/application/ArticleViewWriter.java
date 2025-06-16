@@ -1,6 +1,6 @@
 package board.backend.view.application;
 
-import board.backend.common.event.ArticleViewedEvent;
+import board.backend.common.event.ArticleViewCountIncreasedEvent;
 import board.backend.common.support.TimeProvider;
 import board.backend.view.application.port.ArticleViewCountRepository;
 import board.backend.view.application.port.ArticleViewDistributedLockRepository;
@@ -37,7 +37,7 @@ class ArticleViewWriter {
         articleViewCountRepository.increase(articleId);
 
         // 게시글 조회 이벤트 발행
-        applicationEventPublisher.publishEvent(new ArticleViewedEvent(articleId, timeProvider.now()));
+        applicationEventPublisher.publishEvent(new ArticleViewCountIncreasedEvent(articleId, timeProvider.now()));
 
     }
 

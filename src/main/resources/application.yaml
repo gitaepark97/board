@@ -14,6 +14,10 @@ spring:
           enabled: true
       republish-outstanding-events-on-restart: true
 
+  threads:
+    virtual:
+      enabled: true
+
 management:
   endpoints:
     web:
@@ -43,6 +47,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  datasource:
+    hikari:
+      maximum-pool-size: 30
+      minimum-idle: 10
 
 ---
 spring:

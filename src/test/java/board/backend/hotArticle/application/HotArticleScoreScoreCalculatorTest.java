@@ -39,7 +39,7 @@ class HotArticleScoreScoreCalculatorTest {
 
     @Test
     @DisplayName("좋아요 증가 후 점수 계산")
-    void afterArticleLiked_shouldCalculateScoreAndSave() {
+    void increaseArticleLikeCount_shouldCalculateScoreAndSave() {
         // given
         Long articleId = 1L;
         LocalDateTime now = LocalDateTime.now();
@@ -49,12 +49,12 @@ class HotArticleScoreScoreCalculatorTest {
         when(commentRepo.read(articleId, now)).thenReturn(2L);
 
         // when
-        calculator.afterArticleLiked(articleId, now);
+        calculator.increaseArticleLikeCount(articleId, now);
     }
 
     @Test
     @DisplayName("좋아요 감소 후 점수 계산")
-    void afterArticleUnliked_shouldCalculateScoreAndSave() {
+    void decreaseArticleLikeCount_shouldCalculateScoreAndSave() {
         // given
         Long articleId = 1L;
         LocalDateTime now = LocalDateTime.now();
@@ -63,12 +63,12 @@ class HotArticleScoreScoreCalculatorTest {
         when(commentRepo.read(articleId, now)).thenReturn(1L);
 
         // when
-        calculator.afterArticleUnliked(articleId, now);
+        calculator.decreaseArticleLikeCount(articleId, now);
     }
 
     @Test
     @DisplayName("조회수 증가 후 점수 계산")
-    void afterArticleViewed_shouldCalculateScoreAndSave() {
+    void increaseArticleViewCount_shouldCalculateScoreAndSave() {
         // given
         Long articleId = 1L;
         LocalDateTime now = LocalDateTime.now();
@@ -78,12 +78,12 @@ class HotArticleScoreScoreCalculatorTest {
         when(commentRepo.read(articleId, now)).thenReturn(1L);
 
         // when
-        calculator.afterArticleViewed(articleId, now);
+        calculator.increaseArticleViewCount(articleId, now);
     }
 
     @Test
     @DisplayName("댓글 생성 시 점수 계산")
-    void afterCommentCreated_shouldCalculateScoreAndSave() {
+    void increaseArticleCommentCount_shouldCalculateScoreAndSave() {
         // given
         Long articleId = 1L;
         LocalDateTime now = LocalDateTime.now();
@@ -92,12 +92,12 @@ class HotArticleScoreScoreCalculatorTest {
         when(commentRepo.read(articleId, now)).thenReturn(5L);
 
         // when
-        calculator.afterCommentCreated(articleId, now);
+        calculator.increaseArticleCommentCount(articleId, now);
     }
 
     @Test
     @DisplayName("댓글 삭제 시 점수 계산")
-    void afterCommentDeleted_shouldCalculateScoreAndSave() {
+    void decreaseArticleCommentCount_shouldCalculateScoreAndSave() {
         // given
         Long articleId = 2L;
         LocalDateTime now = LocalDateTime.now();
@@ -106,7 +106,7 @@ class HotArticleScoreScoreCalculatorTest {
         when(commentRepo.read(articleId, now)).thenReturn(3L);
 
         // when
-        calculator.afterCommentDeleted(articleId, now);
+        calculator.decreaseArticleCommentCount(articleId, now);
     }
 
 }

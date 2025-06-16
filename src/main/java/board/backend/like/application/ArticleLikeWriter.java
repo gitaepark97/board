@@ -1,7 +1,7 @@
 package board.backend.like.application;
 
 import board.backend.article.application.ArticleReader;
-import board.backend.common.event.ArticleLikedEvent;
+import board.backend.common.event.ArticleLikeCountIncreasedEvent;
 import board.backend.common.support.TimeProvider;
 import board.backend.like.application.port.ArticleLikeCountRepository;
 import board.backend.like.application.port.ArticleLikeRepository;
@@ -38,7 +38,7 @@ class ArticleLikeWriter {
             articleLikeCountRepository.increaseOrSave(articleLikeCount.articleId(), articleLikeCount.likeCount());
 
             // 게시글 좋아요 생성 이벤트 발행
-            applicationEventPublisher.publishEvent(new ArticleLikedEvent(articleId, articleLike.createdAt()));
+            applicationEventPublisher.publishEvent(new ArticleLikeCountIncreasedEvent(articleId, articleLike.createdAt()));
         }
     }
 
@@ -52,7 +52,7 @@ class ArticleLikeWriter {
             articleLikeCountRepository.decrease(articleId);
 
             // 게시글 좋아요 삭제 이벤트 발행
-            applicationEventPublisher.publishEvent(new ArticleLikedEvent(articleId, timeProvider.now()));
+            applicationEventPublisher.publishEvent(new ArticleLikeCountIncreasedEvent(articleId, timeProvider.now()));
         });
     }
 

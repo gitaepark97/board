@@ -28,8 +28,8 @@ abstract class DailyArticleCountRepositoryImpl implements DailyArticleCountRepos
     }
 
     @Override
-    public void increaseOrSave(Long articleId, LocalDateTime time, Duration ttl) {
-        String key = generateKey(articleId, time);
+    public void increaseOrSave(Long articleId, LocalDateTime now, Duration ttl) {
+        String key = generateKey(articleId, now);
         redisTemplate.opsForValue().increment(key);
 
         boolean hasTtl = redisTemplate.getExpire(key) > 0;
@@ -39,8 +39,8 @@ abstract class DailyArticleCountRepositoryImpl implements DailyArticleCountRepos
     }
 
     @Override
-    public void decrease(Long articleId, LocalDateTime time) {
-        String key = generateKey(articleId, time);
+    public void decrease(Long articleId, LocalDateTime now) {
+        String key = generateKey(articleId, now);
 
         if (redisTemplate.hasKey(key)) {
             redisTemplate.opsForValue().decrement(key);

@@ -13,28 +13,28 @@ class HotArticleEventHandler {
     private final HotArticleWriter hotArticleWriter;
 
     @ApplicationModuleListener
-    void handle(ArticleLikedEvent event) {
-        hotArticleScoreScoreCalculator.afterArticleLiked(event.articleId(), event.likedAt());
+    void handle(ArticleLikeCountIncreasedEvent event) {
+        hotArticleScoreScoreCalculator.increaseArticleLikeCount(event.articleId(), event.createdAt());
     }
 
     @ApplicationModuleListener
-    void handle(ArticleUnlikedEvent event) {
-        hotArticleScoreScoreCalculator.afterArticleUnliked(event.articleId(), event.unlikedAt());
+    void handle(ArticleLikeCountDecreasedEvent event) {
+        hotArticleScoreScoreCalculator.decreaseArticleLikeCount(event.articleId(), event.unlikedAt());
     }
 
     @ApplicationModuleListener
-    void handle(ArticleViewedEvent event) {
-        hotArticleScoreScoreCalculator.afterArticleViewed(event.articleId(), event.viewedAt());
+    void handle(ArticleViewCountIncreasedEvent event) {
+        hotArticleScoreScoreCalculator.increaseArticleViewCount(event.articleId(), event.createdAt());
     }
 
     @ApplicationModuleListener
-    void handle(CommentCreatedEvent event) {
-        hotArticleScoreScoreCalculator.afterCommentCreated(event.articleId(), event.createdAt());
+    void handle(ArticleCommentCountIncreasedEvent event) {
+        hotArticleScoreScoreCalculator.increaseArticleCommentCount(event.articleId(), event.createdAt());
     }
 
     @ApplicationModuleListener
-    void handle(CommentDeletedEvent event) {
-        hotArticleScoreScoreCalculator.afterCommentDeleted(event.articleId(), event.deletedAt());
+    void handle(ArticleCommentDecreasedEvent event) {
+        hotArticleScoreScoreCalculator.decreaseArticleCommentCount(event.articleId(), event.createdAt());
     }
 
     @ApplicationModuleListener

@@ -6,8 +6,8 @@ import board.backend.comment.application.port.CommentRepository;
 import board.backend.comment.domain.ArticleCommentCount;
 import board.backend.comment.domain.Comment;
 import board.backend.comment.domain.CommentNotFound;
-import board.backend.common.event.CommentCreatedEvent;
-import board.backend.common.event.CommentDeletedEvent;
+import board.backend.common.event.ArticleCommentCountIncreasedEvent;
+import board.backend.common.event.ArticleCommentDecreasedEvent;
 import board.backend.common.infra.CachedRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
@@ -58,7 +58,7 @@ class CommentWriter {
         cachedArticleCommentCountRepository.delete(articleId);
 
         // 댓글 생성 이벤트 발행
-        applicationEventPublisher.publishEvent(new CommentCreatedEvent(articleId, newComment.createdAt()));
+        applicationEventPublisher.publishEvent(new ArticleCommentCountIncreasedEvent(articleId, newComment.createdAt()));
 
         return newComment;
     }
@@ -105,7 +105,7 @@ class CommentWriter {
         cachedArticleCommentCountRepository.delete(comment.articleId());
 
         // 댓글 삭제 이벤트 발행
-        applicationEventPublisher.publishEvent(new CommentDeletedEvent(comment.articleId(), timeProvider.now()));
+        applicationEventPublisher.publishEvent(new ArticleCommentDecreasedEvent(comment.articleId(), timeProvider.now()));
 
         commentRepository.delete(comment);
         articleCommentCountRepository.decrease(comment.articleId());
