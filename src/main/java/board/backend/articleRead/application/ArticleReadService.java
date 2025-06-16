@@ -48,11 +48,31 @@ public class ArticleReadService {
             .map(article -> new ArticleWithWriterAndCounts(
                 article,
                 writerMap.get(article.writerId()),
-                likeCountMap.getOrDefault(article.id(), 0L),
-                viewCountMap.getOrDefault(article.id(), 0L),
-                commentCountMap.getOrDefault(article.id(), 0L))
+                likeCountMap.get(article.id()),
+                viewCountMap.get(article.id()),
+                commentCountMap.get(article.id()))
             )
             .toList();
+    }
+
+    public ArticleWithWriterAndCounts read(Long articleId, String ip) {
+        // 게시글 조회
+        Article article = articleReader.read(articleId, ip);
+
+        // 작성자 조회
+        User wrtier = userReader.read(article.writerId());
+
+        // 게시글 좋아요 수 조회
+        Long likeCount = articleLikeReader.count(articleId);
+
+        // 게시글 조회 수 조회
+        Long viewCount = articleViewReader.count(articleId);
+
+
+        // 게시글 댓글 수 조회
+        Long commentCount = commentReader.count(articleId);
+
+        return new ArticleWithWriterAndCounts(article, wrtier, likeCount, viewCount, commentCount);
     }
 
 }

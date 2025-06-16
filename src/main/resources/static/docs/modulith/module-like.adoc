@@ -1,9 +1,0 @@
-[%autowidth.stretch, cols="h,a"]
-|===
-|Base package
-|`board.backend.like`
-|Bean references
-|* `b.b.c.infra.CacheRepository` (in Common)
-* `b.b.c.support.TimeProvider` (in Common)
-* `b.b.a.application.ArticleReader` (in Article)
-|===

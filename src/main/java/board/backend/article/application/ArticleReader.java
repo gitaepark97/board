@@ -36,7 +36,7 @@ public class ArticleReader {
             articleRepository.findAllByBoardId(boardId, pageSize, lastArticleId);
     }
 
-    Article read(Long articleId, String ip) {
+    public Article read(Long articleId, String ip) {
         // 게시글 조회
         Article article = read(articleId);
 

@@ -1,14 +1,14 @@
 package board.backend.articleRead.web.response;
 
 import board.backend.articleRead.application.dto.ArticleWithWriterAndCounts;
-import board.backend.user.web.response.UserSummaryResponse;
+import board.backend.user.web.response.UserResponse;
 
 import java.time.LocalDateTime;
 
-public record ArticleSummaryResponse(
+public record ArticleResponse(
     String id,
     String boardId,
-    UserSummaryResponse writer,
+    UserResponse writer,
     String title,
     LocalDateTime createdAt,
     Long likeCount,
@@ -16,11 +16,11 @@ public record ArticleSummaryResponse(
     Long commentCount
 ) {
 
-    public static ArticleSummaryResponse from(ArticleWithWriterAndCounts articleWithWriterAndCounts) {
-        return new ArticleSummaryResponse(
+    public static ArticleResponse from(ArticleWithWriterAndCounts articleWithWriterAndCounts) {
+        return new ArticleResponse(
             articleWithWriterAndCounts.article().id().toString(),
             articleWithWriterAndCounts.article().boardId().toString(),
-            UserSummaryResponse.from(articleWithWriterAndCounts.writer()),
+            UserResponse.from(articleWithWriterAndCounts.writer()),
             articleWithWriterAndCounts.article().title(),
             articleWithWriterAndCounts.article().createdAt(),
             articleWithWriterAndCounts.likeCount(),

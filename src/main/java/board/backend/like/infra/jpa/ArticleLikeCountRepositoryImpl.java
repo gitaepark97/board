@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -15,6 +16,11 @@ class ArticleLikeCountRepositoryImpl implements ArticleLikeCountRepository {
 
     private final JPAQueryFactory queryFactory;
     private final ArticleLikeCountEntityRepository articleLikeCountEntityRepository;
+
+    @Override
+    public Optional<ArticleLikeCount> findById(Long articleId) {
+        return articleLikeCountEntityRepository.findById(articleId).map(ArticleLikeCountEntity::toArticleLikeCount);
+    }
 
     @Override
     public List<ArticleLikeCount> findAllById(List<Long> articleIds) {

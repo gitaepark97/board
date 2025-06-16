@@ -3,7 +3,6 @@ package board.backend.common.web.response;
 import board.backend.common.support.ApplicationException;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice(basePackages = "board.backend", basePackageClasses = ApiResponseHandler.class)
-@Slf4j
 class ApiResponseHandler implements ResponseBodyAdvice<Object> {
 
     @Override
@@ -55,13 +53,11 @@ class ApiResponseHandler implements ResponseBodyAdvice<Object> {
 
     @ExceptionHandler(Exception.class)
     ApiResponse<?> handleException(Exception e) {
-        log.error(e.getMessage(), e);
         return ApiResponse.of(new ApplicationException(500, "서버 내부 오류입니다."));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ApiResponse<?> handleException(MethodArgumentNotValidException e) {
-        log.warn(e.getMessage(), e);
         Map<String, String> errors = new HashMap<>();
 
         e.getBindingResult().getAllErrors().forEach(error -> {
@@ -74,13 +70,11 @@ class ApiResponseHandler implements ResponseBodyAdvice<Object> {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     ApiResponse<?> handleException(HttpMessageNotReadableException e) {
-        log.warn(e.getMessage(), e);
         return ApiResponse.of(new ApplicationException(400, "잘못된 입력입니다."));
     }
 
     @ExceptionHandler(ApplicationException.class)
     ApiResponse<?> handleApplicationException(ApplicationException e) {
-        log.warn(e.getMessage(), e);
         return ApiResponse.of(e);
     }
 

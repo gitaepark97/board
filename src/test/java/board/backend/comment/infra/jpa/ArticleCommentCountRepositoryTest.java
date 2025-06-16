@@ -42,8 +42,8 @@ class ArticleCommentCountRepositoryTest extends TestRepository {
         em.clear();
 
         // then
-        var saved = articleCommentCountEntityRepository.findById(newArticleId).orElseThrow();
-        assertThat(saved.toArticleCommentCount().commentCount()).isEqualTo(1L);
+        var saved = articleCommentCountRepository.findById(newArticleId).orElseThrow();
+        assertThat(saved.commentCount()).isEqualTo(1L);
     }
 
     @Test
@@ -55,8 +55,8 @@ class ArticleCommentCountRepositoryTest extends TestRepository {
         em.clear();
 
         // then
-        var updated = articleCommentCountEntityRepository.findById(articleId).orElseThrow();
-        assertThat(updated.toArticleCommentCount().commentCount()).isEqualTo(2L);
+        var updated = articleCommentCountRepository.findById(articleId).orElseThrow();
+        assertThat(updated.commentCount()).isEqualTo(2L);
     }
 
     @Test
@@ -68,8 +68,8 @@ class ArticleCommentCountRepositoryTest extends TestRepository {
         em.clear();
 
         // then
-        var updated = articleCommentCountEntityRepository.findById(articleId).orElseThrow();
-        assertThat(updated.toArticleCommentCount().commentCount()).isEqualTo(0L);
+        var updated = articleCommentCountRepository.findById(articleId).orElseThrow();
+        assertThat(updated.commentCount()).isEqualTo(0L);
     }
 
 }

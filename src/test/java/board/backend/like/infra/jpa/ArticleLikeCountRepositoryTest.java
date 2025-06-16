@@ -42,8 +42,8 @@ class ArticleLikeCountRepositoryTest extends TestRepository {
         em.clear();
 
         // then
-        var saved = articleLikeCountEntityRepository.findById(newArticleId).orElseThrow();
-        assertThat(saved.toArticleLikeCount().likeCount()).isEqualTo(1L);
+        var saved = articleLikeCountRepository.findById(newArticleId).orElseThrow();
+        assertThat(saved.likeCount()).isEqualTo(1L);
     }
 
     @Test
@@ -55,8 +55,8 @@ class ArticleLikeCountRepositoryTest extends TestRepository {
         em.clear();
 
         // then
-        var updated = articleLikeCountEntityRepository.findById(articleId).orElseThrow();
-        assertThat(updated.toArticleLikeCount().likeCount()).isEqualTo(2L);
+        var updated = articleLikeCountRepository.findById(articleId).orElseThrow();
+        assertThat(updated.likeCount()).isEqualTo(2L);
     }
 
     @Test
@@ -67,8 +67,8 @@ class ArticleLikeCountRepositoryTest extends TestRepository {
         em.clear();
 
         // then
-        var updated = articleLikeCountEntityRepository.findById(articleId).orElseThrow();
-        assertThat(updated.toArticleLikeCount().likeCount()).isEqualTo(0);
+        var updated = articleLikeCountRepository.findById(articleId).orElseThrow();
+        assertThat(updated.likeCount()).isEqualTo(0);
     }
 
 }

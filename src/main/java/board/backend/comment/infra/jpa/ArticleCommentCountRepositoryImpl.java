@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
@@ -14,6 +15,12 @@ class ArticleCommentCountRepositoryImpl implements ArticleCommentCountRepository
 
     private final JPAQueryFactory queryFactory;
     private final ArticleCommentCountEntityRepository articleCommentCountEntityRepository;
+
+    @Override
+    public Optional<ArticleCommentCount> findById(Long articleId) {
+        return articleCommentCountEntityRepository.findById(articleId)
+            .map(ArticleCommentCountEntity::toArticleCommentCount);
+    }
 
     @Override
     public List<ArticleCommentCount> findAllById(List<Long> articleIds) {

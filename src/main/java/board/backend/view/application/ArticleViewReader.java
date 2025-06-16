@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.util.function.Predicate.not;
+
 @NamedInterface
 @RequiredArgsConstructor
 @Component
@@ -22,6 +24,13 @@ public class ArticleViewReader {
     private final CachedRepository<ArticleViewCount, Long> CachedArticleViewCountRepository;
     private final ArticleViewCountRepository articleViewCountRepository;
 
+    public Long count(Long articleId) {
+        return CachedArticleViewCountRepository.findByKey(articleId)
+            .or(() -> articleViewCountRepository.findById(articleId))
+            .map(ArticleViewCount::viewCount)
+            .orElse(0L);
+    }
+
     public Map<Long, Long> count(List<Long> articleIds) {
         // 캐시 조회
         List<ArticleViewCount> cached = CachedArticleViewCountRepository.finalAllByKey(articleIds);
@@ -31,7 +40,7 @@ public class ArticleViewReader {
 
         // 캐시 미스만 조회
         List<Long> missed = articleIds.stream()
-            .filter(id -> !map.containsKey(id))
+            .filter(not(map::containsKey))
             .toList();
         if (!missed.isEmpty()) {
             List<ArticleViewCount> uncached = articleViewCountRepository.findAllById(missed);

@@ -20,8 +20,6 @@ class ArticleViewCountRepositoryTest extends TestRepository {
     @Autowired
     private ArticleViewCountRepository articleViewCountRepository;
     @Autowired
-    private ArticleViewCountEntityRepository articleViewCountEntityRepository;
-    @Autowired
     private EntityManager em;
 
     @BeforeEach
@@ -38,8 +36,8 @@ class ArticleViewCountRepositoryTest extends TestRepository {
         em.clear();
 
         // then
-        var updated = articleViewCountEntityRepository.findById(articleId).orElseThrow();
-        assertThat(updated.toArticleViewCount().viewCount()).isEqualTo(2);
+        var updated = articleViewCountRepository.findById(articleId).orElseThrow();
+        assertThat(updated.viewCount()).isEqualTo(2);
     }
 
 }

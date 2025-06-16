@@ -15,6 +15,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.function.Predicate.not;
+
 @NamedInterface
 @RequiredArgsConstructor
 @Component
@@ -45,7 +47,7 @@ public class UserReader {
         return userRepository.findByEmail(email);
     }
 
-    User read(Long userId) {
+    public User read(Long userId) {
         return cachedUserRepository.findByKey(userId)
             .orElseGet(() -> {
                 User user = userRepository.findById(userId).orElseThrow(UserNotFound::new);
@@ -63,7 +65,7 @@ public class UserReader {
 
         // 캐시 미스만 조회
         List<Long> missed = userIds.stream()
-            .filter(id -> !map.containsKey(id))
+            .filter(not(map::containsKey))
             .toList();
         if (!missed.isEmpty()) {
             List<User> uncached = userRepository.findAllById(missed);

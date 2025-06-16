@@ -14,12 +14,7 @@ import java.util.Optional;
 public class ArticleService {
 
     private final CacheManager cacheManager;
-    private final ArticleReader articleReader;
     private final ArticleWriter articleWriter;
-
-    public Article read(Long articleId, String ip) {
-        return articleReader.read(articleId, ip);
-    }
 
     @CacheEvict(value = "articleList::board", key = "#boardId")
     public Article create(Long boardId, Long userId, String title, String content) {

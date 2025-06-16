@@ -16,12 +16,13 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,6 +32,49 @@ class ArticleReadControllerTest extends TestController {
 
     @MockitoBean
     private ArticleReadService articleReadService;
+
+    @Test
+    @DisplayName("게시글 조회 API - 성공")
+    void read_success() throws Exception {
+        // given
+        Long articleId = 1L;
+        LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
+        ArticleWithWriterAndCounts response = ArticleWithWriterAndCounts.of(Article.create(articleId, 1L, 1L, "제목1", "내용1", now), User.create(1L, "user1@email.com", "회원1", LocalDateTime.now()), 1L, 1L, 1L);
+
+        when(articleReadService.read(eq(articleId), anyString())).thenReturn(response);
+
+        // when & then
+        mockMvc.perform(get("/api/articles/{articleId}", articleId)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value(HttpStatus.OK.name()))
+            .andExpect(jsonPath("$.message").value("성공"))
+            .andExpect(jsonPath("$.data.id").value(articleId.toString()))
+            .andExpect(jsonPath("$.data.title").value("제목1"))
+            .andExpect(jsonPath("$.data.writer.id").value("1"))
+            .andExpect(jsonPath("$.data.writer.nickname").value("회원1"))
+            .andExpect(jsonPath("$.data.likeCount").value(1L))
+            .andExpect(jsonPath("$.data.viewCount").value(1L))
+            .andExpect(jsonPath("$.data.commentCount").value(1L))
+            .andDo(document("articles/read",
+                pathParameters(
+                    parameterWithName("articleId").description("조회할 게시글 ID")
+                ),
+                responseFields(
+                    fieldWithPath("status").description("HTTP 상태"),
+                    fieldWithPath("message").description("응답 메시지"),
+                    fieldWithPath("data.id").type(JsonFieldType.STRING).description("게시글 ID"),
+                    fieldWithPath("data.boardId").type(JsonFieldType.STRING).description("게시판 ID"),
+                    fieldWithPath("data.writer.id").type(JsonFieldType.STRING).description("작성자 ID"),
+                    fieldWithPath("data.writer.nickname").type(JsonFieldType.STRING).description("작성자 닉네임"),
+                    fieldWithPath("data.title").type(JsonFieldType.STRING).description("제목"),
+                    fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("생성 시각"),
+                    fieldWithPath("data.likeCount").type(JsonFieldType.NUMBER).description("좋아요 수"),
+                    fieldWithPath("data.viewCount").type(JsonFieldType.NUMBER).description("조회 수"),
+                    fieldWithPath("data.commentCount").type(JsonFieldType.NUMBER).description("댓글 수")
+                )
+            ));
+    }
 
     @Test
     @DisplayName("게시글 목록 조회 API - 성공")

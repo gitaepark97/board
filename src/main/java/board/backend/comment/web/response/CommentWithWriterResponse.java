@@ -1,14 +1,14 @@
 package board.backend.comment.web.response;
 
 import board.backend.comment.application.dto.CommentWithWriter;
-import board.backend.user.web.response.UserSummaryResponse;
+import board.backend.user.web.response.UserResponse;
 
 import java.time.LocalDateTime;
 
 public record CommentWithWriterResponse(
     String id,
     String parentId,
-    UserSummaryResponse writer,
+    UserResponse writer,
     String content,
     LocalDateTime createdAt,
     Boolean isDeleted
@@ -18,7 +18,7 @@ public record CommentWithWriterResponse(
         return new CommentWithWriterResponse(
             commentWithWriter.comment().id().toString(),
             commentWithWriter.comment().parentId().toString(),
-            UserSummaryResponse.from(commentWithWriter.writer()),
+            UserResponse.from(commentWithWriter.writer()),
             commentWithWriter.comment().content(),
             commentWithWriter.comment().createdAt(),
             commentWithWriter.comment().isDeleted()

@@ -1,12 +1,10 @@
 package board.backend.articleRead.web;
 
 import board.backend.articleRead.application.ArticleReadService;
-import board.backend.articleRead.web.response.ArticleSummaryResponse;
+import board.backend.articleRead.web.response.ArticleResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,15 +16,20 @@ class ArticleReadController {
     private final ArticleReadService articleReadService;
 
     @GetMapping
-    List<ArticleSummaryResponse> readAll(
+    List<ArticleResponse> readAll(
         @RequestParam Long boardId,
         @RequestParam(required = false, defaultValue = "10") Long pageSize,
         @RequestParam(required = false) Long lastArticleId
     ) {
         return articleReadService.readAll(boardId, pageSize, lastArticleId)
             .stream()
-            .map(ArticleSummaryResponse::from)
+            .map(ArticleResponse::from)
             .toList();
+    }
+
+    @GetMapping("/{articleId}")
+    ArticleResponse read(@PathVariable Long articleId, HttpServletRequest request) {
+        return ArticleResponse.from(articleReadService.read(articleId, request.getRemoteAddr()));
     }
 
 }

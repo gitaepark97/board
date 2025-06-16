@@ -17,7 +17,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDateTime;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -35,42 +36,6 @@ class ArticleControllerTest extends TestController {
 
     @MockitoBean
     private ArticleService articleService;
-
-    @Test
-    @DisplayName("게시글 조회 API - 성공")
-    void read_success() throws Exception {
-        // given
-        Long articleId = 1L;
-        LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
-        Article response = Article.create(articleId, 1L, 100L, "조회 제목", "조회 내용", now);
-
-        when(articleService.read(eq(articleId), anyString())).thenReturn(response);
-
-        // when & then
-        mockMvc.perform(get("/api/articles/{articleId}", articleId)
-                .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.status").value(HttpStatus.OK.name()))
-            .andExpect(jsonPath("$.message").value("성공"))
-            .andExpect(jsonPath("$.data.id").value(articleId))
-            .andExpect(jsonPath("$.data.title").value("조회 제목"))
-            .andDo(document("articles/read",
-                pathParameters(
-                    parameterWithName("articleId").description("조회할 게시글 ID")
-                ),
-                responseFields(
-                    fieldWithPath("status").description("HTTP 상태"),
-                    fieldWithPath("message").description("응답 메시지"),
-                    fieldWithPath("data.id").type(JsonFieldType.STRING).description("게시글 ID"),
-                    fieldWithPath("data.boardId").type(JsonFieldType.STRING).description("게시판 ID"),
-                    fieldWithPath("data.writerId").type(JsonFieldType.STRING).description("작성자 ID"),
-                    fieldWithPath("data.title").type(JsonFieldType.STRING).description("제목"),
-                    fieldWithPath("data.content").type(JsonFieldType.STRING).description("내용"),
-                    fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("생성 시각"),
-                    fieldWithPath("data.updatedAt").type(JsonFieldType.STRING).description("수정 시각")
-                )
-            ));
-    }
 
     @Test
     @DisplayName("게시글 생성 API - 성공")

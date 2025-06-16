@@ -116,27 +116,14 @@ tasks.named('asciidoctor') {
 tasks.register('copyApiDocument', Copy) {
     dependsOn asciidoctor
     doFirst {
-        delete file("src/main/resources/static/docs/api")
+        delete file("src/main/resources/static/docs")
     }
     from asciidoctor.outputDir
-    into file("src/main/resources/static/docs/api")
-}
-
-tasks.register('copyModuleDocumentation', Copy) {
-    doFirst {
-        delete file("src/main/resources/static/docs/modulith")
-    }
-
-    from("build/spring-modulith-docs") {
-        include "**/*.adoc"
-        include "**/*.puml"
-    }
-    into("src/main/resources/static/docs/modulith")
+    into file("src/main/resources/static/docs")
 }
 
 build {
     dependsOn copyApiDocument
-    dependsOn copyModuleDocumentation
 }
 
 clean {

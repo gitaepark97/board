@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.util.function.Predicate.not;
+
 @NamedInterface
 @RequiredArgsConstructor
 @Component
@@ -49,6 +51,13 @@ public class CommentReader {
             .toList();
     }
 
+    public Long count(Long articleId) {
+        return cachedArticleCommentCountRepository.findByKey(articleId)
+            .or(() -> articleCommentCountRepository.findById(articleId))
+            .map(ArticleCommentCount::commentCount)
+            .orElse(0L);
+    }
+
     public Map<Long, Long> count(List<Long> articleIds) {
         // 캐시 조회
         List<ArticleCommentCount> cached = cachedArticleCommentCountRepository.finalAllByKey(articleIds);
@@ -58,7 +67,8 @@ public class CommentReader {
 
         // 캐시 미스만 조회
         List<Long> missed = articleIds.stream()
-            .filter(id -> !map.containsKey(id))
+            .filter(not(map::containsKey))
+            .peek(id -> map.put(id, 0L))
             .toList();
         if (!missed.isEmpty()) {
             List<ArticleCommentCount> uncached = articleCommentCountRepository.findAllById(missed);
