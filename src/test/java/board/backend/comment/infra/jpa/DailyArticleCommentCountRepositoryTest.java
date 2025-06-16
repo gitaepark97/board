@@ -14,7 +14,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
 @Import(ArticleCommentCountRepositoryImpl.class)
-class ArticleCommentCountRepositoryTest extends TestRepository {
+class DailyArticleCommentCountRepositoryTest extends TestRepository {
 
     private final Long articleId = 1L;
     @Autowired

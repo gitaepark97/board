@@ -13,6 +13,7 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -70,6 +71,11 @@ class ApiResponseHandler implements ResponseBodyAdvice<Object> {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     ApiResponse<?> handleException(HttpMessageNotReadableException e) {
+        return ApiResponse.of(new ApplicationException(400, "잘못된 입력입니다."));
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    ApiResponse<?> handleException(MissingServletRequestParameterException e) {
         return ApiResponse.of(new ApplicationException(400, "잘못된 입력입니다."));
     }
 

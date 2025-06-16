@@ -15,7 +15,7 @@ public class CommentService {
     private final CommentReader commentReader;
     private final CommentWriter commentWriter;
 
-    @Cacheable(value = "commentList::article", key = "#articleId", condition = "#pageSize.equals(10L) && #lastParentCommentId == null && #lastCommentId == null")
+    @Cacheable(value = "comment::list::article", key = "#articleId", condition = "#pageSize.equals(10L) && #lastParentCommentId == null && #lastCommentId == null")
     public List<CommentWithWriter> readAll(
         Long articleId,
         Long pageSize,

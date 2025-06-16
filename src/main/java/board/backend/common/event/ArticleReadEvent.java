@@ -1,6 +1,6 @@
 package board.backend.common.event;
 
-public record ArticleReaderEvent(
+public record ArticleReadEvent(
     Long articleId,
     String ip
 ) {

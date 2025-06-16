@@ -7,9 +7,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-class UserCachedRepositoryImpl extends AbstractRedisCachedRepository<User, Long> {
+class CachedUserRepositoryImpl extends AbstractRedisCachedRepository<User, Long> {
 
-    UserCachedRepositoryImpl(@Qualifier("cacheRedisTemplate") RedisTemplate<String, Object> redisTemplate) {
+    CachedUserRepositoryImpl(@Qualifier("cacheRedisTemplate") RedisTemplate<String, Object> redisTemplate) {
         super(redisTemplate, "user::%s", User.class);
     }
 

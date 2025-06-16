@@ -1,10 +1,12 @@
 package board.backend.view.application;
 
+import board.backend.common.support.TimeProvider;
 import board.backend.view.application.port.ArticleViewCountRepository;
 import board.backend.view.application.port.ArticleViewDistributedLockRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.Duration;
 
@@ -18,9 +20,11 @@ class ArticleViewWriterTest {
 
     @BeforeEach
     void setUp() {
+        TimeProvider timeProvider = mock(TimeProvider.class);
         ArticleViewCountRepository articleViewCountRepository = mock(ArticleViewCountRepository.class);
         articleViewDistributedLockRepository = mock(ArticleViewDistributedLockRepository.class);
-        articleViewWriter = new ArticleViewWriter(articleViewCountRepository, articleViewDistributedLockRepository);
+        ApplicationEventPublisher applicationEventPublisher = mock(ApplicationEventPublisher.class);
+        articleViewWriter = new ArticleViewWriter(timeProvider, articleViewCountRepository, articleViewDistributedLockRepository, applicationEventPublisher);
     }
 
     @Test

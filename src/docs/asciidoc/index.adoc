@@ -119,6 +119,18 @@ include::{snippets}/articles/read-all/query-parameters.adoc[]
 include::{snippets}/articles/read-all/http-response.adoc[]
 include::{snippets}/articles/read-all/response-fields.adoc[]
 
+=== 인기 게시글 목록 조회
+
+==== 요청
+
+include::{snippets}/articles/read-all-hot/http-request.adoc[]
+include::{snippets}/articles/read-all-hot/query-parameters.adoc[]
+
+==== 응답
+
+include::{snippets}/articles/read-all-hot/http-response.adoc[]
+include::{snippets}/articles/read-all-hot/response-fields.adoc[]
+
 === 게시글 조회
 
 ==== 요청

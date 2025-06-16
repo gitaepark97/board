@@ -2,7 +2,7 @@ package board.backend.view.application;
 
 import board.backend.common.event.ArticleCreatedEvent;
 import board.backend.common.event.ArticleDeletedEvent;
-import board.backend.common.event.ArticleReaderEvent;
+import board.backend.common.event.ArticleReadEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.modulith.events.ApplicationModuleListener;
@@ -17,7 +17,7 @@ class ArticleViewHandler {
 
     @Async
     @EventListener
-    void handle(ArticleReaderEvent event) {
+    void handle(ArticleReadEvent event) {
         articleViewWriter.increaseCount(event.articleId(), event.ip());
     }
 

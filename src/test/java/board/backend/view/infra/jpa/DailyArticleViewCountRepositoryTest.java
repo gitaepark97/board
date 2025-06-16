@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Import;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Import(ArticleViewCountRepositoryImpl.class)
-class ArticleViewCountRepositoryTest extends TestRepository {
+class DailyArticleViewCountRepositoryTest extends TestRepository {
 
     private final Long articleId = 1L;
 

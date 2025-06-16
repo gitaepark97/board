@@ -3,7 +3,7 @@ package board.backend.articleRead.application.dto;
 import board.backend.article.domain.Article;
 import board.backend.user.domain.User;
 
-public record ArticleWithWriterAndCounts(
+public record ArticleDetail(
     Article article,
     User writer,
     Long likeCount,
@@ -11,14 +11,14 @@ public record ArticleWithWriterAndCounts(
     Long commentCount
 ) {
 
-    public static ArticleWithWriterAndCounts of(
+    public static ArticleDetail of(
         Article article,
         User writer,
         Long likeCount,
         Long viewCount,
         Long commentCount
     ) {
-        return new ArticleWithWriterAndCounts(article, writer, likeCount, viewCount, commentCount);
+        return new ArticleDetail(article, writer, likeCount, viewCount, commentCount);
     }
 
 }

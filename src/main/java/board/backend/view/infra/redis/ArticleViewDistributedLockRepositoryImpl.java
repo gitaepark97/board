@@ -14,7 +14,7 @@ class ArticleViewDistributedLockRepositoryImpl implements ArticleViewDistributed
 
     private final StringRedisTemplate distributedLocks;
 
-    ArticleViewDistributedLockRepositoryImpl(@Qualifier("lockRedisTemplate") StringRedisTemplate redisTemplate) {
+    ArticleViewDistributedLockRepositoryImpl(@Qualifier("lockStringRedisTemplate") StringRedisTemplate redisTemplate) {
         this.distributedLocks = redisTemplate;
     }
 

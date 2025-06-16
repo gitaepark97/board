@@ -35,6 +35,14 @@ class ArticleRepositoryImpl implements ArticleRepository {
     }
 
     @Override
+    public List<Article> findAllById(List<Long> ids) {
+        return articleEntityRepository.findAllById(ids)
+            .stream()
+            .map(ArticleEntity::toArticle)
+            .toList();
+    }
+
+    @Override
     public List<Article> findAllByBoardId(Long boardId, Long pageSize) {
         QArticleEntity articleEntity = QArticleEntity.articleEntity;
 

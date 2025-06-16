@@ -53,16 +53,16 @@ class RedisConfig {
     }
 
     @Bean
-    @Primary
-    StringRedisTemplate stringRedisTemplate() {
-        LettuceConnectionFactory factory = createFactory(host, port, username, password, 0);
+    @Qualifier("lockStringRedisTemplate")
+    StringRedisTemplate lockStringRedisTemplate() {
+        LettuceConnectionFactory factory = createFactory(host, port, username, password, 1);
         return getStringRedisTemplate(factory);
     }
 
     @Bean
-    @Qualifier("lockRedisTemplate")
-    StringRedisTemplate lockRedisTemplate() {
-        LettuceConnectionFactory factory = createFactory(host, port, username, password, 1);
+    @Primary
+    StringRedisTemplate dataStringRedisTemplate() {
+        LettuceConnectionFactory factory = createFactory(host, port, username, password, 4);
         return getStringRedisTemplate(factory);
     }
 

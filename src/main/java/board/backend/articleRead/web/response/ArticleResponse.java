@@ -1,6 +1,6 @@
 package board.backend.articleRead.web.response;
 
-import board.backend.articleRead.application.dto.ArticleWithWriterAndCounts;
+import board.backend.articleRead.application.dto.ArticleDetail;
 import board.backend.user.web.response.UserResponse;
 
 import java.time.LocalDateTime;
@@ -16,16 +16,16 @@ public record ArticleResponse(
     Long commentCount
 ) {
 
-    public static ArticleResponse from(ArticleWithWriterAndCounts articleWithWriterAndCounts) {
+    public static ArticleResponse from(ArticleDetail articleDetail) {
         return new ArticleResponse(
-            articleWithWriterAndCounts.article().id().toString(),
-            articleWithWriterAndCounts.article().boardId().toString(),
-            UserResponse.from(articleWithWriterAndCounts.writer()),
-            articleWithWriterAndCounts.article().title(),
-            articleWithWriterAndCounts.article().createdAt(),
-            articleWithWriterAndCounts.likeCount(),
-            articleWithWriterAndCounts.viewCount(),
-            articleWithWriterAndCounts.commentCount()
+            articleDetail.article().id().toString(),
+            articleDetail.article().boardId().toString(),
+            UserResponse.from(articleDetail.writer()),
+            articleDetail.article().title(),
+            articleDetail.article().createdAt(),
+            articleDetail.likeCount(),
+            articleDetail.viewCount(),
+            articleDetail.commentCount()
         );
     }
 

@@ -11,6 +11,8 @@ public interface ArticleRepository {
 
     Optional<Article> findById(Long id);
 
+    List<Article> findAllById(List<Long> ids);
+
     List<Article> findAllByBoardId(Long boardId, Long pageSize);
 
     List<Article> findAllByBoardId(Long boardId, Long pageSize, Long lastId);

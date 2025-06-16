@@ -6,12 +6,15 @@ import board.backend.comment.application.port.CommentRepository;
 import board.backend.comment.domain.ArticleCommentCount;
 import board.backend.comment.domain.Comment;
 import board.backend.comment.domain.CommentNotFound;
+import board.backend.common.event.CommentCreatedEvent;
+import board.backend.common.event.CommentDeletedEvent;
 import board.backend.common.infra.CachedRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
 import board.backend.user.application.UserReader;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import static java.util.function.Predicate.not;
@@ -27,6 +30,7 @@ class CommentWriter {
     private final ArticleCommentCountRepository articleCommentCountRepository;
     private final ArticleReader articleReader;
     private final UserReader userReader;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     Comment create(Long articleId, Long userId, Long parentCommentId, String content) {
@@ -53,6 +57,9 @@ class CommentWriter {
         // 게시글 댓글 수 캐시 삭제
         cachedArticleCommentCountRepository.delete(articleId);
 
+        // 댓글 생성 이벤트 발행
+        applicationEventPublisher.publishEvent(new CommentCreatedEvent(articleId, newComment.createdAt()));
+
         return newComment;
     }
 
@@ -60,9 +67,6 @@ class CommentWriter {
     void delete(Long commentId, Long userId) {
         commentRepository.findById(commentId).filter(not(Comment::isDeleted)).ifPresent(comment -> {
             comment.checkIsWriter(userId);
-            // 게시글 댓글 수 캐시 삭제
-            cachedArticleCommentCountRepository.delete(comment.articleId());
-
             if (hasChildren(comment)) {
                 // 댓글 삭제
                 Comment deletedComment = comment.delete();
@@ -97,6 +101,12 @@ class CommentWriter {
     }
 
     private void delete(Comment comment) {
+        // 게시글 댓글 수 캐시 삭제
+        cachedArticleCommentCountRepository.delete(comment.articleId());
+
+        // 댓글 삭제 이벤트 발행
+        applicationEventPublisher.publishEvent(new CommentDeletedEvent(comment.articleId(), timeProvider.now()));
+
         commentRepository.delete(comment);
         articleCommentCountRepository.decrease(comment.articleId());
         if (!comment.isRoot()) {

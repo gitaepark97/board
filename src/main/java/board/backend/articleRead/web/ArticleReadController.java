@@ -27,6 +27,14 @@ class ArticleReadController {
             .toList();
     }
 
+    @GetMapping("/hot")
+    List<ArticleResponse> readHot(@RequestParam String dateStr) {
+        return articleReadService.readAllHot(dateStr)
+            .stream()
+            .map(ArticleResponse::from)
+            .toList();
+    }
+
     @GetMapping("/{articleId}")
     ArticleResponse read(@PathVariable Long articleId, HttpServletRequest request) {
         return ArticleResponse.from(articleReadService.read(articleId, request.getRemoteAddr()));
