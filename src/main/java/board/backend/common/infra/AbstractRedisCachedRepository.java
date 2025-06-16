@@ -5,6 +5,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public abstract class AbstractRedisCachedRepository<V, K> implements CachedRepository<V, K> {
@@ -12,8 +13,7 @@ public abstract class AbstractRedisCachedRepository<V, K> implements CachedRepos
     private final RedisTemplate<String, Object> redisTemplate;
     private final String keyPrefix;
     private final Class<V> valueType;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     protected AbstractRedisCachedRepository(
         RedisTemplate<String, Object> redisTemplate,
@@ -23,6 +23,7 @@ public abstract class AbstractRedisCachedRepository<V, K> implements CachedRepos
         this.redisTemplate = redisTemplate;
         this.keyPrefix = keyPrefix;
         this.valueType = valueType;
+        this.objectMapper = RedisConfig.redisObjectMapper();
     }
 
     @Override
@@ -33,10 +34,10 @@ public abstract class AbstractRedisCachedRepository<V, K> implements CachedRepos
     @Override
     public Optional<V> findByKey(K key) {
         Object value = redisTemplate.opsForValue().get(generateKey(key));
-        if (valueType.isInstance(value)) {
-            return Optional.of(valueType.cast(value));
+        if (value == null) {
+            return Optional.empty();
         }
-        return Optional.empty();
+        return Optional.of(objectMapper.convertValue(value, valueType));
     }
 
     @Override
@@ -49,8 +50,8 @@ public abstract class AbstractRedisCachedRepository<V, K> implements CachedRepos
         if (values == null) return List.of();
 
         return values.stream()
-            .filter(valueType::isInstance)
-            .map(valueType::cast)
+            .filter(Objects::nonNull)
+            .map(value -> objectMapper.convertValue(value, valueType))
             .toList();
     }
 
