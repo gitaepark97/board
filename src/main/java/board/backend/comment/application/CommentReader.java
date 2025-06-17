@@ -60,7 +60,7 @@ public class CommentReader {
 
     public Map<Long, Long> count(List<Long> articleIds) {
         // 캐시 조회
-        List<ArticleCommentCount> cached = cachedArticleCommentCountRepository.finalAllByKey(articleIds);
+        List<ArticleCommentCount> cached = cachedArticleCommentCountRepository.findAllByKey(articleIds);
 
         Map<Long, Long> map = cached.stream()
             .collect(Collectors.toMap(ArticleCommentCount::articleId, ArticleCommentCount::commentCount));

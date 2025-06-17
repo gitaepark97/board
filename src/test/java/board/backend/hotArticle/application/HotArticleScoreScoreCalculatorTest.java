@@ -1,6 +1,7 @@
 package board.backend.hotArticle.application;
 
 import board.backend.hotArticle.application.port.DailyArticleCountRepository;
+import board.backend.hotArticle.application.port.DailyArticleViewCountRepository;
 import board.backend.hotArticle.application.port.HotArticleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,24 +15,24 @@ import static org.mockito.Mockito.when;
 
 class HotArticleScoreScoreCalculatorTest {
 
-    private DailyArticleCountRepository likeRepo;
-    private DailyArticleCountRepository viewRepo;
-    private DailyArticleCountRepository commentRepo;
+    private DailyArticleCountRepository likeRepository;
+    private DailyArticleViewCountRepository viewRepository;
+    private DailyArticleCountRepository commentRepository;
     private TimeCalculator timeCalculator;
     private HotArticleScoreScoreCalculator calculator;
 
     @BeforeEach
     void setUp() {
-        likeRepo = mock(DailyArticleCountRepository.class);
-        viewRepo = mock(DailyArticleCountRepository.class);
-        commentRepo = mock(DailyArticleCountRepository.class);
+        likeRepository = mock(DailyArticleCountRepository.class);
+        viewRepository = mock(DailyArticleViewCountRepository.class);
+        commentRepository = mock(DailyArticleCountRepository.class);
         HotArticleRepository hotArticleRepository = mock(HotArticleRepository.class);
         timeCalculator = mock(TimeCalculator.class);
 
         calculator = new HotArticleScoreScoreCalculator(
-            likeRepo,
-            viewRepo,
-            commentRepo,
+            likeRepository,
+            viewRepository,
+            commentRepository,
             hotArticleRepository,
             timeCalculator
         );
@@ -44,9 +45,9 @@ class HotArticleScoreScoreCalculatorTest {
         Long articleId = 1L;
         LocalDateTime now = LocalDateTime.now();
         when(timeCalculator.calculateDurationToNoon()).thenReturn(Duration.ofHours(12));
-        when(likeRepo.read(articleId, now)).thenReturn(5L);
-        when(viewRepo.read(articleId, now)).thenReturn(10L);
-        when(commentRepo.read(articleId, now)).thenReturn(2L);
+        when(likeRepository.read(articleId, now)).thenReturn(5L);
+        when(viewRepository.read(articleId, now)).thenReturn(10L);
+        when(commentRepository.read(articleId, now)).thenReturn(2L);
 
         // when
         calculator.increaseArticleLikeCount(articleId, now);
@@ -58,9 +59,9 @@ class HotArticleScoreScoreCalculatorTest {
         // given
         Long articleId = 1L;
         LocalDateTime now = LocalDateTime.now();
-        when(likeRepo.read(articleId, now)).thenReturn(2L);
-        when(viewRepo.read(articleId, now)).thenReturn(4L);
-        when(commentRepo.read(articleId, now)).thenReturn(1L);
+        when(likeRepository.read(articleId, now)).thenReturn(2L);
+        when(viewRepository.read(articleId, now)).thenReturn(4L);
+        when(commentRepository.read(articleId, now)).thenReturn(1L);
 
         // when
         calculator.decreaseArticleLikeCount(articleId, now);
@@ -71,14 +72,15 @@ class HotArticleScoreScoreCalculatorTest {
     void increaseArticleViewCount_shouldCalculateScoreAndSave() {
         // given
         Long articleId = 1L;
+        Long count = 2L;
         LocalDateTime now = LocalDateTime.now();
         when(timeCalculator.calculateDurationToNoon()).thenReturn(Duration.ofHours(10));
-        when(likeRepo.read(articleId, now)).thenReturn(3L);
-        when(viewRepo.read(articleId, now)).thenReturn(6L);
-        when(commentRepo.read(articleId, now)).thenReturn(1L);
+        when(likeRepository.read(articleId, now)).thenReturn(3L);
+        when(viewRepository.read(articleId, now)).thenReturn(6L);
+        when(commentRepository.read(articleId, now)).thenReturn(1L);
 
         // when
-        calculator.increaseArticleViewCount(articleId, now);
+        calculator.increaseArticleViewCount(articleId, count, now);
     }
 
     @Test
@@ -87,9 +89,9 @@ class HotArticleScoreScoreCalculatorTest {
         // given
         Long articleId = 1L;
         LocalDateTime now = LocalDateTime.now();
-        when(likeRepo.read(articleId, now)).thenReturn(1L);
-        when(viewRepo.read(articleId, now)).thenReturn(2L);
-        when(commentRepo.read(articleId, now)).thenReturn(5L);
+        when(likeRepository.read(articleId, now)).thenReturn(1L);
+        when(viewRepository.read(articleId, now)).thenReturn(2L);
+        when(commentRepository.read(articleId, now)).thenReturn(5L);
 
         // when
         calculator.increaseArticleCommentCount(articleId, now);
@@ -101,9 +103,9 @@ class HotArticleScoreScoreCalculatorTest {
         // given
         Long articleId = 2L;
         LocalDateTime now = LocalDateTime.now();
-        when(likeRepo.read(articleId, now)).thenReturn(0L);
-        when(viewRepo.read(articleId, now)).thenReturn(1L);
-        when(commentRepo.read(articleId, now)).thenReturn(3L);
+        when(likeRepository.read(articleId, now)).thenReturn(0L);
+        when(viewRepository.read(articleId, now)).thenReturn(1L);
+        when(commentRepository.read(articleId, now)).thenReturn(3L);
 
         // when
         calculator.decreaseArticleCommentCount(articleId, now);

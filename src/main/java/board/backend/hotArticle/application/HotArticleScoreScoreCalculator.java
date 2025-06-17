@@ -1,6 +1,7 @@
 package board.backend.hotArticle.application;
 
 import board.backend.hotArticle.application.port.DailyArticleCountRepository;
+import board.backend.hotArticle.application.port.DailyArticleViewCountRepository;
 import board.backend.hotArticle.application.port.HotArticleRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -18,15 +19,14 @@ class HotArticleScoreScoreCalculator {
     private static final Duration HOT_ARTICLE_TTL = Duration.ofDays(10);
 
     private final DailyArticleCountRepository dailyArticleLikeCountRepository;
-    private final DailyArticleCountRepository dailyArticleViewCountRepository;
+    private final DailyArticleViewCountRepository dailyArticleViewCountRepository;
     private final DailyArticleCountRepository dailyArticleCommentCountRepository;
     private final HotArticleRepository hotArticleRepository;
     private final TimeCalculator timeCalculator;
 
     HotArticleScoreScoreCalculator(
         DailyArticleCountRepository dailyArticleLikeCountRepository,
-        @Qualifier("dailyArticleViewCountRepository")
-        DailyArticleCountRepository dailyArticleViewCountRepository,
+        DailyArticleViewCountRepository dailyArticleViewCountRepository,
         @Qualifier("dailyArticleCommentCountRepository")
         DailyArticleCountRepository dailyArticleCommentCountRepository,
         HotArticleRepository hotArticleRepository,
@@ -49,8 +49,8 @@ class HotArticleScoreScoreCalculator {
         calculateScore(articleId, now);
     }
 
-    void increaseArticleViewCount(Long articleId, LocalDateTime now) {
-        dailyArticleViewCountRepository.increaseOrSave(articleId, now, timeCalculator.calculateDurationToNoon());
+    void increaseArticleViewCount(Long articleId, Long count, LocalDateTime now) {
+        dailyArticleViewCountRepository.save(articleId, count, now, timeCalculator.calculateDurationToNoon());
         calculateScore(articleId, now);
     }
 

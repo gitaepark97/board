@@ -11,7 +11,14 @@ public record ArticleViewCount(
     public static ArticleViewCount init(Long articleId) {
         return ArticleViewCount.builder()
             .articleId(articleId)
-            .viewCount(1L)
+            .viewCount(0L)
+            .build();
+    }
+
+    public static ArticleViewCount create(Long articleId, Long viewCount) {
+        return ArticleViewCount.builder()
+            .articleId(articleId)
+            .viewCount(viewCount)
             .build();
     }
 

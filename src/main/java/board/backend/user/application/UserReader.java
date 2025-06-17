@@ -58,7 +58,7 @@ public class UserReader {
 
     public Map<Long, User> readAll(List<Long> userIds) {
         // 캐시 조회
-        List<User> cached = cachedUserRepository.finalAllByKey(userIds);
+        List<User> cached = cachedUserRepository.findAllByKey(userIds);
 
         Map<Long, User> map = cached.stream()
             .collect(Collectors.toMap(User::id, Function.identity()));

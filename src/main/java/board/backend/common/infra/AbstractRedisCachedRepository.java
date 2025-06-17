@@ -41,7 +41,7 @@ public abstract class AbstractRedisCachedRepository<V, K> implements CachedRepos
     }
 
     @Override
-    public List<V> finalAllByKey(List<K> keys) {
+    public List<V> findAllByKey(List<K> keys) {
         List<String> redisKeys = keys.stream()
             .map(this::generateKey)
             .toList();

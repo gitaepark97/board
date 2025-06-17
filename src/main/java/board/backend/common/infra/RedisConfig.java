@@ -40,29 +40,41 @@ class RedisConfig {
 
     @Bean
     @Primary
-    RedisTemplate<String, Object> redisTemplate() {
-        LettuceConnectionFactory factory = createFactory(host, port, username, password, 0);
-        return getStringObjectRedisTemplate(factory);
+    public LettuceConnectionFactory defaultFactory() {
+        return createFactory(host, port, username, password, 0);
+    }
+
+    @Bean
+    public LettuceConnectionFactory lockFactory() {
+        return createFactory(host, port, username, password, 1);
+    }
+
+    @Bean
+    public LettuceConnectionFactory cacheFactory() {
+        return createFactory(host, port, username, password, 2);
+    }
+
+    @Bean
+    @Primary
+    public RedisTemplate<String, Object> redisTemplate(LettuceConnectionFactory defaultFactory) {
+        return getStringObjectRedisTemplate(defaultFactory);
+    }
+
+    @Bean
+    @Primary
+    public StringRedisTemplate stringRedisTemplate(LettuceConnectionFactory defaultFactory) {
+        return getStringRedisTemplate(defaultFactory);
     }
 
     @Bean
     @Qualifier("cacheRedisTemplate")
-    RedisTemplate<String, Object> cacheRedisTemplate() {
-        LettuceConnectionFactory factory = createFactory(host, port, username, password, 2);
+    public RedisTemplate<String, Object> cacheRedisTemplate(@Qualifier("cacheFactory") LettuceConnectionFactory factory) {
         return getStringObjectRedisTemplate(factory);
     }
 
     @Bean
     @Qualifier("lockStringRedisTemplate")
-    StringRedisTemplate lockStringRedisTemplate() {
-        LettuceConnectionFactory factory = createFactory(host, port, username, password, 1);
-        return getStringRedisTemplate(factory);
-    }
-
-    @Bean
-    @Primary
-    StringRedisTemplate dataStringRedisTemplate() {
-        LettuceConnectionFactory factory = createFactory(host, port, username, password, 4);
+    public StringRedisTemplate lockStringRedisTemplate(@Qualifier("lockFactory") LettuceConnectionFactory factory) {
         return getStringRedisTemplate(factory);
     }
 

@@ -41,7 +41,7 @@ public class ArticleReader {
 
     public List<Article> readAll(List<Long> articleIds) {
         // 캐시 조회
-        List<Article> articles = cachedArticleRepository.finalAllByKey(articleIds);
+        List<Article> articles = cachedArticleRepository.findAllByKey(articleIds);
 
         Map<Long, Article> map = articles.stream()
             .collect(Collectors.toMap(Article::id, Function.identity()));

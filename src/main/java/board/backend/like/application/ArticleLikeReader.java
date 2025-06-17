@@ -33,7 +33,7 @@ public class ArticleLikeReader {
 
     public Map<Long, Long> count(List<Long> articleIds) {
         // 캐시 조회
-        List<ArticleLikeCount> cached = cachedArticleLikeCountRepository.finalAllByKey(articleIds);
+        List<ArticleLikeCount> cached = cachedArticleLikeCountRepository.findAllByKey(articleIds);
 
         Map<Long, Long> map = cached.stream()
             .collect(Collectors.toMap(ArticleLikeCount::articleId, ArticleLikeCount::likeCount));

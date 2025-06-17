@@ -177,7 +177,7 @@ class UserReaderTest {
         User user2 = User.create(user2Id, "user2@email.com", "user2", LocalDateTime.now());
 
         List<User> cachedUsers = List.of(user1, user2);
-        when(cachedUserRepository.finalAllByKey(List.of(user1Id, user2Id))).thenReturn(cachedUsers);
+        when(cachedUserRepository.findAllByKey(List.of(user1Id, user2Id))).thenReturn(cachedUsers);
 
         // when
         Map<Long, User> result = userReader.readAll(List.of(user1Id, user2Id));
@@ -195,7 +195,7 @@ class UserReaderTest {
         User user1 = User.create(user1Id, "user1@email.com", "user1", LocalDateTime.now());
         User user2 = User.create(user2Id, "user2@email.com", "user2", LocalDateTime.now());
 
-        when(cachedUserRepository.finalAllByKey(List.of(user1Id, user2Id))).thenReturn(List.of());
+        when(cachedUserRepository.findAllByKey(List.of(user1Id, user2Id))).thenReturn(List.of());
         when(userRepository.findAllById(List.of(user1Id, user2Id))).thenReturn(List.of(user1, user2));
 
         // when
@@ -214,7 +214,7 @@ class UserReaderTest {
         User user1 = User.create(user1Id, "user1@email.com", "user1", LocalDateTime.now());
         User user2 = User.create(user2Id, "user2@email.com", "user2", LocalDateTime.now());
 
-        when(cachedUserRepository.finalAllByKey(List.of(user1Id, user2Id))).thenReturn(List.of(user1));
+        when(cachedUserRepository.findAllByKey(List.of(user1Id, user2Id))).thenReturn(List.of(user1));
         when(userRepository.findAllById(List.of(user2Id))).thenReturn(List.of(user2));
 
         // when

@@ -3,18 +3,18 @@ package board.backend.view.application.port;
 import board.backend.view.domain.ArticleViewCount;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 public interface ArticleViewCountRepository {
 
-    Optional<ArticleViewCount> findById(Long articleId);
+    Long findById(Long articleId);
 
-    List<ArticleViewCount> findAllById(List<Long> articleIds);
-
-    void save(ArticleViewCount articleViewCount);
+    Map<Long, Long> findAllById(List<Long> articleIds);
 
     void deleteById(Long articleId);
 
-    void increase(Long articleId);
+    Long increase(Long articleId);
+
+    void save(ArticleViewCount articleViewCount);
 
 }

@@ -13,7 +13,7 @@ public interface ArticleCommentCountRepository {
 
     void deleteById(Long articleId);
 
-    void increaseOrSave(Long articleId, Long commentCount);
+    void increaseOrSave(ArticleCommentCount articleCommentCount);
 
     void decrease(Long articleId);
 

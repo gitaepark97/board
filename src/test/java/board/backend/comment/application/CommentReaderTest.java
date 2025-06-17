@@ -95,7 +95,7 @@ class CommentReaderTest {
             ArticleCommentCount.init(1L),
             ArticleCommentCount.init(2L)
         );
-        when(articleCommentCountCachedRepository.finalAllByKey(articleIds)).thenReturn(cached);
+        when(articleCommentCountCachedRepository.findAllByKey(articleIds)).thenReturn(cached);
 
         // when
         Map<Long, Long> result = commentReader.count(articleIds);
@@ -116,7 +116,7 @@ class CommentReaderTest {
         List<ArticleCommentCount> uncached = List.of(
             ArticleCommentCount.init(2L)
         );
-        when(articleCommentCountCachedRepository.finalAllByKey(articleIds)).thenReturn(cached);
+        when(articleCommentCountCachedRepository.findAllByKey(articleIds)).thenReturn(cached);
         when(articleCommentCountRepository.findAllById(List.of(2L))).thenReturn(uncached);
 
         // when
@@ -137,7 +137,7 @@ class CommentReaderTest {
             ArticleCommentCount.init(1L),
             ArticleCommentCount.init(2L)
         );
-        when(articleCommentCountCachedRepository.finalAllByKey(articleIds)).thenReturn(List.of());
+        when(articleCommentCountCachedRepository.findAllByKey(articleIds)).thenReturn(List.of());
         when(articleCommentCountRepository.findAllById(articleIds)).thenReturn(fromDb);
 
         // when

@@ -15,15 +15,15 @@ class ArticleViewHandler {
 
     private final ArticleViewWriter articleViewWriter;
 
+    @ApplicationModuleListener
+    void handle(ArticleCreatedEvent event) {
+        articleViewWriter.createCount(event.articleId());
+    }
+
     @Async
     @EventListener
     void handle(ArticleReadEvent event) {
         articleViewWriter.increaseCount(event.articleId(), event.ip());
-    }
-
-    @ApplicationModuleListener
-    void handle(ArticleCreatedEvent event) {
-        articleViewWriter.saveCount(event.articleId());
     }
 
     @ApplicationModuleListener

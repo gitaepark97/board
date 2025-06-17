@@ -12,19 +12,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "article_view_count")
-class ArticleViewCountEntity {
+class ArticleViewCountBackupEntity {
 
     @Id
     private Long articleId;
 
     private Long viewCount;
-
-    static ArticleViewCountEntity from(ArticleViewCount articleViewCount) {
-        return new ArticleViewCountEntity(
-            articleViewCount.articleId(),
-            articleViewCount.viewCount()
-        );
-    }
 
     ArticleViewCount toArticleViewCount() {
         return ArticleViewCount.builder()

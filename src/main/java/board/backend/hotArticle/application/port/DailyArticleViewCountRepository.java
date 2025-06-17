@@ -1,0 +1,12 @@
+package board.backend.hotArticle.application.port;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+
+public interface DailyArticleViewCountRepository {
+
+    Long read(Long articleId, LocalDateTime time);
+
+    void save(Long articleId, Long count, LocalDateTime time, Duration ttl);
+
+}

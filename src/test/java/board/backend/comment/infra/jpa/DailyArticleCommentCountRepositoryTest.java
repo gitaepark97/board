@@ -37,7 +37,7 @@ class DailyArticleCommentCountRepositoryTest extends TestRepository {
         Long newArticleId = 2L;
 
         // when
-        articleCommentCountRepository.increaseOrSave(newArticleId, 1L);
+        articleCommentCountRepository.increaseOrSave(ArticleCommentCount.init(newArticleId));
         em.flush();
         em.clear();
 
@@ -50,7 +50,7 @@ class DailyArticleCommentCountRepositoryTest extends TestRepository {
     @DisplayName("이미 존재하면 comment_count가 1 증가한다")
     void increaseOrSave_update() {
         // when
-        articleCommentCountRepository.increaseOrSave(articleId, 1L);
+        articleCommentCountRepository.increaseOrSave(ArticleCommentCount.init(articleId));
         em.flush();
         em.clear();
 

@@ -18,7 +18,22 @@ class ArticleViewCountTest {
 
         // then
         assertThat(viewCount.articleId()).isEqualTo(articleId);
-        assertThat(viewCount.viewCount()).isEqualTo(1L);
+        assertThat(viewCount.viewCount()).isEqualTo(0L);
+    }
+
+    @Test
+    @DisplayName("게시글 조회 수 생성에 성공한다")
+    void create_success() {
+        // given
+        Long articleId = 1L;
+        Long count = 2L;
+
+        // when
+        ArticleViewCount viewCount = ArticleViewCount.create(articleId, count);
+
+        // then
+        assertThat(viewCount.articleId()).isEqualTo(articleId);
+        assertThat(viewCount.viewCount()).isEqualTo(count);
     }
 
 }

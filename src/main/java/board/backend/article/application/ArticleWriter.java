@@ -4,7 +4,6 @@ import board.backend.article.application.port.ArticleRepository;
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
 import board.backend.board.application.BoardReader;
-import board.backend.common.event.ArticleCreatedEvent;
 import board.backend.common.event.ArticleDeletedEvent;
 import board.backend.common.infra.CachedRepository;
 import board.backend.common.support.IdProvider;
@@ -41,9 +40,6 @@ class ArticleWriter {
         Article newArticle = Article.create(idProvider.nextId(), boardId, userId, title, content, timeProvider.now());
         // 게시글 저장
         articleRepository.save(newArticle);
-
-        // 게시글 생 이벤트 발행
-        eventPublisher.publishEvent(new ArticleCreatedEvent(newArticle.id()));
 
         return newArticle;
     }

@@ -13,7 +13,7 @@ public interface ArticleLikeCountRepository {
 
     void deleteById(Long articleId);
 
-    void increaseOrSave(Long articleId, Long likeCount);
+    void increaseOrSave(ArticleLikeCount articleLikeCount);
 
     void decrease(Long articleId);
 

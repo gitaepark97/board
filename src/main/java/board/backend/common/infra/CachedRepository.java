@@ -10,7 +10,7 @@ public interface CachedRepository<V, K> {
 
     Optional<V> findByKey(K key);
 
-    List<V> finalAllByKey(List<K> keys);
+    List<V> findAllByKey(List<K> keys);
 
     void save(K key, V value, Duration ttl);
 

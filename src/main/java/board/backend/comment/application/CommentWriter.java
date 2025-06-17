@@ -52,7 +52,7 @@ class CommentWriter {
 
         // 게시글 댓글 수 증가
         ArticleCommentCount articleCommentCount = ArticleCommentCount.init(articleId);
-        articleCommentCountRepository.increaseOrSave(articleCommentCount.articleId(), articleCommentCount.commentCount());
+        articleCommentCountRepository.increaseOrSave(articleCommentCount);
 
         // 게시글 댓글 수 캐시 삭제
         cachedArticleCommentCountRepository.delete(articleId);

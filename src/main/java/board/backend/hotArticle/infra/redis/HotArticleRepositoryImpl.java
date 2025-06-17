@@ -1,7 +1,6 @@
 package board.backend.hotArticle.infra.redis;
 
 import board.backend.hotArticle.application.port.HotArticleRepository;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.connection.StringRedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -23,7 +22,7 @@ class HotArticleRepositoryImpl implements HotArticleRepository {
 
     private final StringRedisTemplate redisTemplate;
 
-    HotArticleRepositoryImpl(@Qualifier("dataStringRedisTemplate") StringRedisTemplate redisTemplate) {
+    HotArticleRepositoryImpl(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 

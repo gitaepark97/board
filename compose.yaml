@@ -15,6 +15,7 @@ services:
     volumes:
       - redis_volume:/data
       - ./redis.conf:/etc/redis/redis.conf
+    command: [ "redis-server", "/etc/redis/redis.conf" ]
 
 volumes:
   mysql_volume:
