@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Set;
 
 
 abstract class DailyArticleCountRepositoryImpl implements DailyArticleCountRepository {
@@ -47,8 +48,16 @@ abstract class DailyArticleCountRepositoryImpl implements DailyArticleCountRepos
         }
     }
 
+    @Override
+    public void deleteById(Long articleId) {
+        Set<String> keys = redisTemplate.keys(keyFormat.formatted(articleId, "*"));
+        for (String key : keys) {
+            redisTemplate.delete(key);
+        }
+    }
+
     private String generateKey(Long articleId, LocalDateTime time) {
-        return String.format(keyFormat, articleId, TIME_FORMATTER.format(time));
+        return keyFormat.formatted(articleId, TIME_FORMATTER.format(time));
     }
 
 }

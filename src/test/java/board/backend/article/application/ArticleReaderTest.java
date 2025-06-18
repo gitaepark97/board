@@ -3,12 +3,12 @@ package board.backend.article.application;
 import board.backend.article.application.port.ArticleRepository;
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
+import board.backend.common.event.EventPublisher;
 import board.backend.common.infra.CachedRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,8 +30,8 @@ class ArticleReaderTest {
     void setUp() {
         articleCachedRepository = mock(CachedRepository.class);
         articleRepository = mock(ArticleRepository.class);
-        ApplicationEventPublisher applicationEventPublisher = mock(ApplicationEventPublisher.class);
-        articleReader = new ArticleReader(articleCachedRepository, articleRepository, applicationEventPublisher);
+        EventPublisher eventPublisher = mock(EventPublisher.class);
+        articleReader = new ArticleReader(articleCachedRepository, articleRepository, eventPublisher);
     }
 
     @Test

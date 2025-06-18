@@ -11,4 +11,6 @@ public interface DailyArticleCountRepository {
 
     void decrease(Long articleId, LocalDateTime now);
 
+    void deleteById(Long articleId);
+
 }

@@ -1,6 +1,6 @@
 package board.backend.common.web.response;
 
-import board.backend.common.support.ApplicationException;
+import board.backend.common.exception.ApplicationException;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.http.HttpStatus;
 

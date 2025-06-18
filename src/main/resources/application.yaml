@@ -9,9 +9,6 @@ spring:
 
   modulith:
     events:
-      jdbc:
-        schema-initialization:
-          enabled: true
       republish-outstanding-events-on-restart: true
 
   threads:

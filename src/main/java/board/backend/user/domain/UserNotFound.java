@@ -1,6 +1,6 @@
 package board.backend.user.domain;
 
-import board.backend.common.support.ApplicationException;
+import board.backend.common.exception.ApplicationException;
 
 public class UserNotFound extends ApplicationException {
 

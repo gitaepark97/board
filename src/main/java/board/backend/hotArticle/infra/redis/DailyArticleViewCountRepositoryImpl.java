@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Component
@@ -31,8 +32,16 @@ class DailyArticleViewCountRepositoryImpl implements DailyArticleViewCountReposi
         redisTemplate.opsForValue().set(key, String.valueOf(count), ttl);
     }
 
+    @Override
+    public void deleteById(Long articleId) {
+        Set<String> keys = redisTemplate.keys(KEY_FORMAT.formatted(articleId, "*"));
+        for (String key : keys) {
+            redisTemplate.delete(key);
+        }
+    }
+
     private String generateKey(Long articleId, LocalDateTime time) {
-        return String.format(KEY_FORMAT, articleId, TIME_FORMATTER.format(time));
+        return KEY_FORMAT.formatted(articleId, TIME_FORMATTER.format(time));
     }
 
 }

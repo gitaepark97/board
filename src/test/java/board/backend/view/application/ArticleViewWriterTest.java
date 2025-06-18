@@ -1,14 +1,13 @@
 package board.backend.view.application;
 
+import board.backend.common.event.EventPublisher;
 import board.backend.common.support.TimeProvider;
-import board.backend.view.application.port.ArticleViewBackupTimeRepository;
 import board.backend.view.application.port.ArticleViewCountBackupRepository;
 import board.backend.view.application.port.ArticleViewCountRepository;
 import board.backend.view.application.port.ArticleViewDistributedLockRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -20,7 +19,6 @@ class ArticleViewWriterTest {
 
     private TimeProvider timeProvider;
     private ArticleViewDistributedLockRepository articleViewDistributedLockRepository;
-    private ArticleViewBackupTimeRepository articleViewBackupTimeRepository;
     private ArticleViewWriter articleViewWriter;
 
     @BeforeEach
@@ -29,9 +27,8 @@ class ArticleViewWriterTest {
         ArticleViewCountRepository articleViewCountRepository = mock(ArticleViewCountRepository.class);
         ArticleViewCountBackupRepository articleViewCountBackUpRepository = mock(ArticleViewCountBackupRepository.class);
         articleViewDistributedLockRepository = mock(ArticleViewDistributedLockRepository.class);
-        articleViewBackupTimeRepository = mock(ArticleViewBackupTimeRepository.class);
-        ApplicationEventPublisher applicationEventPublisher = mock(ApplicationEventPublisher.class);
-        articleViewWriter = new ArticleViewWriter(timeProvider, articleViewCountRepository, articleViewCountBackUpRepository, articleViewDistributedLockRepository, articleViewBackupTimeRepository, applicationEventPublisher);
+        EventPublisher eventPublisher = mock(EventPublisher.class);
+        articleViewWriter = new ArticleViewWriter(timeProvider, articleViewCountRepository, articleViewCountBackUpRepository, articleViewDistributedLockRepository, eventPublisher);
     }
 
     @Test
@@ -63,7 +60,6 @@ class ArticleViewWriterTest {
         Long articleId = 1L;
         String ip = "127.0.0.1";
         when(articleViewDistributedLockRepository.lock(articleId, ip, Duration.ofMinutes(10))).thenReturn(true);
-        when(articleViewBackupTimeRepository.findById(articleId)).thenReturn(LocalDateTime.now());
         when(timeProvider.now()).thenReturn(LocalDateTime.now());
 
         // when

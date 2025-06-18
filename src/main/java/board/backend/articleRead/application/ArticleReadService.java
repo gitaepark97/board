@@ -59,8 +59,7 @@ public class ArticleReadService {
 
         // 게시글 조회 수 조회
         Long viewCount = articleViewReader.count(articleId);
-
-
+        
         // 게시글 댓글 수 조회
         Long commentCount = commentReader.count(articleId);
 

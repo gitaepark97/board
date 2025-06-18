@@ -1,6 +1,6 @@
 package board.backend.article.domain;
 
-import board.backend.common.support.Forbidden;
+import board.backend.common.exception.Forbidden;
 import lombok.Builder;
 import org.springframework.modulith.NamedInterface;
 

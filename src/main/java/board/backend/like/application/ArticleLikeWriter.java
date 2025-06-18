@@ -1,8 +1,10 @@
 package board.backend.like.application;
 
 import board.backend.article.application.ArticleReader;
-import board.backend.common.event.ArticleLikeCountDecreasedEvent;
-import board.backend.common.event.ArticleLikeCountIncreasedEvent;
+import board.backend.common.event.EventPublisher;
+import board.backend.common.event.EventType;
+import board.backend.common.event.payload.ArticleLikedEventPaylod;
+import board.backend.common.event.payload.ArticleUnlikedEventPayload;
 import board.backend.common.support.TimeProvider;
 import board.backend.like.application.port.ArticleLikeCountRepository;
 import board.backend.like.application.port.ArticleLikeRepository;
@@ -10,7 +12,6 @@ import board.backend.like.domain.ArticleLike;
 import board.backend.like.domain.ArticleLikeCount;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
@@ -21,7 +22,7 @@ class ArticleLikeWriter {
     private final ArticleLikeRepository articleLikeRepository;
     private final ArticleLikeCountRepository articleLikeCountRepository;
     private final ArticleReader articleReader;
-    private final ApplicationEventPublisher applicationEventPublisher;
+    private final EventPublisher eventPublisher;
 
     @Transactional
     void like(Long articleId, Long userId) {
@@ -39,7 +40,7 @@ class ArticleLikeWriter {
             articleLikeCountRepository.increaseOrSave(articleLikeCount);
 
             // 게시글 좋아요 생성 이벤트 발행
-            applicationEventPublisher.publishEvent(new ArticleLikeCountIncreasedEvent(articleId, articleLike.createdAt()));
+            eventPublisher.publishEvent(EventType.ARTICLE_LIKED, new ArticleLikedEventPaylod(articleId, articleLike.createdAt()));
         }
     }
 
@@ -53,7 +54,7 @@ class ArticleLikeWriter {
             articleLikeCountRepository.decrease(articleId);
 
             // 게시글 좋아요 삭제 이벤트 발행
-            applicationEventPublisher.publishEvent(new ArticleLikeCountDecreasedEvent(articleId, timeProvider.now()));
+            eventPublisher.publishEvent(EventType.ARTICLE_UNLIKED, new ArticleUnlikedEventPayload(articleId, timeProvider.now()));
         });
     }
 

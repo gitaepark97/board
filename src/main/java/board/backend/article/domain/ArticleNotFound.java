@@ -1,6 +1,6 @@
 package board.backend.article.domain;
 
-import board.backend.common.support.ApplicationException;
+import board.backend.common.exception.ApplicationException;
 
 public class ArticleNotFound extends ApplicationException {
 

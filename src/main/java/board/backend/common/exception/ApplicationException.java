@@ -1,4 +1,4 @@
-package board.backend.common.support;
+package board.backend.common.exception;
 
 import lombok.Getter;
 

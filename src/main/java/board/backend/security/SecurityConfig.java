@@ -1,7 +1,7 @@
 package board.backend.security;
 
 import board.backend.auth.application.TokenProcessor;
-import board.backend.common.support.ApplicationException;
+import board.backend.common.exception.ApplicationException;
 import board.backend.common.web.response.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

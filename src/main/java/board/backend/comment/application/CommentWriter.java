@@ -6,16 +6,19 @@ import board.backend.comment.application.port.CommentRepository;
 import board.backend.comment.domain.ArticleCommentCount;
 import board.backend.comment.domain.Comment;
 import board.backend.comment.domain.CommentNotFound;
-import board.backend.common.event.ArticleCommentCountIncreasedEvent;
-import board.backend.common.event.ArticleCommentDecreasedEvent;
+import board.backend.common.event.EventPublisher;
+import board.backend.common.event.EventType;
+import board.backend.common.event.payload.CommentCreatedEventPayload;
+import board.backend.common.event.payload.CommentDeletedEventPayload;
 import board.backend.common.infra.CachedRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
 import board.backend.user.application.UserReader;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 import static java.util.function.Predicate.not;
 
@@ -30,7 +33,7 @@ class CommentWriter {
     private final ArticleCommentCountRepository articleCommentCountRepository;
     private final ArticleReader articleReader;
     private final UserReader userReader;
-    private final ApplicationEventPublisher applicationEventPublisher;
+    private final EventPublisher eventPublisher;
 
     @Transactional
     Comment create(Long articleId, Long userId, Long parentCommentId, String content) {
@@ -58,24 +61,29 @@ class CommentWriter {
         cachedArticleCommentCountRepository.delete(articleId);
 
         // 댓글 생성 이벤트 발행
-        applicationEventPublisher.publishEvent(new ArticleCommentCountIncreasedEvent(articleId, newComment.createdAt()));
+        eventPublisher.publishEvent(EventType.COMMENT_CREATED, new CommentCreatedEventPayload(articleId, newComment.createdAt()));
 
         return newComment;
     }
 
     @Transactional
-    void delete(Long commentId, Long userId) {
-        commentRepository.findById(commentId).filter(not(Comment::isDeleted)).ifPresent(comment -> {
-            comment.checkIsWriter(userId);
-            if (hasChildren(comment)) {
-                // 댓글 삭제
-                Comment deletedComment = comment.delete();
-                // 댓글 저장
-                commentRepository.save(deletedComment);
-            } else {
-                delete(comment);
-            }
-        });
+    Optional<Long> delete(Long commentId, Long userId) {
+        return commentRepository.findById(commentId)
+            .filter(not(Comment::isDeleted))
+            .map(comment -> {
+                comment.checkIsWriter(userId);
+
+                if (hasChildren(comment)) {
+                    // 댓글 삭제
+                    Comment deletedComment = comment.delete();
+                    // 댓글 저장
+                    commentRepository.save(deletedComment);
+                } else {
+                    delete(comment);
+                }
+
+                return comment.articleId();
+            });
     }
 
     @Transactional
@@ -105,7 +113,7 @@ class CommentWriter {
         cachedArticleCommentCountRepository.delete(comment.articleId());
 
         // 댓글 삭제 이벤트 발행
-        applicationEventPublisher.publishEvent(new ArticleCommentDecreasedEvent(comment.articleId(), timeProvider.now()));
+        eventPublisher.publishEvent(EventType.COMMENT_DELETED, new CommentDeletedEventPayload(comment.articleId(), timeProvider.now()));
 
         commentRepository.delete(comment);
         articleCommentCountRepository.decrease(comment.articleId());

@@ -6,6 +6,7 @@ import board.backend.comment.application.port.CommentRepository;
 import board.backend.comment.domain.ArticleCommentCount;
 import board.backend.comment.domain.Comment;
 import board.backend.comment.domain.CommentNotFound;
+import board.backend.common.event.EventPublisher;
 import board.backend.common.infra.CachedRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
@@ -13,7 +14,6 @@ import board.backend.user.application.UserReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -39,8 +39,8 @@ class CommentWriterTest {
         ArticleCommentCountRepository articleCommentCountRepository = mock(ArticleCommentCountRepository.class);
         ArticleReader articleReader = mock(ArticleReader.class);
         UserReader userReader = mock(UserReader.class);
-        ApplicationEventPublisher applicationEventPublisher = mock(ApplicationEventPublisher.class);
-        commentWriter = new CommentWriter(idProvider, timeProvider, commentRepository, articleCommentCountCachedRepository, articleCommentCountRepository, articleReader, userReader, applicationEventPublisher);
+        EventPublisher eventPublisher = mock(EventPublisher.class);
+        commentWriter = new CommentWriter(idProvider, timeProvider, commentRepository, articleCommentCountCachedRepository, articleCommentCountRepository, articleReader, userReader, eventPublisher);
     }
 
     @Test

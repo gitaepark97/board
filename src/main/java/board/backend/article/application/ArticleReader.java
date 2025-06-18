@@ -3,10 +3,11 @@ package board.backend.article.application;
 import board.backend.article.application.port.ArticleRepository;
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
-import board.backend.common.event.ArticleReadEvent;
+import board.backend.common.event.EventPublisher;
+import board.backend.common.event.EventType;
+import board.backend.common.event.payload.ArticleReadEventPayload;
 import board.backend.common.infra.CachedRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.modulith.NamedInterface;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +26,7 @@ public class ArticleReader {
 
     private final CachedRepository<Article, Long> cachedArticleRepository;
     private final ArticleRepository articleRepository;
-    private final ApplicationEventPublisher eventPublisher;
+    private final EventPublisher eventPublisher;
 
     public void checkArticleExistsOrThrow(Long articleId) {
         if (cachedArticleRepository.findByKey(articleId).isEmpty() && !articleRepository.existsById(articleId)) {
@@ -69,7 +70,7 @@ public class ArticleReader {
         Article article = read(articleId);
 
         // 게시글 조회 이벤트 발생
-        eventPublisher.publishEvent(new ArticleReadEvent(articleId, ip));
+        eventPublisher.publishEvent(EventType.ARTICLE_READ, new ArticleReadEventPayload(articleId, ip));
 
         return article;
     }

@@ -1,6 +1,6 @@
 package board.backend.comment.domain;
 
-import board.backend.common.support.Forbidden;
+import board.backend.common.exception.Forbidden;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 

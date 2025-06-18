@@ -9,4 +9,6 @@ public interface DailyArticleViewCountRepository {
 
     void save(Long articleId, Long count, LocalDateTime time, Duration ttl);
 
+    void deleteById(Long articleId);
+
 }

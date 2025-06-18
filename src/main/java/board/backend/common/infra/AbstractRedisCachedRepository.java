@@ -18,12 +18,13 @@ public abstract class AbstractRedisCachedRepository<V, K> implements CachedRepos
     protected AbstractRedisCachedRepository(
         RedisTemplate<String, Object> redisTemplate,
         String keyPrefix,
-        Class<V> valueType
+        Class<V> valueType,
+        ObjectMapper objectMapper
     ) {
         this.redisTemplate = redisTemplate;
         this.keyPrefix = keyPrefix;
         this.valueType = valueType;
-        this.objectMapper = RedisConfig.redisObjectMapper();
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -66,7 +67,7 @@ public abstract class AbstractRedisCachedRepository<V, K> implements CachedRepos
     }
 
     protected String generateKey(K key) {
-        return String.format(keyPrefix, key);
+        return keyPrefix.formatted(key);
     }
 
 }

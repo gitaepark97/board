@@ -16,7 +16,7 @@ public class ArticleService {
     private final CacheManager cacheManager;
     private final ArticleWriter articleWriter;
 
-    @CacheEvict(value = "articleList::board", key = "#boardId")
+    @CacheEvict(value = "article::list::board", key = "#boardId")
     public Article create(Long boardId, Long userId, String title, String content) {
         return articleWriter.create(boardId, userId, title, content);
     }
@@ -28,7 +28,7 @@ public class ArticleService {
     public void delete(Long articleId, Long userId) {
         Optional<Long> boardId = articleWriter.delete(articleId, userId);
         boardId.ifPresent(id -> {
-            Cache cache = cacheManager.getCache("articleList::board");
+            Cache cache = cacheManager.getCache("article::list::board");
             if (cache != null) {
                 cache.evict(id);
             }

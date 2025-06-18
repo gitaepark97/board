@@ -55,7 +55,7 @@ class HotArticleScoreScoreCalculator {
     }
 
     void increaseArticleCommentCount(Long articleId, LocalDateTime now) {
-        dailyArticleCommentCountRepository.decrease(articleId, now);
+        dailyArticleCommentCountRepository.increaseOrSave(articleId, now, timeCalculator.calculateDurationToNoon());
         calculateScore(articleId, now);
     }
 

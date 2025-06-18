@@ -1,6 +1,6 @@
 package board.backend.common.web.response;
 
-import board.backend.common.support.ApplicationException;
+import board.backend.common.exception.ApplicationException;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.core.MethodParameter;

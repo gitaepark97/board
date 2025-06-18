@@ -4,14 +4,16 @@ import board.backend.article.application.port.ArticleRepository;
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
 import board.backend.board.application.BoardReader;
-import board.backend.common.event.ArticleDeletedEvent;
+import board.backend.common.event.EventPublisher;
+import board.backend.common.event.EventType;
+import board.backend.common.event.payload.ArticleCreatedEventPayload;
+import board.backend.common.event.payload.ArticleDeletedEventPayload;
 import board.backend.common.infra.CachedRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
 import board.backend.user.application.UserReader;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -24,9 +26,9 @@ class ArticleWriter {
     private final TimeProvider timeProvider;
     private final CachedRepository<Article, Long> articleCachedRepository;
     private final ArticleRepository articleRepository;
-    private final ApplicationEventPublisher eventPublisher;
     private final BoardReader boardReader;
     private final UserReader userReader;
+    private final EventPublisher eventPublisher;
 
     @Transactional
     public Article create(Long boardId, Long userId, String title, String content) {
@@ -40,6 +42,9 @@ class ArticleWriter {
         Article newArticle = Article.create(idProvider.nextId(), boardId, userId, title, content, timeProvider.now());
         // 게시글 저장
         articleRepository.save(newArticle);
+
+        // 게시글 생성 이벤트 발행
+        eventPublisher.publishEvent(EventType.ARTICLE_CREATED, new ArticleCreatedEventPayload(newArticle.id()));
 
         return newArticle;
     }
@@ -70,7 +75,7 @@ class ArticleWriter {
             articleCachedRepository.delete(articleId);
 
             // 게시글 삭제 이벤트 발행
-            eventPublisher.publishEvent(new ArticleDeletedEvent(articleId));
+            eventPublisher.publishEvent(EventType.ARTICLE_DELETED, new ArticleDeletedEventPayload(articleId));
 
             return article.boardId();
         });

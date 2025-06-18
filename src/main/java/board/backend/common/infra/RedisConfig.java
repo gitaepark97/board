@@ -1,7 +1,6 @@
 package board.backend.common.infra;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,39 +18,31 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 class RedisConfig {
 
+    private static final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+
     @Value("${spring.data.redis.host}")
     private String host;
 
     @Value("${spring.data.redis.port}")
     private int port;
 
-    @Value("${spring.data.redis.username}")
-    private String username;
-
     @Value("${spring.data.redis.password}")
     private String password;
-
-    static ObjectMapper redisObjectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // ISO-8601 형식
-        return mapper;
-    }
 
     @Bean
     @Primary
     public LettuceConnectionFactory defaultFactory() {
-        return createFactory(host, port, username, password, 0);
+        return createFactory(host, port, password, 0);
     }
 
     @Bean
     public LettuceConnectionFactory lockFactory() {
-        return createFactory(host, port, username, password, 1);
+        return createFactory(host, port, password, 1);
     }
 
     @Bean
     public LettuceConnectionFactory cacheFactory() {
-        return createFactory(host, port, username, password, 2);
+        return createFactory(host, port, password, 2);
     }
 
     @Bean
@@ -66,14 +57,12 @@ class RedisConfig {
         return getStringRedisTemplate(defaultFactory);
     }
 
-    @Bean
-    @Qualifier("cacheRedisTemplate")
+    @Bean(name = "cacheRedisTemplate")
     public RedisTemplate<String, Object> cacheRedisTemplate(@Qualifier("cacheFactory") LettuceConnectionFactory factory) {
         return getStringObjectRedisTemplate(factory);
     }
 
-    @Bean
-    @Qualifier("lockStringRedisTemplate")
+    @Bean(name = "lockStringRedisTemplate")
     public StringRedisTemplate lockStringRedisTemplate(@Qualifier("lockFactory") LettuceConnectionFactory factory) {
         return getStringRedisTemplate(factory);
     }
@@ -94,7 +83,7 @@ class RedisConfig {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
         template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new Jackson2JsonRedisSerializer<>(redisObjectMapper(), Object.class));
+        template.setValueSerializer(new Jackson2JsonRedisSerializer<>(objectMapper, Object.class));
         template.afterPropertiesSet();
 
         return template;
@@ -103,12 +92,10 @@ class RedisConfig {
     private LettuceConnectionFactory createFactory(
         String host,
         int port,
-        String username,
         String password,
         int dbIndex
     ) {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host, port);
-        config.setUsername(username);
         config.setPassword(RedisPassword.of(password));
         config.setDatabase(dbIndex);
 

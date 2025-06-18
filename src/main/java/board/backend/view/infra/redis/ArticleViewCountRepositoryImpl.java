@@ -71,7 +71,7 @@ class ArticleViewCountRepositoryImpl implements ArticleViewCountRepository {
     }
 
     private String generateKey(Long articleId) {
-        return String.format(KEY_FORMAT, articleId);
+        return KEY_FORMAT.formatted(articleId);
     }
 
 }

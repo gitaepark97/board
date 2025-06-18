@@ -25,7 +25,7 @@ class ArticleViewDistributedLockRepositoryImpl implements ArticleViewDistributed
     }
 
     private String generateKey(Long articleId, String ip) {
-        return String.format(KEY_FORMAT, articleId, ip);
+        return KEY_FORMAT.formatted(articleId, ip);
     }
 
 }

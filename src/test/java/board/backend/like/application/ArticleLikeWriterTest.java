@@ -1,6 +1,7 @@
 package board.backend.like.application;
 
 import board.backend.article.application.ArticleReader;
+import board.backend.common.event.EventPublisher;
 import board.backend.common.support.TimeProvider;
 import board.backend.like.application.port.ArticleLikeCountRepository;
 import board.backend.like.application.port.ArticleLikeRepository;
@@ -8,7 +9,6 @@ import board.backend.like.domain.ArticleLike;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -28,8 +28,8 @@ class ArticleLikeWriterTest {
         articleLikeRepository = mock(ArticleLikeRepository.class);
         ArticleLikeCountRepository articleLikeCountRepository = mock(ArticleLikeCountRepository.class);
         ArticleReader articleReader = mock(ArticleReader.class);
-        ApplicationEventPublisher applicationEventPublisher = mock(ApplicationEventPublisher.class);
-        articleLikeWriter = new ArticleLikeWriter(timeProvider, articleLikeRepository, articleLikeCountRepository, articleReader, applicationEventPublisher);
+        EventPublisher eventPublisher = mock(EventPublisher.class);
+        articleLikeWriter = new ArticleLikeWriter(timeProvider, articleLikeRepository, articleLikeCountRepository, articleReader, eventPublisher);
     }
 
     @Test

@@ -1,6 +1,6 @@
 package board.backend.comment.domain;
 
-import board.backend.common.support.Forbidden;
+import board.backend.common.exception.Forbidden;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
