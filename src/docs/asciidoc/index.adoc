@@ -5,7 +5,7 @@
 
 == Auth
 
-=== 회원가입
+=== 사용자가입
 
 ==== 요청
 
@@ -67,7 +67,7 @@ include::{snippets}/users/read-my/request-headers.adoc[]
 include::{snippets}/users/read-my/http-response.adoc[]
 include::{snippets}/users/read-my/response-fields.adoc[]
 
-=== 회원 조회
+=== 사용자 조회
 
 ==== 요청
 

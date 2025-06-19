@@ -18,9 +18,14 @@ public class CommentService {
 
     private final CacheManager cacheManager;
     private final CommentReader commentReader;
-    private final CommentWriter commentWriter;
+    private final CommentCreator commentCreator;
+    private final CommentDeleter commentDeleter;
 
-    @Cacheable(value = "comment::list::article", key = "#articleId", condition = "#pageSize.equals(10L) && #lastParentCommentId == null && #lastCommentId == null")
+    @Cacheable(
+        value = "comment::list::article",
+        key = "#articleId",
+        condition = "#pageSize.equals(10L) && #lastParentCommentId == null && #lastCommentId == null"
+    )
     public List<CommentWithWriter> readAll(
         Long articleId,
         Long pageSize,
@@ -30,13 +35,16 @@ public class CommentService {
         return commentReader.readAll(articleId, pageSize, lastParentCommentId, lastCommentId);
     }
 
-    @CacheEvict(value = "comment::list::article", key = "#articleId")
+    @CacheEvict(
+        value = "comment::list::article",
+        key = "#articleId"
+    )
     public Comment create(Long articleId, Long userId, Long parentCommentId, String content) {
-        return commentWriter.create(articleId, userId, parentCommentId, content);
+        return commentCreator.create(articleId, userId, parentCommentId, content);
     }
 
     public void delete(Long commentId, Long userId) {
-        Optional<Long> articleId = commentWriter.delete(commentId, userId);
+        Optional<Long> articleId = commentDeleter.delete(commentId, userId);
         articleId.ifPresent(id -> {
             Cache cache = cacheManager.getCache("comment::list::article");
             if (cache != null) {

@@ -6,116 +6,103 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CommentTest {
 
-    @Test
-    @DisplayName("부모 ID가 null이면 댓글 생성 시 부모 ID에 자기 자신 id가 할당되고 isDeleted는 false이다")
-    void create_with_null_parentId() {
-        // given
-        Long id = 1L;
-        Long articleId = 10L;
-        Long writerId = 100L;
-        Long parentId = null;
-        String content = "루트 댓글 내용";
-        LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
-
-        // when
-        Comment comment = Comment.create(id, articleId, writerId, parentId, content, now);
-
-        // then
-        assertThat(comment.parentId()).isEqualTo(id);
-        assertThat(comment.isRoot()).isTrue();
-        assertThat(comment.id()).isEqualTo(id);
-        assertThat(comment.articleId()).isEqualTo(articleId);
-        assertThat(comment.writerId()).isEqualTo(writerId);
-        assertThat(comment.content()).isEqualTo(content);
-        assertThat(comment.createdAt()).isEqualTo(now);
-        assertThat(comment.isDeleted()).isFalse();
-    }
+    private final LocalDateTime now = LocalDateTime.of(2024, 1, 1, 12, 0);
 
     @Test
-    @DisplayName("부모 ID가 주어지면 댓글 생성 시 해당 값으로 할당되고, 루트 댓글이 아님을 판별할 수 있다")
-    void create_with_nonNull_parentId() {
+    @DisplayName("루트 댓글은 parentId와 id가 같다")
+    void isRoot_true_whenParentIdEqualsId() {
         // given
-        Long id = 2L;
-        Long articleId = 20L;
-        Long writerId = 200L;
-        // 루트 댓글이 아니라면 부모 ID가 자기 자신의 id와 달라야 함
-        Long parentId = 1L;
-        String content = "대댓글 내용";
-        LocalDateTime now = LocalDateTime.of(2024, 1, 2, 11, 0);
+        Comment comment = Comment.builder()
+            .id(1L)
+            .articleId(100L)
+            .writerId(10L)
+            .parentId(1L)
+            .content("댓글")
+            .createdAt(now)
+            .isDeleted(false)
+            .build();
 
-        // when
-        Comment comment = Comment.create(id, articleId, writerId, parentId, content, now);
-
-        // then
-        assertThat(comment.parentId()).isEqualTo(parentId);
-        assertThat(comment.isRoot()).isFalse();
-        assertThat(comment.id()).isEqualTo(id);
-    }
-
-    @Test
-    @DisplayName("댓글 ID와 부모 ID가 같으면 루트 댓글로 판단한다")
-    void is_root_success() {
-        // given
-        Long id = 5L;
-        Long parentId = 5L;
-        Comment comment = Comment.create(id, 10L, 100L, parentId, "루트 댓글", LocalDateTime.now());
-
-        // expect
+        // when & then
         assertThat(comment.isRoot()).isTrue();
     }
 
     @Test
-    @DisplayName("댓글 ID와 부모 ID가 다르면 루트 댓글이 아니다")
-    void is_not_root() {
+    @DisplayName("대댓글은 parentId와 id가 다르다")
+    void isRoot_false_whenParentIdNotEqualsId() {
         // given
-        Long id = 6L;
-        Long parentId = 5L;
-        Comment comment = Comment.create(id, 10L, 100L, parentId, "대댓글", LocalDateTime.now());
+        Comment comment = Comment.builder()
+            .id(2L)
+            .articleId(100L)
+            .writerId(10L)
+            .parentId(1L)
+            .content("대댓글")
+            .createdAt(now)
+            .isDeleted(false)
+            .build();
 
-        // expect
+        // when & then
         assertThat(comment.isRoot()).isFalse();
     }
 
     @Test
-    @DisplayName("댓글 삭제 시 isDeleted가 true로 변경된다")
-    void delete_success() {
+    @DisplayName("댓글을 삭제하면 isDeleted가 true로 바뀐다")
+    void delete_success_setsIsDeletedTrue() {
         // given
-        Comment comment = Comment.create(1L, 10L, 100L, 1L, "삭제될 댓글", LocalDateTime.now());
+        Comment comment = Comment.create(1L, 100L, 10L, null, "댓글", now);
 
         // when
-        Comment result = comment.delete();
+        Comment deleted = comment.delete();
 
         // then
-        assertThat(result.isDeleted()).isTrue();
+        assertThat(deleted.isDeleted()).isTrue();
     }
 
     @Test
-    @DisplayName("작성자 본인이면 예외가 발생하지 않는다")
-    void check_writer_success() {
+    @DisplayName("댓글 작성자가 맞으면 예외가 발생하지 않는다")
+    void checkIsWriter_success_whenSameUserId() {
         // given
-        Long writerId = 1L;
-        Comment comment = Comment.create(1L, 10L, writerId, 1L, "삭제될 댓글", LocalDateTime.now());
+        Comment comment = Comment.create(1L, 100L, 10L, null, "댓글", now);
 
         // when & then
-        comment.checkIsWriter(writerId);
+        comment.checkIsWriter(10L);
     }
 
     @Test
-    @DisplayName("작성자가 아니면 Forbidden 예외가 발생한다")
-    void check_writer_fail() {
+    @DisplayName("댓글 작성자가 아니면 예외가 발생한다")
+    void checkIsWriter_fail_whenDifferentUserId_throwsException() {
         // given
-        Long writerId = 1L;
-        Long anotherUserId = 2L;
-        Comment comment = Comment.create(1L, 10L, writerId, 1L, "삭제될 댓글", LocalDateTime.now());
+        Comment comment = Comment.create(1L, 100L, 10L, null, "댓글", now);
 
         // when & then
-        assertThatThrownBy(() -> comment.checkIsWriter(anotherUserId))
+        assertThatThrownBy(() -> comment.checkIsWriter(20L))
             .isInstanceOf(Forbidden.class);
+    }
+
+    @Test
+    @DisplayName("create 시 parentId가 null이면 id로 설정된다")
+    void create_setsParentIdToId_whenParentIdIsNull() {
+        // when
+        Comment comment = Comment.create(5L, 100L, 10L, null, "내용", now);
+
+        // then
+        assertThat(comment.parentId()).isEqualTo(comment.id());
+        assertThat(comment.isRoot()).isTrue();
+    }
+
+    @Test
+    @DisplayName("create 시 parentId가 있으면 그대로 설정된다")
+    void create_setsParentId_whenGiven() {
+        // when
+        Comment comment = Comment.create(5L, 100L, 10L, 3L, "내용", now);
+
+        // then
+        assertThat(comment.parentId()).isEqualTo(3L);
+        assertThat(comment.isRoot()).isFalse();
     }
 
 }

@@ -1,11 +1,11 @@
 package board.backend.auth.application;
 
 import board.backend.auth.application.port.LoginInfoRepository;
+import board.backend.auth.application.port.PasswordEncoderProvider;
 import board.backend.auth.domain.LoginInfo;
 import board.backend.auth.domain.LoginInfoNotFound;
 import board.backend.auth.domain.LoginMethod;
 import board.backend.auth.domain.WrongPassword;
-import board.backend.auth.infra.PasswordEncoderProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

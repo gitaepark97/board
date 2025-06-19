@@ -45,12 +45,10 @@ class CommentControllerTest extends TestController {
         Long pageSize = 10L;
         Long lastParentCommentId = 5L;
         Long lastCommentId = 7L;
-
         List<CommentWithWriter> comments = List.of(
-            CommentWithWriter.of(Comment.create(8L, articleId, 1L, 8L, "댓글1", LocalDateTime.of(2024, 1, 1, 10, 0)), User.create(1L, "user1@email.com", "회원1", LocalDateTime.now())),
-            CommentWithWriter.of(Comment.create(9L, articleId, 101L, 9L, "댓글2", LocalDateTime.of(2024, 1, 1, 11, 0)), User.create(2L, "user2@email.com", "회원2", LocalDateTime.now()))
+            CommentWithWriter.of(Comment.create(8L, articleId, 1L, 8L, "댓글1", LocalDateTime.of(2024, 1, 1, 10, 0)), User.create(1L, "user1@email.com", "사용자1", LocalDateTime.now())),
+            CommentWithWriter.of(Comment.create(9L, articleId, 101L, 9L, "댓글2", LocalDateTime.of(2024, 1, 1, 11, 0)), User.create(2L, "user2@email.com", "사용자2", LocalDateTime.now()))
         );
-
         when(commentService.readAll(articleId, pageSize, lastParentCommentId, lastCommentId)).thenReturn(comments);
 
         // when & then
@@ -66,11 +64,11 @@ class CommentControllerTest extends TestController {
             .andExpect(jsonPath("$.data.length()").value(2))
             .andExpect(jsonPath("$.data[0].id").value("8"))
             .andExpect(jsonPath("$.data[0].writer.id").value("1"))
-            .andExpect(jsonPath("$.data[0].writer.nickname").value("회원1"))
+            .andExpect(jsonPath("$.data[0].writer.nickname").value("사용자1"))
             .andExpect(jsonPath("$.data[0].content").value("댓글1"))
             .andExpect(jsonPath("$.data[1].id").value("9"))
             .andExpect(jsonPath("$.data[1].writer.id").value("2"))
-            .andExpect(jsonPath("$.data[1].writer.nickname").value("회원2"))
+            .andExpect(jsonPath("$.data[1].writer.nickname").value("사용자2"))
             .andExpect(jsonPath("$.data[1].content").value("댓글2"))
             .andDo(document("comments/read-all",
                 queryParameters(
@@ -104,7 +102,6 @@ class CommentControllerTest extends TestController {
             "100",
             "댓글 내용"
         );
-
         Comment comment = Comment.create(
             10L,
             1L,
@@ -113,7 +110,6 @@ class CommentControllerTest extends TestController {
             "댓글 내용",
             LocalDateTime.of(2024, 1, 1, 12, 0)
         );
-
         when(commentService.create(anyLong(), anyLong(), anyLong(), anyString())).thenReturn(comment);
 
         // when & then

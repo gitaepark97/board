@@ -1,8 +1,8 @@
 package board.backend.hotArticle.application;
 
-import board.backend.hotArticle.application.port.DailyArticleCountRepository;
-import board.backend.hotArticle.application.port.DailyArticleViewCountRepository;
-import board.backend.hotArticle.application.port.HotArticleRepository;
+import board.backend.hotArticle.application.fake.FakeDailyArticleCountRepository;
+import board.backend.hotArticle.application.fake.FakeDailyArticleViewCountRepository;
+import board.backend.hotArticle.application.fake.FakeHotArticleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,105 +10,64 @@ import org.junit.jupiter.api.Test;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class HotArticleScoreScoreCalculatorTest {
 
-    private DailyArticleCountRepository likeRepository;
-    private DailyArticleViewCountRepository viewRepository;
-    private DailyArticleCountRepository commentRepository;
-    private TimeCalculator timeCalculator;
+    private final LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
+
+    private FakeDailyArticleCountRepository likeCountRepository;
+    private FakeDailyArticleViewCountRepository viewCountRepository;
+    private FakeDailyArticleCountRepository commentCountRepository;
+    private FakeHotArticleRepository hotArticleRepository;
     private HotArticleScoreScoreCalculator calculator;
 
     @BeforeEach
     void setUp() {
-        likeRepository = mock(DailyArticleCountRepository.class);
-        viewRepository = mock(DailyArticleViewCountRepository.class);
-        commentRepository = mock(DailyArticleCountRepository.class);
-        HotArticleRepository hotArticleRepository = mock(HotArticleRepository.class);
-        timeCalculator = mock(TimeCalculator.class);
-
+        likeCountRepository = new FakeDailyArticleCountRepository();
+        viewCountRepository = new FakeDailyArticleViewCountRepository();
+        commentCountRepository = new FakeDailyArticleCountRepository();
+        hotArticleRepository = new FakeHotArticleRepository();
         calculator = new HotArticleScoreScoreCalculator(
-            likeRepository,
-            viewRepository,
-            commentRepository,
+            likeCountRepository,
+            viewCountRepository,
+            commentCountRepository,
             hotArticleRepository,
-            timeCalculator
+            new TimeCalculator()
         );
     }
 
     @Test
-    @DisplayName("좋아요 증가 후 점수 계산")
-    void increaseArticleLikeCount_shouldCalculateScoreAndSave() {
+    @DisplayName("좋아요 수 증가 시 점수를 계산하고 핫 게시글로 저장한다")
+    void increaseArticleLikeCount_success_savesHotArticle() {
         // given
         Long articleId = 1L;
-        LocalDateTime now = LocalDateTime.now();
-        when(timeCalculator.calculateDurationToNoon()).thenReturn(Duration.ofHours(12));
-        when(likeRepository.read(articleId, now)).thenReturn(5L);
-        when(viewRepository.read(articleId, now)).thenReturn(10L);
-        when(commentRepository.read(articleId, now)).thenReturn(2L);
 
         // when
         calculator.increaseArticleLikeCount(articleId, now);
+
+        // then
+        assertThat(hotArticleRepository.findById(articleId))
+            .contains(new FakeHotArticleRepository.Entry(articleId, now, 3L));
     }
 
     @Test
-    @DisplayName("좋아요 감소 후 점수 계산")
-    void decreaseArticleLikeCount_shouldCalculateScoreAndSave() {
+    @DisplayName("댓글 수와 조회 수가 있을 때 정확한 점수를 계산한다")
+    void calculateScore_success_combinesAllMetricsWithWeight() {
         // given
         Long articleId = 1L;
-        LocalDateTime now = LocalDateTime.now();
-        when(likeRepository.read(articleId, now)).thenReturn(2L);
-        when(viewRepository.read(articleId, now)).thenReturn(4L);
-        when(commentRepository.read(articleId, now)).thenReturn(1L);
-
-        // when
-        calculator.decreaseArticleLikeCount(articleId, now);
-    }
-
-    @Test
-    @DisplayName("조회수 증가 후 점수 계산")
-    void increaseArticleViewCount_shouldCalculateScoreAndSave() {
-        // given
-        Long articleId = 1L;
-        Long count = 2L;
-        LocalDateTime now = LocalDateTime.now();
-        when(timeCalculator.calculateDurationToNoon()).thenReturn(Duration.ofHours(10));
-        when(likeRepository.read(articleId, now)).thenReturn(3L);
-        when(viewRepository.read(articleId, now)).thenReturn(6L);
-        when(commentRepository.read(articleId, now)).thenReturn(1L);
-
-        // when
-        calculator.increaseArticleViewCount(articleId, count, now);
-    }
-
-    @Test
-    @DisplayName("댓글 생성 시 점수 계산")
-    void increaseArticleCommentCount_shouldCalculateScoreAndSave() {
-        // given
-        Long articleId = 1L;
-        LocalDateTime now = LocalDateTime.now();
-        when(likeRepository.read(articleId, now)).thenReturn(1L);
-        when(viewRepository.read(articleId, now)).thenReturn(2L);
-        when(commentRepository.read(articleId, now)).thenReturn(5L);
+        likeCountRepository.increaseOrSave(articleId, now, Duration.ofDays(1)); // +3
+        likeCountRepository.increaseOrSave(articleId, now, Duration.ofDays(1)); // +3
+        commentCountRepository.increaseOrSave(articleId, now, Duration.ofDays(1)); // +2
+        viewCountRepository.save(articleId, 5L, now, Duration.ofDays(1)); // +5
 
         // when
         calculator.increaseArticleCommentCount(articleId, now);
-    }
 
-    @Test
-    @DisplayName("댓글 삭제 시 점수 계산")
-    void decreaseArticleCommentCount_shouldCalculateScoreAndSave() {
-        // given
-        Long articleId = 2L;
-        LocalDateTime now = LocalDateTime.now();
-        when(likeRepository.read(articleId, now)).thenReturn(0L);
-        when(viewRepository.read(articleId, now)).thenReturn(1L);
-        when(commentRepository.read(articleId, now)).thenReturn(3L);
-
-        // when
-        calculator.decreaseArticleCommentCount(articleId, now);
+        // then
+        // 좋아요 2회 → 6, 댓글 2회 → 4, 조회수 5 → 5 → 총합 15
+        assertThat(hotArticleRepository.findById(articleId))
+            .contains(new FakeHotArticleRepository.Entry(articleId, now, 15L));
     }
 
 }

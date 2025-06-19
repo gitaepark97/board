@@ -12,28 +12,32 @@ public class AuthService {
 
     private final LoginInfoReader loginInfoReader;
     private final SessionReader sessionReader;
-    private final LoginInfoWriter loginInfoWriter;
-    private final SessionWriter sessionWriter;
-    private final TokenProcessor tokenProcessor;
+    private final LoginInfoCreator loginInfoCreator;
+    private final SessionCreator sessionCreator;
+    private final SessionDeleter sessionDeleter;
+    private final TokenManager tokenManager;
 
     public void register(String email, String password, String nickname) {
-        loginInfoWriter.create(email, password, nickname);
+        loginInfoCreator.create(email, password, nickname);
     }
 
     public Token login(String email, String password) {
         // 로그인 정보 조회
         LoginInfo loginInfo = loginInfoReader.read(email, password);
 
+        // 기존 세션 삭제
+        sessionDeleter.delete(loginInfo.userId());
+
         // 세션 생성
-        Session session = sessionWriter.create(loginInfo.userId());
+        Session session = sessionCreator.create(loginInfo.userId());
 
         // 토큰 발급
-        return tokenProcessor.issueToken(session);
+        return tokenManager.issueToken(session);
     }
 
     public void logout(Long userId) {
         // 세션 삭제
-        sessionWriter.delete(userId);
+        sessionDeleter.delete(userId);
     }
 
     public Token reissueToken(String refreshToken) {
@@ -41,7 +45,7 @@ public class AuthService {
         Session session = sessionReader.read(refreshToken);
 
         // 토큰 발급
-        return tokenProcessor.issueToken(session);
+        return tokenManager.issueToken(session);
     }
 
 }

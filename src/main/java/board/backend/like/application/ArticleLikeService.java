@@ -7,14 +7,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class ArticleLikeService {
 
-    private final ArticleLikeWriter articleLikeWriter;
+    private final ArticleLikeManager articleLikeManager;
 
     public void like(Long articleId, Long userId) {
-        articleLikeWriter.like(articleId, userId);
+        articleLikeManager.like(articleId, userId);
     }
 
     public void unlike(Long articleId, Long userId) {
-        articleLikeWriter.unlike(articleId, userId);
+        articleLikeManager.unlike(articleId, userId);
     }
 
 }

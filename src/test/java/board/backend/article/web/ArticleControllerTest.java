@@ -46,9 +46,7 @@ class ArticleControllerTest extends TestController {
         ArticleCreateRequest request = new ArticleCreateRequest("1", "제목입니다", "내용입니다");
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
         Article response = Article.create(1L, 1L, userId, "제목입니다", "내용입니다", now);
-
-        when(articleService.create(any(), any(), any(), any()))
-            .thenReturn(response);
+        when(articleService.create(any(), any(), any(), any())).thenReturn(response);
 
         // when & then
         mockMvc.perform(post("/api/articles")
@@ -92,12 +90,10 @@ class ArticleControllerTest extends TestController {
         String accessToken = "valid-access-token";
         Long articleId = 1L;
         ArticleUpdateRequest request = new ArticleUpdateRequest("수정된 제목", "수정된 내용");
-
         LocalDateTime createdAt = LocalDateTime.of(2024, 1, 1, 10, 0);
         LocalDateTime updatedAt = LocalDateTime.of(2024, 1, 2, 12, 0);
         Article response = Article.create(articleId, 1L, userId, "수정된 제목", "수정된 내용", createdAt)
             .update(userId, "수정된 제목", "수정된 내용", updatedAt);
-
         when(articleService.update(eq(userId), eq(articleId), any(), any())).thenReturn(response);
 
         // when & then

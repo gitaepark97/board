@@ -1,54 +1,50 @@
 package board.backend.auth.application;
 
-import board.backend.auth.application.port.SessionRepository;
+import board.backend.auth.application.fake.FakeSessionRepository;
 import board.backend.auth.domain.Session;
 import board.backend.auth.domain.SessionInvalid;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SessionReaderTest {
 
-    private SessionRepository sessionRepository;
+    private FakeSessionRepository sessionRepository;
     private SessionReader sessionReader;
 
     @BeforeEach
     void setUp() {
-        sessionRepository = mock(SessionRepository.class);
+        sessionRepository = new FakeSessionRepository();
         sessionReader = new SessionReader(sessionRepository);
     }
 
     @Test
-    @DisplayName("세션 조회에 성공한다")
-    void read_success() {
+    @DisplayName("세션 ID로 세션을 조회한다")
+    void read_success_whenValidSessionId_returnsSession() {
         // given
-        String sessionId = "abc-123";
-        Session session = mock(Session.class);
-        when(sessionRepository.findById(sessionId)).thenReturn(Optional.of(session));
+        Session session = Session.create("session-123", 1L, LocalDateTime.now());
+        sessionRepository.save(session);
 
         // when
-        Session result = sessionReader.read(sessionId);
+        Session result = sessionReader.read("session-123");
 
         // then
         assertThat(result).isEqualTo(session);
     }
 
     @Test
-    @DisplayName("세션이 존재하지 않으면 예외가 발생한다")
-    void read_fail_notFound() {
+    @DisplayName("세션 ID가 존재하지 않으면 예외가 발생한다")
+    void read_fail_whenSessionNotFound_throwsSessionInvalid() {
         // given
-        String invalidId = "invalid";
-        when(sessionRepository.findById(invalidId)).thenReturn(Optional.empty());
+        String invalidSessionId = "invalid-session";
 
         // when & then
-        assertThatThrownBy(() -> sessionReader.read(invalidId))
+        assertThatThrownBy(() -> sessionReader.read(invalidSessionId))
             .isInstanceOf(SessionInvalid.class);
     }
 

@@ -8,13 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.modulith.NamedInterface;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static board.backend.user.application.UserConstants.USER_CACHE_TTL;
 import static java.util.function.Predicate.not;
 
 @NamedInterface
@@ -22,26 +22,8 @@ import static java.util.function.Predicate.not;
 @Component
 public class UserReader {
 
-    private final static Duration CACHE_TTL = Duration.ofMinutes(5);
-
     private final CachedRepository<User, Long> cachedUserRepository;
     private final UserRepository userRepository;
-
-    public void checkUserExistsOrThrow(Long userId) {
-        if (!cachedUserRepository.existsByKey(userId) && !userRepository.existsById(userId)) {
-            throw new UserNotFound();
-        }
-        cachedUserRepository.save(userId, null, CACHE_TTL);
-    }
-
-    public boolean isUserExists(Long userId) {
-        if (cachedUserRepository.existsByKey(userId) || userRepository.existsById(userId)) {
-            cachedUserRepository.save(userId, null, CACHE_TTL);
-            return true;
-        }
-
-        return false;
-    }
 
     public Optional<User> read(String email) {
         return userRepository.findByEmail(email);
@@ -51,7 +33,7 @@ public class UserReader {
         return cachedUserRepository.findByKey(userId)
             .orElseGet(() -> {
                 User user = userRepository.findById(userId).orElseThrow(UserNotFound::new);
-                cachedUserRepository.save(userId, user, CACHE_TTL);
+                cachedUserRepository.save(userId, user, USER_CACHE_TTL);
                 return user;
             });
     }
@@ -71,7 +53,7 @@ public class UserReader {
             List<User> uncached = userRepository.findAllById(missed);
 
             // 캐시에 저장
-            uncached.forEach(user -> cachedUserRepository.save(user.id(), user, CACHE_TTL));
+            uncached.forEach(user -> cachedUserRepository.save(user.id(), user, USER_CACHE_TTL));
 
             // 합쳐서 반환
             uncached.forEach(user -> map.put(user.id(), user));

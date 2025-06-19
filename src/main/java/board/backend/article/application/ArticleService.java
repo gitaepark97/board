@@ -14,19 +14,24 @@ import java.util.Optional;
 public class ArticleService {
 
     private final CacheManager cacheManager;
-    private final ArticleWriter articleWriter;
+    private final ArticleCreator articleCreator;
+    private final ArticleUpdater articleUpdater;
+    private final ArticleDeleter articleDeleter;
 
-    @CacheEvict(value = "article::list::board", key = "#boardId")
+    @CacheEvict(
+        value = "article::list::board",
+        key = "#boardId"
+    )
     public Article create(Long boardId, Long userId, String title, String content) {
-        return articleWriter.create(boardId, userId, title, content);
+        return articleCreator.create(boardId, userId, title, content);
     }
 
     public Article update(Long articleId, Long userId, String title, String content) {
-        return articleWriter.update(articleId, userId, title, content);
+        return articleUpdater.update(articleId, userId, title, content);
     }
 
     public void delete(Long articleId, Long userId) {
-        Optional<Long> boardId = articleWriter.delete(articleId, userId);
+        Optional<Long> boardId = articleDeleter.delete(articleId, userId);
         boardId.ifPresent(id -> {
             Cache cache = cacheManager.getCache("article::list::board");
             if (cache != null) {

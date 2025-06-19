@@ -11,7 +11,8 @@ import org.springframework.context.annotation.Import;
 
 import java.time.LocalDateTime;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @Import(UserRepositoryImpl.class)
 class UserRepositoryTest extends TestRepository {
@@ -28,8 +29,8 @@ class UserRepositoryTest extends TestRepository {
     }
 
     @Test
-    @DisplayName("ID로 회원 존재 여부를 확인한다 - 존재함")
-    void existsById_exists() {
+    @DisplayName("userId로 사용자가 존재하면 true를 반환한다")
+    void existsById_success_whenExists_returnsTrue() {
         // when
         boolean result = userRepository.existsById(userId);
 
@@ -38,8 +39,8 @@ class UserRepositoryTest extends TestRepository {
     }
 
     @Test
-    @DisplayName("ID로 회원 존재 여부를 확인한다 - 존재하지 않음")
-    void existsById_notExists() {
+    @DisplayName("userId로 사용자가 존재하지 않으면 false를 반환한다")
+    void existsById_success_whenNotExists_returnsFalse() {
         // when
         boolean result = userRepository.existsById(999L);
 
@@ -48,8 +49,8 @@ class UserRepositoryTest extends TestRepository {
     }
 
     @Test
-    @DisplayName("email로 회원 존재 여부를 확인한다 - 존재함")
-    void existsByEmail_exists() {
+    @DisplayName("email로 사용자가 존재하면 true를 반환한다")
+    void existsByEmail_success_whenExists_returnsTrue() {
         // when
         boolean result = userRepository.existsByEmail(email);
 
@@ -58,8 +59,8 @@ class UserRepositoryTest extends TestRepository {
     }
 
     @Test
-    @DisplayName("email로 회원 존재 여부를 확인한다 - 존재하지 않음")
-    void existsByEmail_notExists() {
+    @DisplayName("email로 사용자가 존재하지 않으면 false를 반환한다")
+    void existsByEmail_success_whenNotExists_returnsFalse() {
         // when
         boolean result = userRepository.existsByEmail("user999@example.com");
 

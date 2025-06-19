@@ -16,7 +16,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.cookies.CookieDocumentation.cookieWithName;
 import static org.springframework.restdocs.cookies.CookieDocumentation.requestCookies;
@@ -35,7 +34,7 @@ class AuthControllerTest extends TestController {
     private AuthService authService;
 
     @Test
-    @DisplayName("회원가입 API - 성공")
+    @DisplayName("사용자가입 API - 성공")
     void register_success() throws Exception {
         // given
         RegisterRequest request = new RegisterRequest("user@example.com", "Password123!", "닉네임1");
@@ -49,7 +48,7 @@ class AuthControllerTest extends TestController {
             .andExpect(jsonPath("$.message").value("성공"))
             .andDo(document("auth/register",
                 requestFields(
-                    fieldWithPath("email").description("회원 이메일"),
+                    fieldWithPath("email").description("사용자 이메일"),
                     fieldWithPath("password").description("비밀번호"),
                     fieldWithPath("nickname").description("닉네임")
                 ),
@@ -66,7 +65,6 @@ class AuthControllerTest extends TestController {
         // given
         LoginRequest request = new LoginRequest("user@example.com", "password123");
         Token token = new Token("access-token-value", "refresh-token-value");
-
         when(authService.login(anyString(), anyString())).thenReturn(token);
 
         // when & then
@@ -97,8 +95,6 @@ class AuthControllerTest extends TestController {
         // given
         Long userId = 1L;
 
-        doNothing().when(authService).logout(userId);
-
         // when & then
         mockMvc.perform(post("/api/auth/logout")
                 .with(authentication(new UsernamePasswordAuthenticationToken(userId, null, null)))
@@ -125,7 +121,6 @@ class AuthControllerTest extends TestController {
         // given
         String refreshToken = "valid-refresh-token";
         Token token = new Token("new-access-token", "new-refresh-token");
-
         when(authService.reissueToken(refreshToken)).thenReturn(token);
 
         // when & then

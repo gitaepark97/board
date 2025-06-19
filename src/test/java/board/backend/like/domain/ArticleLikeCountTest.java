@@ -3,22 +3,22 @@ package board.backend.like.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ArticleLikeCountTest {
 
     @Test
-    @DisplayName("게시글 좋아요 수 초기화에 성공한다")
-    void init_success() {
+    @DisplayName("init 메서드는 articleId로 초기화된 ArticleLikeCount를 반환한다")
+    void init_success_setsInitialLikeCountToOne() {
         // given
         Long articleId = 1L;
 
         // when
-        ArticleLikeCount likeCount = ArticleLikeCount.init(articleId);
+        ArticleLikeCount count = ArticleLikeCount.init(articleId);
 
         // then
-        assertThat(likeCount.articleId()).isEqualTo(articleId);
-        assertThat(likeCount.likeCount()).isEqualTo(1L);
+        assertThat(count.articleId()).isEqualTo(articleId);
+        assertThat(count.likeCount()).isEqualTo(1L);
     }
 
 }

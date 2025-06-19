@@ -1,13 +1,14 @@
 package board.backend.user.application;
 
-import board.backend.common.infra.CachedRepository;
-import board.backend.user.application.port.UserRepository;
+import board.backend.common.infra.fake.FakeCachedRepository;
+import board.backend.user.application.fake.FakeUserRepository;
 import board.backend.user.domain.User;
 import board.backend.user.domain.UserNotFound;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -15,106 +16,27 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class UserReaderTest {
 
-    private CachedRepository<User, Long> cachedUserRepository;
-    private UserRepository userRepository;
+    private FakeCachedRepository<User, Long> cachedRepository;
+    private FakeUserRepository userRepository;
     private UserReader userReader;
 
     @BeforeEach
     void setUp() {
-        cachedUserRepository = mock(CachedRepository.class);
-        userRepository = mock(UserRepository.class);
-        userReader = new UserReader(cachedUserRepository, userRepository);
+        cachedRepository = new FakeCachedRepository<>();
+        userRepository = new FakeUserRepository();
+        userReader = new UserReader(cachedRepository, userRepository);
     }
 
     @Test
-    @DisplayName("회원이 캐시에 존재하면 예외 없이 통과한다")
-    void checkUserExists_OrThrow_whenCacheHit_shouldPass() {
+    @DisplayName("이메일로 사용자를 조회할 수 있다")
+    void read_success_whenEmailExists_returnsUser() {
         // given
-        Long userId = 1L;
-        when(cachedUserRepository.existsByKey(userId)).thenReturn(true);
-
-        // when
-        userReader.checkUserExistsOrThrow(userId);
-    }
-
-    @Test
-    @DisplayName("회원이 캐시에 없지만 DB에 존재하면 예외가 발생하지 않는다")
-    void checkUserExistsOrThrow_OrThrow_successByDB() {
-        // given
-        Long userId = 1L;
-        when(cachedUserRepository.existsByKey(userId)).thenReturn(false);
-        when(userRepository.existsById(userId)).thenReturn(true);
-
-        // when
-        userReader.checkUserExistsOrThrow(userId);
-    }
-
-    @Test
-    @DisplayName("회원이 캐시에 없고 DB에는 존재하면 예외 없이 통과한다")
-    void checkUserExistsOrThrow_whenCacheMissAndDbHit_shouldPass() {
-        // given
-        Long userId = 1L;
-        when(cachedUserRepository.existsByKey(userId)).thenReturn(false);
-        when(userRepository.existsById(userId)).thenReturn(true);
-
-        // when
-        userReader.checkUserExistsOrThrow(userId);
-    }
-
-    @Test
-    @DisplayName("회원이 캐시와 DB에 모두 없으면 예외가 발생한다")
-    void checkUserExistsOrThrow_whenCacheAndDbMiss_shouldThrow() {
-        // given
-        Long userId = 1L;
-        when(cachedUserRepository.existsByKey(userId)).thenReturn(false);
-        when(userRepository.existsById(userId)).thenReturn(false);
-
-        // when & then
-        assertThatThrownBy(() -> userReader.checkUserExistsOrThrow(userId))
-            .isInstanceOf(UserNotFound.class);
-    }
-
-    @Test
-    @DisplayName("회원 존재 여부를 캐시에서 조회해 true를 반환한다")
-    void isUserExists_whenCacheHit_shouldReturnTrue() {
-        // given
-        Long userId = 1L;
-        when(cachedUserRepository.existsByKey(userId)).thenReturn(true);
-
-        // when
-        boolean result = userReader.isUserExists(userId);
-
-        // then
-        assertThat(result).isTrue();
-    }
-
-    @Test
-    @DisplayName("회원 존재 여부를 DB에서 조회해 true를 반환한다")
-    void isUserExists_whenDbHit_shouldReturnTrue() {
-        // given
-        Long userId = 1L;
-        when(cachedUserRepository.existsByKey(userId)).thenReturn(false);
-        when(userRepository.existsById(userId)).thenReturn(true);
-
-        // when
-        boolean result = userReader.isUserExists(userId);
-
-        // then
-        assertThat(result).isTrue();
-    }
-
-    @Test
-    @DisplayName("이메일로 회원을 조회해 Optional로 반환한다")
-    void read_whenEmailExists_shouldReturnUser() {
-        // given
-        String email = "test@email.com";
-        User user = User.create(1L, email, "nickname", LocalDateTime.now());
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        String email = "test@example.com";
+        User user = User.create(1L, email, "tester", LocalDateTime.now());
+        userRepository.save(user);
 
         // when
         Optional<User> result = userReader.read(email);
@@ -124,104 +46,70 @@ class UserReaderTest {
     }
 
     @Test
-    @DisplayName("회원 ID로 캐시에서 조회해 반환한다")
-    void read_whenCacheHit_shouldReturnUser() {
+    @DisplayName("ID로 사용자를 조회할 수 있다 (캐시에 없음)")
+    void read_success_whenUserNotInCache_returnsFromRepositoryAndCaches() {
         // given
-        Long userId = 1L;
-        User user = User.create(userId, "email@test.com", "nickname", LocalDateTime.now());
-        when(cachedUserRepository.findByKey(userId)).thenReturn(Optional.of(user));
+        Long id = 1L;
+        User user = User.create(id, "test@example.com", "tester", LocalDateTime.now());
+        userRepository.save(user);
 
         // when
-        User result = userReader.read(userId);
+        User result = userReader.read(id);
+
+        // then
+        assertThat(result).isEqualTo(user);
+        assertThat(cachedRepository.findByKey(id)).contains(user);
+    }
+
+    @Test
+    @DisplayName("ID로 사용자를 조회할 수 있다 (캐시에 있음)")
+    void read_success_whenUserInCache_returnsFromCache() {
+        // given
+        Long id = 1L;
+        User user = User.create(id, "test@example.com", "tester", LocalDateTime.now());
+        cachedRepository.save(id, user, Duration.ofMinutes(10));
+
+        // when
+        User result = userReader.read(id);
 
         // then
         assertThat(result).isEqualTo(user);
     }
 
     @Test
-    @DisplayName("회원 ID로 캐시에 없을 때 DB에서 조회해 반환한다")
-    void read_whenCacheMiss_shouldReturnUserFromDb() {
+    @DisplayName("ID로 사용자를 조회할 때 존재하지 않으면 예외가 발생한다")
+    void read_fail_whenUserNotFound_throwsUserNotFound() {
         // given
-        Long userId = 1L;
-        User user = User.create(userId, "email@test.com", "nickname", LocalDateTime.now());
-        when(cachedUserRepository.findByKey(userId)).thenReturn(Optional.empty());
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-
-        // when
-        User result = userReader.read(userId);
-
-        // then
-        assertThat(result).isEqualTo(user);
-    }
-
-    @Test
-    @DisplayName("회원 ID로 조회 시 캐시와 DB 모두 없으면 예외가 발생한다")
-    void read_whenCacheAndDbMiss_shouldThrow() {
-        // given
-        Long userId = 1L;
-        when(cachedUserRepository.findByKey(userId)).thenReturn(Optional.empty());
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        Long id = 1L;
 
         // when & then
-        assertThatThrownBy(() -> userReader.read(userId))
+        assertThatThrownBy(() -> userReader.read(id))
             .isInstanceOf(UserNotFound.class);
     }
 
     @Test
-    @DisplayName("여러 회원 ID 조회 시 캐시에 모두 존재하면 DB 조회 없이 반환한다")
-    void readAll_whenAllCacheHit_shouldReturnFromCacheOnly() {
+    @DisplayName("ID 목록으로 여러 사용자를 조회할 수 있다 (캐시 미스 포함)")
+    void readAll_success_whenSomeUsersCached_returnsAllAndCachesMissed() {
         // given
-        Long user1Id = 1L;
-        Long user2Id = 2L;
-        User user1 = User.create(user1Id, "user1@email.com", "user1", LocalDateTime.now());
-        User user2 = User.create(user2Id, "user2@email.com", "user2", LocalDateTime.now());
+        User user1 = User.create(1L, "a@example.com", "a", LocalDateTime.now());
+        User user2 = User.create(2L, "b@example.com", "b", LocalDateTime.now());
+        User user3 = User.create(3L, "c@example.com", "c", LocalDateTime.now());
 
-        List<User> cachedUsers = List.of(user1, user2);
-        when(cachedUserRepository.findAllByKey(List.of(user1Id, user2Id))).thenReturn(cachedUsers);
+        cachedRepository.save(1L, user1, Duration.ofMinutes(10));
+        userRepository.save(user2);
+        userRepository.save(user3);
 
         // when
-        Map<Long, User> result = userReader.readAll(List.of(user1Id, user2Id));
+        Map<Long, User> result = userReader.readAll(List.of(1L, 2L, 3L));
 
         // then
-        assertThat(result).containsEntry(user1Id, user1).containsEntry(user2Id, user2);
-    }
+        assertThat(result).containsEntry(1L, user1);
+        assertThat(result).containsEntry(2L, user2);
+        assertThat(result).containsEntry(3L, user3);
 
-    @Test
-    @DisplayName("여러 회원 ID 조회 시 캐시에 모두 없으면 DB에서 모두 조회하고 반환한다")
-    void readAll_whenAllCacheMiss_shouldReturnFromDb() {
-        // given
-        Long user1Id = 1L;
-        Long user2Id = 2L;
-        User user1 = User.create(user1Id, "user1@email.com", "user1", LocalDateTime.now());
-        User user2 = User.create(user2Id, "user2@email.com", "user2", LocalDateTime.now());
-
-        when(cachedUserRepository.findAllByKey(List.of(user1Id, user2Id))).thenReturn(List.of());
-        when(userRepository.findAllById(List.of(user1Id, user2Id))).thenReturn(List.of(user1, user2));
-
-        // when
-        Map<Long, User> result = userReader.readAll(List.of(user1Id, user2Id));
-
-        // then
-        assertThat(result).containsEntry(user1Id, user1).containsEntry(user2Id, user2);
-    }
-
-    @Test
-    @DisplayName("여러 회원 ID로 조회할 때 일부 캐시 hit이면 나머지를 DB에서 조회해 합쳐 반환한다")
-    void readAll_whenPartialCacheHit_shouldReturnMerged() {
-        // given
-        Long user1Id = 1L;
-        Long user2Id = 2L;
-        User user1 = User.create(user1Id, "user1@email.com", "user1", LocalDateTime.now());
-        User user2 = User.create(user2Id, "user2@email.com", "user2", LocalDateTime.now());
-
-        when(cachedUserRepository.findAllByKey(List.of(user1Id, user2Id))).thenReturn(List.of(user1));
-        when(userRepository.findAllById(List.of(user2Id))).thenReturn(List.of(user2));
-
-        // when
-        Map<Long, User> result = userReader.readAll(List.of(user1Id, user2Id));
-
-        // then
-        assertThat(result).containsEntry(user1Id, user1).containsEntry(user2Id, user2);
+        // and: uncached user들이 캐시에 저장되었는지 확인
+        assertThat(cachedRepository.findByKey(2L)).contains(user2);
+        assertThat(cachedRepository.findByKey(3L)).contains(user3);
     }
 
 }

@@ -39,29 +39,29 @@ class HotArticleScoreScoreCalculator {
         this.timeCalculator = timeCalculator;
     }
 
-    void increaseArticleLikeCount(Long articleId, LocalDateTime now) {
-        dailyArticleLikeCountRepository.increaseOrSave(articleId, now, timeCalculator.calculateDurationToNoon());
-        calculateScore(articleId, now);
+    void increaseArticleLikeCount(Long articleId, LocalDateTime time) {
+        dailyArticleLikeCountRepository.increaseOrSave(articleId, time, timeCalculator.calculateDurationToNoon(time));
+        calculateScore(articleId, time);
     }
 
-    void decreaseArticleLikeCount(Long articleId, LocalDateTime now) {
-        dailyArticleLikeCountRepository.decrease(articleId, now);
-        calculateScore(articleId, now);
+    void decreaseArticleLikeCount(Long articleId, LocalDateTime time) {
+        dailyArticleLikeCountRepository.decrease(articleId, time);
+        calculateScore(articleId, time);
     }
 
-    void increaseArticleViewCount(Long articleId, Long count, LocalDateTime now) {
-        dailyArticleViewCountRepository.save(articleId, count, now, timeCalculator.calculateDurationToNoon());
-        calculateScore(articleId, now);
+    void increaseArticleViewCount(Long articleId, Long count, LocalDateTime time) {
+        dailyArticleViewCountRepository.save(articleId, count, time, timeCalculator.calculateDurationToNoon(time));
+        calculateScore(articleId, time);
     }
 
-    void increaseArticleCommentCount(Long articleId, LocalDateTime now) {
-        dailyArticleCommentCountRepository.increaseOrSave(articleId, now, timeCalculator.calculateDurationToNoon());
-        calculateScore(articleId, now);
+    void increaseArticleCommentCount(Long articleId, LocalDateTime time) {
+        dailyArticleCommentCountRepository.increaseOrSave(articleId, time, timeCalculator.calculateDurationToNoon(time));
+        calculateScore(articleId, time);
     }
 
-    void decreaseArticleCommentCount(Long articleId, LocalDateTime now) {
-        dailyArticleCommentCountRepository.decrease(articleId, now);
-        calculateScore(articleId, now);
+    void decreaseArticleCommentCount(Long articleId, LocalDateTime time) {
+        dailyArticleCommentCountRepository.decrease(articleId, time);
+        calculateScore(articleId, time);
     }
 
     private void calculateScore(Long articleId, LocalDateTime time) {

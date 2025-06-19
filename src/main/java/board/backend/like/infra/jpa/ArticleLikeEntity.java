@@ -1,7 +1,6 @@
 package board.backend.like.infra.jpa;
 
 import board.backend.like.domain.ArticleLike;
-import board.backend.like.domain.ArticleLikeId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;

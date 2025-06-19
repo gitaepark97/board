@@ -1,177 +1,115 @@
 package board.backend.article.application;
 
-import board.backend.article.application.port.ArticleRepository;
+import board.backend.article.application.fake.FakeArticleRepository;
 import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
-import board.backend.common.event.EventPublisher;
-import board.backend.common.infra.CachedRepository;
-import org.assertj.core.api.Assertions;
+import board.backend.common.event.EventType;
+import board.backend.common.event.fake.FakeEventPublisher;
+import board.backend.common.event.payload.ArticleReadEventPayload;
+import board.backend.common.infra.fake.FakeCachedRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ArticleReaderTest {
 
-    private CachedRepository<Article, Long> articleCachedRepository;
-    private ArticleRepository articleRepository;
+    private FakeCachedRepository<Article, Long> cachedRepository;
+    private FakeArticleRepository articleRepository;
+    private FakeEventPublisher eventPublisher;
     private ArticleReader articleReader;
 
     @BeforeEach
     void setUp() {
-        articleCachedRepository = mock(CachedRepository.class);
-        articleRepository = mock(ArticleRepository.class);
-        EventPublisher eventPublisher = mock(EventPublisher.class);
-        articleReader = new ArticleReader(articleCachedRepository, articleRepository, eventPublisher);
+        cachedRepository = new FakeCachedRepository<>();
+        articleRepository = new FakeArticleRepository();
+        eventPublisher = new FakeEventPublisher();
+        articleReader = new ArticleReader(cachedRepository, articleRepository, eventPublisher);
     }
 
     @Test
-    @DisplayName("회원이 캐시에 존재하면 예외 없이 통과한다")
-    void checkArticleExistsOrThrow_whenCacheHit_shouldPass() {
-        // given
-        Long articleId = 1L;
-        when(articleCachedRepository.findByKey(articleId)).thenReturn(Optional.of(mock(Article.class)));
-
-        // when
-        articleReader.checkArticleExistsOrThrow(articleId);
-    }
-
-    @Test
-    @DisplayName("회원이 캐시에 없지만 DB에 존재하면 예외가 발생하지 않는다")
-    void checkArticleExistsOrThrow_successByDB() {
-        // given
-        Long articleId = 1L;
-        when(articleCachedRepository.findByKey(articleId)).thenReturn(Optional.empty());
-        when(articleRepository.existsById(articleId)).thenReturn(true);
-
-        // when
-        articleReader.checkArticleExistsOrThrow(articleId);
-    }
-
-    @Test
-    @DisplayName("회원이 캐시에 없고 DB에는 존재하면 예외 없이 통과한다")
-    void checkArticleExistsOrThrow_whenCacheMissAndDbHit_shouldPass() {
-        // given
-        Long articleId = 1L;
-        when(articleCachedRepository.findByKey(articleId)).thenReturn(Optional.empty());
-        when(articleRepository.existsById(articleId)).thenReturn(true);
-
-        // when
-        articleReader.checkArticleExistsOrThrow(articleId);
-    }
-
-    @Test
-    @DisplayName("회원이 캐시와 DB에 모두 없으면 예외가 발생한다")
-    void checkArticleExistsOrThrow_whenCacheAndDbMiss_shouldThrow() {
-        // given
-        Long articleId = 1L;
-        when(articleCachedRepository.findByKey(articleId)).thenReturn(Optional.empty());
-        when(articleRepository.existsById(articleId)).thenReturn(false);
-
-        // when & then
-        Assertions.assertThatThrownBy(() -> articleReader.checkArticleExistsOrThrow(articleId))
-            .isInstanceOf(ArticleNotFound.class);
-    }
-
-    @Test
-    @DisplayName("lastArticleId가 null이면 첫 페이지 게시글 목록을 조회한다")
-    void readAll_firstPage_success() {
+    @DisplayName("게시판 ID로 게시글을 조회할 수 있다 (lastId가 없는 경우)")
+    void readAll_success_whenNoLastId_returnsFirstPage() {
         // given
         Long boardId = 1L;
-        Long pageSize = 3L;
-        Long lastArticleId = null;
-        List<Article> articles = List.of(
-            Article.create(3L, boardId, 1L, "제목1", "내용1", LocalDateTime.now()),
-            Article.create(2L, boardId, 2L, "제목2", "내용2", LocalDateTime.now())
-        );
-        when(articleRepository.findAllByBoardId(anyLong(), anyLong())).thenReturn(articles);
+        Article article1 = Article.create(1L, boardId, 10L, "t1", "c1", LocalDateTime.now());
+        Article article2 = Article.create(2L, boardId, 10L, "t2", "c2", LocalDateTime.now());
+        articleRepository.save(article1);
+        articleRepository.save(article2);
 
         // when
-        List<Article> result = articleReader.readAll(boardId, pageSize, lastArticleId);
+        List<Article> result = articleReader.readAll(boardId, 10L, null);
 
         // then
-        assertThat(result.size()).isEqualTo(2);
+        assertThat(result).containsExactly(article2, article1);
     }
 
     @Test
-    @DisplayName("lastArticleId가 존재하면 다음 페이지 게시글 목록을 조회한다")
-    void readAll_nextPage_success() {
+    @DisplayName("게시판 ID로 게시글을 조회할 수 있다 (lastId가 있는 경우)")
+    void readAll_success_whenLastIdGiven_returnsNextPage() {
         // given
         Long boardId = 1L;
-        Long pageSize = 3L;
-        Long lastArticleId = 10L;
-        List<Article> articles = List.of(
-            Article.create(9L, boardId, 100L, "제목3", "내용3", LocalDateTime.now()),
-            Article.create(8L, boardId, 101L, "제목4", "내용4", LocalDateTime.now())
-        );
-        when(articleRepository.findAllByBoardId(boardId, pageSize, lastArticleId)).thenReturn(articles);
+        Article article3 = Article.create(3L, boardId, 10L, "t1", "c1", LocalDateTime.now());
+        Article article4 = Article.create(4L, boardId, 10L, "t2", "c2", LocalDateTime.now());
+        articleRepository.save(article3);
+        articleRepository.save(article4);
 
         // when
-        List<Article> result = articleReader.readAll(boardId, pageSize, lastArticleId);
+        List<Article> result = articleReader.readAll(boardId, 2L, 5L);
 
         // then
-        assertThat(result.size()).isEqualTo(2);
+        assertThat(result).containsExactly(article4, article3);
     }
 
     @Test
-    @DisplayName("캐싱된 게시글 단건 조회에 성공한다")
-    void read_success_withCache() {
+    @DisplayName("ID 목록으로 게시글을 조회할 수 있다 (캐시 포함)")
+    void readAll_success_whenSomeCached_returnsAllAndCachesMissed() {
         // given
-        Long articleId = 1L;
-        Article article = Article.create(
-            articleId, 10L, 100L, "조회 제목", "조회 내용",
-            LocalDateTime.of(2024, 1, 1, 10, 0)
-        );
-        String ip = "0:0:0:0";
-        when(articleCachedRepository.findByKey(articleId)).thenReturn(Optional.of(article));
+        Article article1 = Article.create(1L, 1L, 10L, "t1", "c1", LocalDateTime.now());
+        Article article2 = Article.create(2L, 1L, 10L, "t2", "c2", LocalDateTime.now());
+        cachedRepository.save(1L, article1, Duration.ofMinutes(10));
+        articleRepository.save(article2);
 
         // when
-        Article result = articleReader.read(articleId, ip);
+        List<Article> result = articleReader.readAll(List.of(1L, 2L));
+
+        // then
+        assertThat(result).containsExactly(article1, article2);
+        assertThat(cachedRepository.findByKey(2L)).contains(article2);
+    }
+
+    @Test
+    @DisplayName("게시글을 조회하고 조회 이벤트를 발행한다")
+    void read_success_whenArticleExists_publishesReadEvent() {
+        // given
+        String ip = "127.0.0.1";
+        Article article = Article.create(1L, 1L, 10L, "title", "content", LocalDateTime.now());
+        articleRepository.save(article);
+
+        // when
+        Article result = articleReader.read(article.id(), ip);
 
         // then
         assertThat(result).isEqualTo(article);
+        assertThat(eventPublisher.getPublishedEvents())
+            .containsExactly(new FakeEventPublisher.PublishedEvent(EventType.ARTICLE_READ, new ArticleReadEventPayload(article.id(), ip)));
+        assertThat(cachedRepository.findByKey(article.id())).contains(article);
     }
 
     @Test
-    @DisplayName("게시글 단건 조회에 성공한다")
-    void read_success() {
+    @DisplayName("게시글이 존재하지 않으면 예외가 발생한다")
+    void read_fail_whenArticleNotFound_throwsException() {
         // given
-        Long articleId = 1L;
-        Article article = Article.create(
-            articleId, 10L, 100L, "조회 제목", "조회 내용",
-            LocalDateTime.of(2024, 1, 1, 10, 0)
-        );
-        String ip = "0:0:0:0";
-        when(articleCachedRepository.findByKey(articleId)).thenReturn(Optional.empty());
-        when(articleRepository.findById(articleId)).thenReturn(Optional.of(article));
-
-        // when
-        Article result = articleReader.read(articleId, ip);
-
-        // then
-        assertThat(result).isEqualTo(article);
-    }
-
-    @Test
-    @DisplayName("게시글 단건 조회 시 존재하지 않으면 예외가 발생한다")
-    void read_failWhenNotFound() {
-        // given
-        Long invalidId = 999L;
-        String ip = "0:0:0:0";
-        when(articleCachedRepository.findByKey(invalidId)).thenReturn(Optional.empty());
-        when(articleRepository.findById(invalidId)).thenReturn(Optional.empty());
+        Long id = 999L;
 
         // when & then
-        assertThatThrownBy(() -> articleReader.read(invalidId, ip))
+        assertThatThrownBy(() -> articleReader.read(id, "127.0.0.1"))
             .isInstanceOf(ArticleNotFound.class);
     }
 

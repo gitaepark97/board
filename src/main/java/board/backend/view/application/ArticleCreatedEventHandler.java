@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component;
 @Component("viewArticleCreatedEventHandler")
 class ArticleCreatedEventHandler implements EventHandler<ArticleCreatedEventPayload> {
 
-    private final ArticleViewWriter articleViewWriter;
+    private final ArticleViewCreator articleViewCreator;
 
     @Override
     public void handle(Event<ArticleCreatedEventPayload> event) {
         ArticleCreatedEventPayload payload = event.getPayload();
-        articleViewWriter.createCount(payload.articleId());
+        articleViewCreator.createCount(payload.articleId());
     }
 
     @Override

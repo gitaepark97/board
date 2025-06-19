@@ -5,19 +5,21 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 class LoginInfoTest {
 
+    private final LocalDateTime now = LocalDateTime.of(2024, 1, 1, 12, 0);
+
     @Test
-    @DisplayName("이메일 로그인 방식의 LoginInfo 생성에 성공한다")
-    void create_emailLoginSuccess() {
+    @DisplayName("이메일 로그인 정보를 생성할 수 있다")
+    void create_success_returnsLoginInfo() {
         // given
         Long id = 1L;
-        Long userId = 100L;
         String email = "user@example.com";
-        String password = "securePass123";
-        LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
+        String password = "encrypted_password";
+        Long userId = 10L;
 
         // when
         LoginInfo loginInfo = LoginInfo.create(id, email, password, userId, now);

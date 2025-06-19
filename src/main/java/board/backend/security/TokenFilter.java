@@ -1,6 +1,6 @@
 package board.backend.security;
 
-import board.backend.auth.application.TokenProcessor;
+import board.backend.auth.application.TokenManager;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +22,7 @@ class TokenFilter extends OncePerRequestFilter {
 
     private static final String BEARER = "Bearer ";
 
-    private final TokenProcessor tokenProcessor;
+    private final TokenManager tokenManager;
 
     @Override
     protected void doFilterInternal(
@@ -30,13 +30,13 @@ class TokenFilter extends OncePerRequestFilter {
         @NotNull HttpServletResponse response,
         @NotNull FilterChain filterChain
     ) throws ServletException, IOException {
-        Optional<String> token = getTokenProcessor(request);
+        Optional<String> token = getTokenManager(request);
         if (token.isEmpty()) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        Optional<Long> userId = this.tokenProcessor.getUserId(token.get());
+        Optional<Long> userId = this.tokenManager.getUserId(token.get());
         if (userId.isEmpty()) {
             filterChain.doFilter(request, response);
             return;
@@ -48,7 +48,7 @@ class TokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private Optional<String> getTokenProcessor(HttpServletRequest request) {
+    private Optional<String> getTokenManager(HttpServletRequest request) {
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (!StringUtils.hasText(authHeader) || !authHeader.startsWith(BEARER)) {
             return Optional.empty();

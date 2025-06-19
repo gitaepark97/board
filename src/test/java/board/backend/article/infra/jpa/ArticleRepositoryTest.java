@@ -3,7 +3,6 @@ package board.backend.article.infra.jpa;
 import board.backend.article.application.port.ArticleRepository;
 import board.backend.article.domain.Article;
 import board.backend.common.infra.TestRepository;
-import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,6 @@ class ArticleRepositoryTest extends TestRepository {
 
     @BeforeEach
     void setUp() {
-        // given: 게시글 5개 저장 (ID는 자동 증가 가정)
         for (int i = 1; i <= 5; i++) {
             Article article = Article.create(
                 (long) i,
@@ -38,29 +36,28 @@ class ArticleRepositoryTest extends TestRepository {
     }
 
     @Test
-    @DisplayName("articleId로 게시글 존재 여부를 확인한다 - 존재함")
-    void existsById_exists() {
+    @DisplayName("게시글이 존재하면 true를 반환한다")
+    void existsById_success_whenExists_returnsTrue() {
         // when
-        Long articleId = 1L;
-        boolean result = articleRepository.existsById(articleId);
+        boolean result = articleRepository.existsById(1L);
 
         // then
-        AssertionsForClassTypes.assertThat(result).isTrue();
+        assertThat(result).isTrue();
     }
 
     @Test
-    @DisplayName("articleId로 게시글 존재 여부를 확인한다 - 존재하지 않음")
-    void existsById_notExists() {
+    @DisplayName("게시글이 존재하지 않으면 false를 반환한다")
+    void existsById_success_whenNotExists_returnsFalse() {
         // when
         boolean result = articleRepository.existsById(999L);
 
         // then
-        AssertionsForClassTypes.assertThat(result).isFalse();
+        assertThat(result).isFalse();
     }
 
     @Test
-    @DisplayName("lastArticleId가 null인 경우 최신순으로 게시글 pageSize만큼 조회")
-    void findAllByBoardId_without_last_article_id() {
+    @DisplayName("lastArticleId가 null이면 최신순으로 게시글을 pageSize만큼 조회한다")
+    void findAllByBoardId_success_whenNoLastId_returnsFirstPage() {
         // when
         List<Article> result = articleRepository.findAllByBoardId(1L, 3L);
 
@@ -70,8 +67,8 @@ class ArticleRepositoryTest extends TestRepository {
     }
 
     @Test
-    @DisplayName("lastArticleId가 존재할 경우 해당 ID 이전의 게시글을 pageSize만큼 조회")
-    void findAllByBoardId_with_last_article_id() {
+    @DisplayName("lastArticleId가 존재하면 해당 ID 이전의 게시글을 pageSize만큼 조회한다")
+    void findAllByBoardId_success_whenLastIdGiven_returnsNextPage() {
         // when
         List<Article> result = articleRepository.findAllByBoardId(1L, 3L, 4L);
 

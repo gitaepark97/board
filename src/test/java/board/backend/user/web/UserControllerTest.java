@@ -41,7 +41,6 @@ class UserControllerTest extends TestController {
         Long userId = 1L;
         String accessToken = "valid-access-token";
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
-
         User user = User.create(userId, "user@example.com", "닉네임", now);
         when(userService.read(userId)).thenReturn(user);
 
@@ -73,12 +72,11 @@ class UserControllerTest extends TestController {
     }
 
     @Test
-    @DisplayName("회원 조회 API - 성공")
+    @DisplayName("사용자 조회 API - 성공")
     void read_success() throws Exception {
         // given
         Long userId = 1L;
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
-
         User user = User.create(userId, "user@example.com", "닉네임", now);
         when(userService.read(userId)).thenReturn(user);
 
@@ -92,7 +90,7 @@ class UserControllerTest extends TestController {
             .andExpect(jsonPath("$.data.nickname").value("닉네임"))
             .andDo(document("users/read",
                 pathParameters(
-                    parameterWithName("userId").description("조회할 회원 ID")
+                    parameterWithName("userId").description("조회할 사용자 ID")
                 ),
                 responseFields(
                     fieldWithPath("status").description("HTTP 상태"),
@@ -111,7 +109,6 @@ class UserControllerTest extends TestController {
         String accessToken = "valid-access-token";
         UserUpdateRequest request = new UserUpdateRequest("새닉네임");
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
-
         User user = User.create(userId, "user@example.com", "새닉네임", now);
         when(userService.update(userId, "새닉네임")).thenReturn(user);
 

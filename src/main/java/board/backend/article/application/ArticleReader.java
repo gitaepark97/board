@@ -11,28 +11,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.modulith.NamedInterface;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static board.backend.article.application.ArticleConstants.ARTICLE_CACHE_TTL;
 
 @NamedInterface
 @RequiredArgsConstructor
 @Component
 public class ArticleReader {
 
-    private static final Duration CACHE_TTL = Duration.ofMinutes(5);
-
     private final CachedRepository<Article, Long> cachedArticleRepository;
     private final ArticleRepository articleRepository;
     private final EventPublisher eventPublisher;
-
-    public void checkArticleExistsOrThrow(Long articleId) {
-        if (cachedArticleRepository.findByKey(articleId).isEmpty() && !articleRepository.existsById(articleId)) {
-            throw new ArticleNotFound();
-        }
-    }
 
     public List<Article> readAll(Long boardId, Long pageSize, Long lastArticleId) {
         return lastArticleId == null ?
@@ -56,7 +49,7 @@ public class ArticleReader {
             List<Article> uncached = articleRepository.findAllById(missedIds);
             uncached.forEach(article -> {
                 map.put(article.id(), article); // 맵에 병합
-                cachedArticleRepository.save(article.id(), article, CACHE_TTL);
+                cachedArticleRepository.save(article.id(), article, ARTICLE_CACHE_TTL);
             });
         }
 
@@ -79,7 +72,7 @@ public class ArticleReader {
         return cachedArticleRepository.findByKey(articleId)
             .orElseGet(() -> {
                 Article article = articleRepository.findById(articleId).orElseThrow(ArticleNotFound::new);
-                cachedArticleRepository.save(articleId, article, CACHE_TTL);
+                cachedArticleRepository.save(articleId, article, ARTICLE_CACHE_TTL);
                 return article;
             });
     }

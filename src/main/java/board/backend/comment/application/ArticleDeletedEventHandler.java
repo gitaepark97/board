@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component;
 @Component("commentArticleDeletedEventHandler")
 class ArticleDeletedEventHandler implements EventHandler<ArticleDeletedEventPayload> {
 
-    private final CommentWriter commentWriter;
+    private final CommentDeleter commentDeleter;
 
     @Override
     public void handle(Event<ArticleDeletedEventPayload> event) {
         ArticleDeletedEventPayload payload = event.getPayload();
-        commentWriter.deleteArticle(payload.articleId());
+        commentDeleter.deleteArticle(payload.articleId());
     }
 
     @Override

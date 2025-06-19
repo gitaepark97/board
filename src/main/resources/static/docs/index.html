@@ -448,7 +448,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel1">
 <li><a href="#_auth">Auth</a>
 <ul class="sectlevel2">
-<li><a href="#_회원가입">회원가입</a></li>
+<li><a href="#_사용자가입">사용자가입</a></li>
 <li><a href="#_로그인">로그인</a></li>
 <li><a href="#_로그아웃">로그아웃</a></li>
 <li><a href="#_토큰_재발급">토큰 재발급</a></li>
@@ -457,7 +457,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_user">User</a>
 <ul class="sectlevel2">
 <li><a href="#_본인_조회">본인 조회</a></li>
-<li><a href="#_회원_조회">회원 조회</a></li>
+<li><a href="#_사용자_조회">사용자 조회</a></li>
 <li><a href="#_본인_수정">본인 수정</a></li>
 </ul>
 </li>
@@ -497,7 +497,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_auth"><a class="link" href="#_auth">Auth</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_회원가입"><a class="link" href="#_회원가입">회원가입</a></h3>
+<h3 id="_사용자가입"><a class="link" href="#_사용자가입">사용자가입</a></h3>
 <div class="sect3">
 <h4 id="_요청"><a class="link" href="#_요청">요청</a></h4>
 <div class="listingblock">
@@ -529,7 +529,7 @@ Host: localhost:8080
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>email</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">회원 이메일</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 이메일</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 </tr>
 <tr>
@@ -642,7 +642,7 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Set-Cookie: refreshToken=refresh-token-value; Path=/; Max-Age=604800000; Expires=Mon, 15 Aug 2044 09:53:56 GMT; Secure; HttpOnly; SameSite=None
+Set-Cookie: refreshToken=refresh-token-value; Path=/; Max-Age=604800000; Expires=Thu, 18 Aug 2044 12:58:35 GMT; Secure; HttpOnly; SameSite=None
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -802,7 +802,7 @@ Content-Type: application/x-www-form-urlencoded</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Set-Cookie: refreshToken=new-refresh-token; Path=/; Max-Age=604800000; Expires=Mon, 15 Aug 2044 09:53:56 GMT; Secure; HttpOnly; SameSite=None
+Set-Cookie: refreshToken=new-refresh-token; Path=/; Max-Age=604800000; Expires=Thu, 18 Aug 2044 12:58:35 GMT; Secure; HttpOnly; SameSite=None
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -955,7 +955,7 @@ Content-Length: 170
 </div>
 </div>
 <div class="sect2">
-<h3 id="_회원_조회"><a class="link" href="#_회원_조회">회원 조회</a></h3>
+<h3 id="_사용자_조회"><a class="link" href="#_사용자_조회">사용자 조회</a></h3>
 <div class="sect3">
 <h4 id="_요청_6"><a class="link" href="#_요청_6">요청</a></h4>
 <div class="listingblock">
@@ -980,7 +980,7 @@ Host: localhost:8080</code></pre>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>userId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">조회할 회원 ID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회할 사용자 ID</p></td>
 </tr>
 </tbody>
 </table>
@@ -1298,9 +1298,9 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 369
+Content-Length: 375
 
-{"status":"OK","message":"성공","data":[{"id":"6","boardId":"1","writer":{"id":"1","nickname":"회원1"},"title":"제목1","createdAt":"2024-01-01T10:00:00","likeCount":1,"viewCount":1,"commentCount":1},{"id":"7","boardId":"1","writer":{"id":"2","nickname":"회원2"},"title":"제목2","createdAt":"2024-01-01T10:00:00","likeCount":0,"viewCount":0,"commentCount":0}]}</code></pre>
+{"status":"OK","message":"성공","data":[{"id":"6","boardId":"1","writer":{"id":"1","nickname":"사용자1"},"title":"제목1","createdAt":"2024-01-01T10:00:00","likeCount":1,"viewCount":1,"commentCount":1},{"id":"7","boardId":"1","writer":{"id":"2","nickname":"사용자2"},"title":"제목2","createdAt":"2024-01-01T10:00:00","likeCount":0,"viewCount":0,"commentCount":0}]}</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -1420,9 +1420,9 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 369
+Content-Length: 375
 
-{"status":"OK","message":"성공","data":[{"id":"6","boardId":"1","writer":{"id":"1","nickname":"회원1"},"title":"제목1","createdAt":"2024-01-01T10:00:00","likeCount":1,"viewCount":1,"commentCount":1},{"id":"7","boardId":"1","writer":{"id":"2","nickname":"회원2"},"title":"제목2","createdAt":"2024-01-01T10:00:00","likeCount":0,"viewCount":0,"commentCount":0}]}</code></pre>
+{"status":"OK","message":"성공","data":[{"id":"6","boardId":"1","writer":{"id":"1","nickname":"사용자1"},"title":"제목1","createdAt":"2024-01-01T10:00:00","likeCount":1,"viewCount":1,"commentCount":1},{"id":"7","boardId":"1","writer":{"id":"2","nickname":"사용자2"},"title":"제목2","createdAt":"2024-01-01T10:00:00","likeCount":0,"viewCount":0,"commentCount":0}]}</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -1541,9 +1541,9 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 204
+Content-Length: 207
 
-{"status":"OK","message":"성공","data":{"id":"1","boardId":"1","writer":{"id":"1","nickname":"회원1"},"title":"제목1","createdAt":"2024-01-01T10:00:00","likeCount":1,"viewCount":1,"commentCount":1}}</code></pre>
+{"status":"OK","message":"성공","data":{"id":"1","boardId":"1","writer":{"id":"1","nickname":"사용자1"},"title":"제목1","createdAt":"2024-01-01T10:00:00","likeCount":1,"viewCount":1,"commentCount":1}}</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -2259,9 +2259,9 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Frame-Options: DENY
-Content-Length: 321
+Content-Length: 327
 
-{"status":"OK","message":"성공","data":[{"id":"8","parentId":"8","writer":{"id":"1","nickname":"회원1"},"content":"댓글1","createdAt":"2024-01-01T10:00:00","isDeleted":false},{"id":"9","parentId":"9","writer":{"id":"2","nickname":"회원2"},"content":"댓글2","createdAt":"2024-01-01T11:00:00","isDeleted":false}]}</code></pre>
+{"status":"OK","message":"성공","data":[{"id":"8","parentId":"8","writer":{"id":"1","nickname":"사용자1"},"content":"댓글1","createdAt":"2024-01-01T10:00:00","isDeleted":false},{"id":"9","parentId":"9","writer":{"id":"2","nickname":"사용자2"},"content":"댓글2","createdAt":"2024-01-01T11:00:00","isDeleted":false}]}</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -2572,7 +2572,7 @@ Content-Length: 34
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2025-06-16 18:53:18 +0900
+Last updated 2025-06-19 15:56:23 +0900
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

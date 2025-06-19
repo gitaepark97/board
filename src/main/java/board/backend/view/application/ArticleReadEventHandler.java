@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component;
 @Component("viewArticleReadEventHandler")
 class ArticleReadEventHandler implements EventHandler<ArticleReadEventPayload> {
 
-    private final ArticleViewWriter articleViewWriter;
+    private final ArticleViewManager articleViewManager;
 
     @Override
     public void handle(Event<ArticleReadEventPayload> event) {
         ArticleReadEventPayload payload = event.getPayload();
-        articleViewWriter.increaseCount(payload.articleId(), payload.ip());
+        articleViewManager.increaseCount(payload.articleId(), payload.ip());
     }
 
     @Override

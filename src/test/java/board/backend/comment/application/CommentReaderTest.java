@@ -1,12 +1,11 @@
 package board.backend.comment.application;
 
 import board.backend.comment.application.dto.CommentWithWriter;
-import board.backend.comment.application.port.ArticleCommentCountRepository;
-import board.backend.comment.application.port.CommentRepository;
-import board.backend.comment.domain.ArticleCommentCount;
+import board.backend.comment.application.fake.FakeCommentRepository;
 import board.backend.comment.domain.Comment;
-import board.backend.common.infra.CachedRepository;
+import board.backend.common.infra.fake.FakeCachedRepository;
 import board.backend.user.application.UserReader;
+import board.backend.user.application.fake.FakeUserRepository;
 import board.backend.user.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,137 +13,68 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class CommentReaderTest {
 
-    private CommentRepository commentRepository;
-    private CachedRepository<ArticleCommentCount, Long> articleCommentCountCachedRepository;
-    private ArticleCommentCountRepository articleCommentCountRepository;
-    private UserReader userReader;
+    private FakeCommentRepository commentRepository;
+    private FakeUserRepository userRepository;
     private CommentReader commentReader;
 
     @BeforeEach
     void setUp() {
-        commentRepository = mock(CommentRepository.class);
-        articleCommentCountCachedRepository = mock(CachedRepository.class);
-        articleCommentCountRepository = mock(ArticleCommentCountRepository.class);
-        userReader = mock(UserReader.class);
-        commentReader = new CommentReader(commentRepository, articleCommentCountCachedRepository, articleCommentCountRepository, userReader);
+        commentRepository = new FakeCommentRepository();
+        userRepository = new FakeUserRepository();
+        UserReader userReader = new UserReader(new FakeCachedRepository<>(), userRepository);
+        commentReader = new CommentReader(commentRepository, userReader);
     }
 
     @Test
-    @DisplayName("lastCommentId가 없을 때 댓글 목록을 조회한다")
-    void readAll_withoutLastCommentId_success() {
+    @DisplayName("게시글 ID로 댓글을 조회할 수 있다 (lastId가 없는 경우)")
+    void readAll_success_whenNoLastId_returnsFirstPage() {
         // given
-        Long articleId = 1L;
-        Long pageSize = 3L;
-        List<Comment> comments = List.of(
-            Comment.create(1L, articleId, 10L, null, "댓글1", LocalDateTime.now()),
-            Comment.create(2L, articleId, 11L, null, "댓글2", LocalDateTime.now())
-        );
-        Map<Long, User> writerMap = Map.of(
-            10L, User.create(10L, "user10@email.com", "user10", LocalDateTime.now()),
-            11L, User.create(11L, "user11@email.com", "user11", LocalDateTime.now())
-        );
-        when(commentRepository.findAllById(articleId, pageSize)).thenReturn(comments);
-        when(userReader.readAll(anyList())).thenReturn(writerMap);
+        User user1 = User.create(10L, "user1@example.com", "user1", LocalDateTime.now());
+        User user2 = User.create(11L, "user2@example.com", "user2", LocalDateTime.now());
+        Comment comment1 = Comment.create(1L, 100L, user1.id(), null, "댓글1", LocalDateTime.now());
+        Comment comment2 = Comment.create(2L, 100L, user2.id(), null, "댓글2", LocalDateTime.now());
+        userRepository.save(user1);
+        userRepository.save(user2);
+        commentRepository.save(comment1);
+        commentRepository.save(comment2);
 
         // when
-        List<CommentWithWriter> result = commentReader.readAll(articleId, pageSize, null, null);
+        List<CommentWithWriter> result = commentReader.readAll(comment1.articleId(), 10L, null, null);
 
         // then
-        assertThat(result.size()).isEqualTo(2);
+        assertThat(result).extracting(CommentWithWriter::comment)
+            .containsExactlyInAnyOrder(comment1, comment2);
+        assertThat(result).extracting(CommentWithWriter::writer)
+            .containsExactlyInAnyOrder(user1, user2);
     }
 
     @Test
-    @DisplayName("lastCommentId가 있을 때 다음 댓글 목록을 조회한다")
-    void readAll_withLastCommentId_success() {
+    @DisplayName("게시글 ID로 댓글을 조회할 수 있다 (lastId가 있는 경우)")
+    void readAll_success_whenLastIdGiven_returnsNextPage() {
         // given
-        Long articleId = 1L;
-        Long pageSize = 3L;
-        Long lastParentCommentId = 5L;
-        Long lastCommentId = 7L;
-        List<Comment> comments = List.of(
-            Comment.create(8L, articleId, 12L, 5L, "댓글3", LocalDateTime.now())
-        );
-        Map<Long, User> writerMap = Map.of(
-            12L, User.create(12L, "user12@email.com", "user12", LocalDateTime.now())
-        );
-        when(commentRepository.findAllById(articleId, pageSize, lastParentCommentId, lastCommentId)).thenReturn(comments);
-        when(userReader.readAll(anyList())).thenReturn(writerMap);
+        Long articleId = 100L;
+        User user3 = User.create(12L, "user3@example.com", "user3", LocalDateTime.now());
+        User user4 = User.create(13L, "user4@example.com", "user4", LocalDateTime.now());
+        Comment comment3 = Comment.create(3L, articleId, user3.id(), 1L, "대댓글1", LocalDateTime.now());
+        Comment comment4 = Comment.create(4L, articleId, user4.id(), 1L, "대댓글2", LocalDateTime.now());
+        userRepository.save(user3);
+        userRepository.save(user4);
+        commentRepository.save(comment3);
+        commentRepository.save(comment4);
 
         // when
-        List<CommentWithWriter> result = commentReader.readAll(articleId, pageSize, lastParentCommentId, lastCommentId);
+        List<CommentWithWriter> result = commentReader.readAll(articleId, 10L, 1L, 2L);
 
         // then
-        assertThat(result.size()).isEqualTo(1);
-    }
-
-    @Test
-    @DisplayName("캐시에 존재하는 댓글 수는 DB 조회 없이 반환한다")
-    void count_allCacheHit_success() {
-        // given
-        List<Long> articleIds = List.of(1L, 2L);
-        List<ArticleCommentCount> cached = List.of(
-            ArticleCommentCount.init(1L),
-            ArticleCommentCount.init(2L)
-        );
-        when(articleCommentCountCachedRepository.findAllByKey(articleIds)).thenReturn(cached);
-
-        // when
-        Map<Long, Long> result = commentReader.count(articleIds);
-
-        // then
-        assertThat(result).containsEntry(1L, 1L).containsEntry(2L, 1L);
-    }
-
-    @Test
-    @DisplayName("일부 캐시 미스 시 DB에서 조회하고, 캐시에 저장한 뒤 합쳐서 반환한다")
-    void count_partialCacheMiss_success() {
-        // given
-        List<Long> articleIds = List.of(1L, 2L, 3L);
-        List<ArticleCommentCount> cached = List.of(
-            ArticleCommentCount.init(1L),
-            ArticleCommentCount.init(3L)
-        );
-        List<ArticleCommentCount> uncached = List.of(
-            ArticleCommentCount.init(2L)
-        );
-        when(articleCommentCountCachedRepository.findAllByKey(articleIds)).thenReturn(cached);
-        when(articleCommentCountRepository.findAllById(List.of(2L))).thenReturn(uncached);
-
-        // when
-        Map<Long, Long> result = commentReader.count(articleIds);
-
-        // then
-        assertThat(result).containsEntry(1L, 1L)
-            .containsEntry(2L, 1L)
-            .containsEntry(3L, 1L);
-    }
-
-    @Test
-    @DisplayName("모두 캐시 미스일 경우 DB에서 모두 조회하고 캐시에 저장 후 반환한다")
-    void count_allCacheMiss_success() {
-        // given
-        List<Long> articleIds = List.of(1L, 2L);
-        List<ArticleCommentCount> fromDb = List.of(
-            ArticleCommentCount.init(1L),
-            ArticleCommentCount.init(2L)
-        );
-        when(articleCommentCountCachedRepository.findAllByKey(articleIds)).thenReturn(List.of());
-        when(articleCommentCountRepository.findAllById(articleIds)).thenReturn(fromDb);
-
-        // when
-        Map<Long, Long> result = commentReader.count(articleIds);
-
-        // then
-        assertThat(result).containsEntry(1L, 1L).containsEntry(2L, 1L);
+        assertThat(result).extracting(CommentWithWriter::comment)
+            .containsExactlyInAnyOrder(comment3, comment4);
+        assertThat(result).extracting(CommentWithWriter::writer)
+            .containsExactlyInAnyOrder(user3, user4);
     }
 
 }

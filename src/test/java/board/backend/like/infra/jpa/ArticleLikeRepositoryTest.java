@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Import;
 
 import java.time.LocalDateTime;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Import(ArticleLikeRepositoryImpl.class)
 class ArticleLikeRepositoryTest extends TestRepository {
@@ -28,8 +28,8 @@ class ArticleLikeRepositoryTest extends TestRepository {
     }
 
     @Test
-    @DisplayName("articleId와 userId로 좋아요 존재 여부를 확인한다 - 존재함")
-    void existsByArticleIdAndUserId_exists() {
+    @DisplayName("articleId와 userId로 좋아요가 존재하면 true를 반환한다")
+    void existsByArticleIdAndUserId_success_whenExists_returnsTrue() {
         // when
         boolean result = articleLikeRepository.existsByArticleIdAndUserId(articleId, userId);
 
@@ -38,8 +38,8 @@ class ArticleLikeRepositoryTest extends TestRepository {
     }
 
     @Test
-    @DisplayName("articleId와 userId로 좋아요 존재 여부를 확인한다 - 존재하지 않음")
-    void existsByArticleIdAndUserId_notExists() {
+    @DisplayName("articleId와 userId로 좋아요가 존재하지 않으면 false를 반환한다")
+    void existsByArticleIdAndUserId_success_whenNotExists_returnsFalse() {
         // when
         boolean result = articleLikeRepository.existsByArticleIdAndUserId(articleId, 999L);
 

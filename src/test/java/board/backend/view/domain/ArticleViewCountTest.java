@@ -8,8 +8,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ArticleViewCountTest {
 
     @Test
-    @DisplayName("게시글 조회 수 초기화에 성공한다")
-    void init_success() {
+    @DisplayName("init 메서드는 조회 수 0으로 ArticleViewCount를 생성한다")
+    void init_success_initializesViewCountToZero() {
         // given
         Long articleId = 1L;
 
@@ -22,11 +22,11 @@ class ArticleViewCountTest {
     }
 
     @Test
-    @DisplayName("게시글 조회 수 생성에 성공한다")
-    void create_success() {
+    @DisplayName("create 메서드는 주어진 값으로 ArticleViewCount를 생성한다")
+    void create_success_createsWithGivenValues() {
         // given
-        Long articleId = 1L;
-        Long count = 2L;
+        Long articleId = 2L;
+        Long count = 123L;
 
         // when
         ArticleViewCount viewCount = ArticleViewCount.create(articleId, count);

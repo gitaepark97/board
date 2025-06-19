@@ -1,50 +1,44 @@
 package board.backend.auth.application;
 
-import board.backend.auth.application.port.LoginInfoRepository;
+import board.backend.auth.application.fake.FakeLoginInfoRepository;
+import board.backend.auth.application.fake.FakePasswordEncoderProvider;
 import board.backend.auth.domain.LoginInfo;
 import board.backend.auth.domain.LoginInfoNotFound;
-import board.backend.auth.domain.LoginMethod;
 import board.backend.auth.domain.WrongPassword;
-import board.backend.auth.infra.PasswordEncoderProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class LoginInfoReaderTest {
 
-    private LoginInfoRepository loginInfoRepository;
-    private PasswordEncoderProvider passwordEncoderProvider;
+    private FakeLoginInfoRepository loginInfoRepository;
+    private FakePasswordEncoderProvider passwordEncoderProvider;
     private LoginInfoReader loginInfoReader;
 
     @BeforeEach
     void setUp() {
-        loginInfoRepository = mock(LoginInfoRepository.class);
-        passwordEncoderProvider = mock(PasswordEncoderProvider.class);
+        loginInfoRepository = new FakeLoginInfoRepository();
+        passwordEncoderProvider = new FakePasswordEncoderProvider();
         loginInfoReader = new LoginInfoReader(loginInfoRepository, passwordEncoderProvider);
     }
 
     @Test
-    @DisplayName("로그인 정보가 존재하고 비밀번호가 일치하면 조회에 성공한다")
-    void read_success() {
+    @DisplayName("이메일과 비밀번호가 일치하면 로그인 정보를 반환한다")
+    void read_success_whenEmailAndPasswordMatch_returnsLoginInfo() {
         // given
-        String email = "test@example.com";
-        String rawPassword = "password123";
-        String encodedPassword = "hashed-password";
-        LoginInfo loginInfo = LoginInfo.create(1L, email, encodedPassword, 1L, LocalDateTime.now());
-
-        when(loginInfoRepository.findByLoginMethodAndLoginKey(LoginMethod.EMAIL, email)).thenReturn(Optional.of(loginInfo));
-        when(passwordEncoderProvider.matches(rawPassword, encodedPassword)).thenReturn(true);
+        String email = "user@example.com";
+        String password = "1234";
+        String encodedPassword = passwordEncoderProvider.encode(password);
+        LoginInfo loginInfo = LoginInfo.create(1L, email, encodedPassword, 10L, LocalDateTime.now());
+        loginInfoRepository.save(loginInfo);
 
         // when
-        LoginInfo result = loginInfoReader.read(email, rawPassword);
+        LoginInfo result = loginInfoReader.read(email, password);
 
         // then
         assertThat(result).isEqualTo(loginInfo);
@@ -52,12 +46,10 @@ class LoginInfoReaderTest {
 
     @Test
     @DisplayName("로그인 정보가 존재하지 않으면 예외가 발생한다")
-    void read_failWhenLoginInfoNotFound() {
+    void read_fail_whenLoginInfoNotFound_throwsLoginInfoNotFound() {
         // given
-        String email = "nonexistent@example.com";
-        String password = "password123";
-
-        when(loginInfoRepository.findByLoginMethodAndLoginKey(LoginMethod.EMAIL, email)).thenReturn(Optional.empty());
+        String email = "notfound@example.com";
+        String password = "pw";
 
         // when & then
         assertThatThrownBy(() -> loginInfoReader.read(email, password))
@@ -66,18 +58,16 @@ class LoginInfoReaderTest {
 
     @Test
     @DisplayName("비밀번호가 일치하지 않으면 예외가 발생한다")
-    void read_failWhenWrongPassword() {
+    void read_fail_whenPasswordDoesNotMatch_throwsWrongPassword() {
         // given
-        String email = "test@example.com";
-        String rawPassword = "wrong-password";
-        String encodedPassword = "hashed-password";
-        LoginInfo loginInfo = LoginInfo.create(1L, email, encodedPassword, 1L, LocalDateTime.now());
-
-        when(loginInfoRepository.findByLoginMethodAndLoginKey(LoginMethod.EMAIL, email)).thenReturn(Optional.of(loginInfo));
-        when(passwordEncoderProvider.matches(rawPassword, encodedPassword)).thenReturn(false);
+        String email = "user@example.com";
+        String correctPassword = "1234";
+        String wrongPassword = "wrong";
+        LoginInfo loginInfo = LoginInfo.create(1L, email, passwordEncoderProvider.encode(correctPassword), 10L, LocalDateTime.now());
+        loginInfoRepository.save(loginInfo);
 
         // when & then
-        assertThatThrownBy(() -> loginInfoReader.read(email, rawPassword))
+        assertThatThrownBy(() -> loginInfoReader.read(email, wrongPassword))
             .isInstanceOf(WrongPassword.class);
     }
 

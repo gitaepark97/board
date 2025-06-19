@@ -12,13 +12,13 @@ import org.springframework.context.annotation.Import;
 
 import java.time.LocalDateTime;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Import(LoginInfoRepositoryImpl.class)
 class LoginInfoRepositoryTest extends TestRepository {
 
     private final String email = "user1@example.com";
+
     @Autowired
     private LoginInfoRepository loginInfoRepository;
 
@@ -29,8 +29,8 @@ class LoginInfoRepositoryTest extends TestRepository {
     }
 
     @Test
-    @DisplayName("loginMethod와 loginKey로 로그인 정보 존재 여부를 확인한다 - 존재함")
-    void existsByLoginMethodAndLoginKey_exists() {
+    @DisplayName("로그인 정보가 존재하면 true를 반환한다")
+    void existsBy_success_whenExists_returnsTrue() {
         // when
         boolean result = loginInfoRepository.existsBy(LoginMethod.EMAIL, email);
 
@@ -39,8 +39,8 @@ class LoginInfoRepositoryTest extends TestRepository {
     }
 
     @Test
-    @DisplayName("loginMethod와 loginKey로 로그인 정보 존재 여부를 확인한다 - 존재하지 않음")
-    void existsByLoginMethodAndLoginKey_notExists() {
+    @DisplayName("로그인 정보가 존재하지 않으면 false를 반환한다")
+    void existsBy_success_whenNotExists_returnsFalse() {
         // when
         boolean result = loginInfoRepository.existsBy(LoginMethod.EMAIL, "user999@example.com");
 

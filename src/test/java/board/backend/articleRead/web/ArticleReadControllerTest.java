@@ -39,8 +39,12 @@ class ArticleReadControllerTest extends TestController {
         // given
         Long articleId = 1L;
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
-        ArticleDetail response = ArticleDetail.of(Article.create(articleId, 1L, 1L, "제목1", "내용1", now), User.create(1L, "user1@email.com", "회원1", LocalDateTime.now()), 1L, 1L, 1L);
-
+        ArticleDetail response = ArticleDetail.of(
+            Article.create(articleId, 1L, 1L, "제목1", "내용1", now), User.create(1L, "user1@email.com", "사용자1", LocalDateTime.now()),
+            1L,
+            1L,
+            1L
+        );
         when(articleReadService.read(eq(articleId), anyString())).thenReturn(response);
 
         // when & then
@@ -52,7 +56,7 @@ class ArticleReadControllerTest extends TestController {
             .andExpect(jsonPath("$.data.id").value(articleId.toString()))
             .andExpect(jsonPath("$.data.title").value("제목1"))
             .andExpect(jsonPath("$.data.writer.id").value("1"))
-            .andExpect(jsonPath("$.data.writer.nickname").value("회원1"))
+            .andExpect(jsonPath("$.data.writer.nickname").value("사용자1"))
             .andExpect(jsonPath("$.data.likeCount").value(1L))
             .andExpect(jsonPath("$.data.viewCount").value(1L))
             .andExpect(jsonPath("$.data.commentCount").value(1L))
@@ -81,14 +85,11 @@ class ArticleReadControllerTest extends TestController {
     void readAllHot_success() throws Exception {
         // given
         String dateStr = "20250616";
-
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
-
         List<ArticleDetail> responses = List.of(
-            ArticleDetail.of(Article.create(6L, 1L, 1L, "제목1", "내용1", now), User.create(1L, "user1@email.com", "회원1", LocalDateTime.now()), 1L, 1L, 1L),
-            ArticleDetail.of(Article.create(7L, 1L, 2L, "제목2", "내용2", now), User.create(2L, "user2@email.com", "회원2", LocalDateTime.now()), 0L, 0L, 0L)
+            ArticleDetail.of(Article.create(6L, 1L, 1L, "제목1", "내용1", now), User.create(1L, "user1@email.com", "사용자1", LocalDateTime.now()), 1L, 1L, 1L),
+            ArticleDetail.of(Article.create(7L, 1L, 2L, "제목2", "내용2", now), User.create(2L, "user2@email.com", "사용자2", LocalDateTime.now()), 0L, 0L, 0L)
         );
-
         when(articleReadService.readAllHot(eq(dateStr))).thenReturn(responses);
 
         // when & then
@@ -101,13 +102,13 @@ class ArticleReadControllerTest extends TestController {
             .andExpect(jsonPath("$.data[0].id").value("6"))
             .andExpect(jsonPath("$.data[0].title").value("제목1"))
             .andExpect(jsonPath("$.data[0].writer.id").value("1"))
-            .andExpect(jsonPath("$.data[0].writer.nickname").value("회원1"))
+            .andExpect(jsonPath("$.data[0].writer.nickname").value("사용자1"))
             .andExpect(jsonPath("$.data[0].likeCount").value(1L))
             .andExpect(jsonPath("$.data[0].viewCount").value(1L))
             .andExpect(jsonPath("$.data[0].commentCount").value(1L))
             .andExpect(jsonPath("$.data[1].id").value("7"))
             .andExpect(jsonPath("$.data[1].writer.id").value("2"))
-            .andExpect(jsonPath("$.data[1].writer.nickname").value("회원2"))
+            .andExpect(jsonPath("$.data[1].writer.nickname").value("사용자2"))
             .andExpect(jsonPath("$.data[1].title").value("제목2"))
             .andExpect(jsonPath("$.data[1].likeCount").value(0L))
             .andExpect(jsonPath("$.data[1].viewCount").value(0L))
@@ -139,12 +140,20 @@ class ArticleReadControllerTest extends TestController {
         Long boardId = 1L;
         Long pageSize = 10L;
         Long lastArticleId = 5L;
-
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
-
         List<ArticleDetail> responses = List.of(
-            ArticleDetail.of(Article.create(6L, boardId, 1L, "제목1", "내용1", now), User.create(1L, "user1@email.com", "회원1", LocalDateTime.now()), 1L, 1L, 1L),
-            ArticleDetail.of(Article.create(7L, boardId, 2L, "제목2", "내용2", now), User.create(2L, "user2@email.com", "회원2", LocalDateTime.now()), 0L, 0L, 0L)
+            ArticleDetail.of(
+                Article.create(6L, boardId, 1L, "제목1", "내용1", now), User.create(1L, "user1@email.com", "사용자1", LocalDateTime.now()),
+                1L,
+                1L,
+                1L
+            ),
+            ArticleDetail.of(
+                Article.create(7L, boardId, 2L, "제목2", "내용2", now), User.create(2L, "user2@email.com", "사용자2", LocalDateTime.now()),
+                0L,
+                0L,
+                0L
+            )
         );
 
         when(articleReadService.readAll(boardId, pageSize, lastArticleId)).thenReturn(responses);
@@ -161,13 +170,13 @@ class ArticleReadControllerTest extends TestController {
             .andExpect(jsonPath("$.data[0].id").value("6"))
             .andExpect(jsonPath("$.data[0].title").value("제목1"))
             .andExpect(jsonPath("$.data[0].writer.id").value("1"))
-            .andExpect(jsonPath("$.data[0].writer.nickname").value("회원1"))
+            .andExpect(jsonPath("$.data[0].writer.nickname").value("사용자1"))
             .andExpect(jsonPath("$.data[0].likeCount").value(1L))
             .andExpect(jsonPath("$.data[0].viewCount").value(1L))
             .andExpect(jsonPath("$.data[0].commentCount").value(1L))
             .andExpect(jsonPath("$.data[1].id").value("7"))
             .andExpect(jsonPath("$.data[1].writer.id").value("2"))
-            .andExpect(jsonPath("$.data[1].writer.nickname").value("회원2"))
+            .andExpect(jsonPath("$.data[1].writer.nickname").value("사용자2"))
             .andExpect(jsonPath("$.data[1].title").value("제목2"))
             .andExpect(jsonPath("$.data[1].likeCount").value(0L))
             .andExpect(jsonPath("$.data[1].viewCount").value(0L))

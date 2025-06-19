@@ -11,12 +11,13 @@ import org.springframework.context.annotation.Import;
 
 import java.time.LocalDateTime;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Import(BoardRepositoryImpl.class)
 class BoardRepositoryTest extends TestRepository {
 
     private final Long boardId = 1L;
+
     @Autowired
     private BoardRepository boardRepository;
     @Autowired
@@ -24,13 +25,18 @@ class BoardRepositoryTest extends TestRepository {
 
     @BeforeEach
     void setUp() {
-        Board board = Board.builder().id(boardId).title("게시판1").createdAt(LocalDateTime.now()).build();
+        Board board = Board.builder()
+            .id(boardId)
+            .title("게시판1")
+            .createdAt(LocalDateTime.now())
+            .build();
+
         boardEntityRepository.save(BoardEntity.from(board));
     }
 
     @Test
-    @DisplayName("ID로 게시판 존재 여부를 확인한다 - 존재함")
-    void existsById_exists() {
+    @DisplayName("게시판이 존재하면 true를 반환한다")
+    void existsById_success_whenExists_returnsTrue() {
         // when
         boolean result = boardRepository.existsById(boardId);
 
@@ -39,8 +45,8 @@ class BoardRepositoryTest extends TestRepository {
     }
 
     @Test
-    @DisplayName("ID로 게시판 존재 여부를 확인한다 - 존재하지 않음")
-    void existsById_notExists() {
+    @DisplayName("게시판이 존재하지 않으면 false를 반환한다")
+    void existsById_success_whenNotExists_returnsFalse() {
         // when
         boolean result = boardRepository.existsById(999L);
 

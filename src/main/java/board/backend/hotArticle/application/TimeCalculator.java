@@ -1,6 +1,5 @@
 package board.backend.hotArticle.application;
 
-import board.backend.common.support.TimeProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -11,12 +10,9 @@ import java.time.LocalDateTime;
 @Component
 class TimeCalculator {
 
-    private final TimeProvider timeProvider;
-
-    public Duration calculateDurationToNoon() {
-        LocalDateTime now = timeProvider.now();
-        LocalDateTime noon = now.plusDays(1).toLocalDate().atTime(12, 0);
-        return Duration.between(now, noon);
+    public Duration calculateDurationToNoon(LocalDateTime time) {
+        LocalDateTime noon = time.plusDays(1).toLocalDate().atTime(12, 0);
+        return Duration.between(time, noon);
     }
 
 }
