@@ -31,39 +31,39 @@ class RedisConfig {
 
     @Bean
     @Primary
-    public LettuceConnectionFactory defaultFactory() {
+    LettuceConnectionFactory defaultFactory() {
         return createFactory(host, port, password, 0);
     }
 
     @Bean
-    public LettuceConnectionFactory lockFactory() {
+    LettuceConnectionFactory lockFactory() {
         return createFactory(host, port, password, 1);
     }
 
     @Bean
-    public LettuceConnectionFactory cacheFactory() {
+    LettuceConnectionFactory cacheFactory() {
         return createFactory(host, port, password, 2);
     }
 
     @Bean
     @Primary
-    public RedisTemplate<String, Object> redisTemplate(LettuceConnectionFactory defaultFactory) {
+    RedisTemplate<String, Object> redisTemplate(LettuceConnectionFactory defaultFactory) {
         return getStringObjectRedisTemplate(defaultFactory);
     }
 
     @Bean
     @Primary
-    public StringRedisTemplate stringRedisTemplate(LettuceConnectionFactory defaultFactory) {
+    StringRedisTemplate stringRedisTemplate(LettuceConnectionFactory defaultFactory) {
         return getStringRedisTemplate(defaultFactory);
     }
 
     @Bean(name = "cacheRedisTemplate")
-    public RedisTemplate<String, Object> cacheRedisTemplate(@Qualifier("cacheFactory") LettuceConnectionFactory factory) {
+    RedisTemplate<String, Object> cacheRedisTemplate(@Qualifier("cacheFactory") LettuceConnectionFactory factory) {
         return getStringObjectRedisTemplate(factory);
     }
 
     @Bean(name = "lockStringRedisTemplate")
-    public StringRedisTemplate lockStringRedisTemplate(@Qualifier("lockFactory") LettuceConnectionFactory factory) {
+    StringRedisTemplate lockStringRedisTemplate(@Qualifier("lockFactory") LettuceConnectionFactory factory) {
         return getStringRedisTemplate(factory);
     }
 

@@ -56,7 +56,7 @@ class UserCreatorTest {
         String email = "duplicate@example.com";
 
         // 이미 등록된 사용자
-        User existing = User.create(id, email, "existing", LocalDateTime.of(2023, 12, 31, 10, 0));
+        User existing = User.create(id, email, "existing", LocalDateTime.now());
         userRepository.save(existing);
 
         // when & then

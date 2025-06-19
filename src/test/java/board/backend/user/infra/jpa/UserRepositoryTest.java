@@ -1,6 +1,6 @@
 package board.backend.user.infra.jpa;
 
-import board.backend.common.infra.TestRepository;
+import board.backend.common.infra.TestJpaRepository;
 import board.backend.user.application.port.UserRepository;
 import board.backend.user.domain.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,24 +15,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @Import(UserRepositoryImpl.class)
-class UserRepositoryTest extends TestRepository {
+class UserRepositoryTest extends TestJpaRepository {
 
-    private final Long userId = 1L;
-    private final String email = "user1@example.com";
+    private final User user = User.create(1L, "user1@example.com", "닉네임1", LocalDateTime.now());
+
     @Autowired
     private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {
-        User user = User.create(userId, email, "닉네임1", LocalDateTime.now());
-        userRepository.save(user);
+
     }
 
     @Test
     @DisplayName("userId로 사용자가 존재하면 true를 반환한다")
     void existsById_success_whenExists_returnsTrue() {
+        // given
+        userRepository.save(user);
+
         // when
-        boolean result = userRepository.existsById(userId);
+        boolean result = userRepository.existsById(user.id());
 
         // then
         assertThat(result).isTrue();
@@ -51,8 +53,11 @@ class UserRepositoryTest extends TestRepository {
     @Test
     @DisplayName("email로 사용자가 존재하면 true를 반환한다")
     void existsByEmail_success_whenExists_returnsTrue() {
+        // given
+        userRepository.save(user);
+
         // when
-        boolean result = userRepository.existsByEmail(email);
+        boolean result = userRepository.existsByEmail(user.email());
 
         // then
         assertThat(result).isTrue();
