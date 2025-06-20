@@ -1,11 +1,15 @@
 package board.backend.common.event;
 
 import board.backend.common.support.DataSerializer;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Event<T extends EventPayload> {
 
     private Long id;

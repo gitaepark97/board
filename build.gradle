@@ -99,8 +99,11 @@ dependencies {
     // JSON
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
-    //  Loki
+    // Loki
     implementation 'com.github.loki4j:loki-logback-appender:1.4.0'
+
+    // Retry
+    implementation 'org.springframework.retry:spring-retry'
 }
 
 tasks.named('test') {
