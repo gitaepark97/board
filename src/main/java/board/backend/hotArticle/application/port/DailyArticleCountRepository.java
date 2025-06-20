@@ -7,7 +7,9 @@ public interface DailyArticleCountRepository {
 
     Long read(Long articleId, LocalDateTime time);
 
-    void increaseOrSave(Long articleId, LocalDateTime now, Duration ttl);
+    void increaseOrSave(Long articleId, LocalDateTime time, Duration ttl);
+
+    void increaseOrSave(Long articleId, Long increasement, LocalDateTime time, Duration ttl);
 
     void decrease(Long articleId, LocalDateTime now);
 

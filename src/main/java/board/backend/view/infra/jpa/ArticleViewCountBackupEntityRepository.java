@@ -15,6 +15,6 @@ interface ArticleViewCountBackupEntityRepository extends JpaRepository<ArticleVi
         VALUES (:articleId, :viewCount)
         ON DUPLICATE KEY UPDATE view_count = :viewCount
         """, nativeQuery = true)
-    void upsert(@Param("articleId") Long articleId, @Param("viewCount") Long viewCount);
+    void upsert(@Param("articleId") Long articleId, @Param("increment") Long viewCount);
 
 }

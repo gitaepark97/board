@@ -29,9 +29,20 @@ abstract class DailyArticleCountRepositoryImpl implements DailyArticleCountRepos
     }
 
     @Override
-    public void increaseOrSave(Long articleId, LocalDateTime now, Duration ttl) {
-        String key = generateKey(articleId, now);
+    public void increaseOrSave(Long articleId, LocalDateTime time, Duration ttl) {
+        String key = generateKey(articleId, time);
         redisTemplate.opsForValue().increment(key);
+
+        boolean hasTtl = redisTemplate.getExpire(key) > 0;
+        if (!hasTtl) {
+            redisTemplate.expire(key, ttl);
+        }
+    }
+
+    @Override
+    public void increaseOrSave(Long articleId, Long increasement, LocalDateTime time, Duration ttl) {
+        String key = generateKey(articleId, time);
+        redisTemplate.opsForValue().increment(key, increasement);
 
         boolean hasTtl = redisTemplate.getExpire(key) > 0;
         if (!hasTtl) {

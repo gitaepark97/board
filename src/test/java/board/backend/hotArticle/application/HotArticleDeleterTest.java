@@ -1,7 +1,6 @@
 package board.backend.hotArticle.application;
 
 import board.backend.hotArticle.application.fake.FakeDailyArticleCountRepository;
-import board.backend.hotArticle.application.fake.FakeDailyArticleViewCountRepository;
 import board.backend.hotArticle.application.fake.FakeHotArticleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class HotArticleDeleterTest {
 
     private FakeDailyArticleCountRepository dailyArticleLikeCountRepository;
-    private FakeDailyArticleViewCountRepository dailyArticleViewCountRepository;
+    private FakeDailyArticleCountRepository dailyArticleViewCountRepository;
     private FakeDailyArticleCountRepository dailyArticleCommentCountRepository;
     private FakeHotArticleRepository hotArticleRepository;
     private HotArticleDeleter hotArticleDeleter;
@@ -23,7 +22,7 @@ class HotArticleDeleterTest {
     @BeforeEach
     void setUp() {
         dailyArticleLikeCountRepository = new FakeDailyArticleCountRepository();
-        dailyArticleViewCountRepository = new FakeDailyArticleViewCountRepository();
+        dailyArticleViewCountRepository = new FakeDailyArticleCountRepository();
         dailyArticleCommentCountRepository = new FakeDailyArticleCountRepository();
         hotArticleRepository = new FakeHotArticleRepository();
         hotArticleDeleter = new HotArticleDeleter(
@@ -41,7 +40,7 @@ class HotArticleDeleterTest {
         Long articleId = 1L;
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 12, 0);
         dailyArticleLikeCountRepository.increaseOrSave(articleId, now, Duration.ofHours(1));
-        dailyArticleViewCountRepository.save(articleId, 10L, now, Duration.ofHours(1));
+        dailyArticleViewCountRepository.increaseOrSave(articleId, 10L, now, Duration.ofHours(1));
         dailyArticleCommentCountRepository.increaseOrSave(articleId, now, Duration.ofHours(1));
         hotArticleRepository.save(articleId, now, 100L, 10L, Duration.ofHours(1));
 

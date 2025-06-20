@@ -18,9 +18,15 @@ public class FakeDailyArticleCountRepository implements DailyArticleCountReposit
     }
 
     @Override
-    public void increaseOrSave(Long articleId, LocalDateTime now, Duration ttl) {
-        Key key = new Key(articleId, toDate(now));
+    public void increaseOrSave(Long articleId, LocalDateTime time, Duration ttl) {
+        Key key = new Key(articleId, toDate(time));
         store.put(key, store.getOrDefault(key, 0L) + 1);
+    }
+
+    @Override
+    public void increaseOrSave(Long articleId, Long increasement, LocalDateTime time, Duration ttl) {
+        Key key = new Key(articleId, toDate(time));
+        store.put(key, store.getOrDefault(key, 0L) + increasement);
     }
 
     @Override

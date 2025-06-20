@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 public record ArticleViewedEventPayload(
     Long articleId,
-    Long viewCount,
+    Long increment,
     LocalDateTime createdAt
 ) implements EventPayload {
 

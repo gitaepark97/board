@@ -17,7 +17,7 @@ import java.time.Duration;
 @Component
 class ArticleViewManager {
 
-    private static final int BACK_UP_BATCH_SIZE = 10;
+    private static final long BACK_UP_BATCH_SIZE = 10;
     private static final Duration TTL = Duration.ofMinutes(1);
 
     private final TimeProvider timeProvider;
@@ -37,7 +37,7 @@ class ArticleViewManager {
             articleViewCountBackUpRepository.save(ArticleViewCount.create(articleId, count));
 
             // 게시글 조회 이벤트 발행
-            eventPublisher.publishEvent(EventType.ARTICLE_VIEWED, new ArticleViewedEventPayload(articleId, count, timeProvider.now()));
+            eventPublisher.publishEvent(EventType.ARTICLE_VIEWED, new ArticleViewedEventPayload(articleId, BACK_UP_BATCH_SIZE, timeProvider.now()));
         }
     }
 

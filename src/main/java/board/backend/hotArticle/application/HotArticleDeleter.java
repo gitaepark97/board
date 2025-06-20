@@ -1,7 +1,6 @@
 package board.backend.hotArticle.application;
 
 import board.backend.hotArticle.application.port.DailyArticleCountRepository;
-import board.backend.hotArticle.application.port.DailyArticleViewCountRepository;
 import board.backend.hotArticle.application.port.HotArticleRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -10,13 +9,14 @@ import org.springframework.stereotype.Component;
 class HotArticleDeleter {
 
     private final DailyArticleCountRepository dailyArticleLikeCountRepository;
-    private final DailyArticleViewCountRepository dailyArticleViewCountRepository;
+    private final DailyArticleCountRepository dailyArticleViewCountRepository;
     private final DailyArticleCountRepository dailyArticleCommentCountRepository;
     private final HotArticleRepository hotArticleRepository;
 
     HotArticleDeleter(
         DailyArticleCountRepository dailyArticleLikeCountRepository,
-        DailyArticleViewCountRepository dailyArticleViewCountRepository,
+        @Qualifier("dailyArticleViewCountRepository")
+        DailyArticleCountRepository dailyArticleViewCountRepository,
         @Qualifier("dailyArticleCommentCountRepository")
         DailyArticleCountRepository dailyArticleCommentCountRepository,
         HotArticleRepository hotArticleRepository

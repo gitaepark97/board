@@ -1,7 +1,6 @@
 package board.backend.hotArticle.application;
 
 import board.backend.hotArticle.application.fake.FakeDailyArticleCountRepository;
-import board.backend.hotArticle.application.fake.FakeDailyArticleViewCountRepository;
 import board.backend.hotArticle.application.fake.FakeHotArticleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +16,7 @@ class HotArticleScoreScoreCalculatorTest {
     private final LocalDateTime now = LocalDateTime.of(2024, 1, 1, 10, 0);
 
     private FakeDailyArticleCountRepository likeCountRepository;
-    private FakeDailyArticleViewCountRepository viewCountRepository;
+    private FakeDailyArticleCountRepository viewCountRepository;
     private FakeDailyArticleCountRepository commentCountRepository;
     private FakeHotArticleRepository hotArticleRepository;
     private HotArticleScoreScoreCalculator calculator;
@@ -25,7 +24,7 @@ class HotArticleScoreScoreCalculatorTest {
     @BeforeEach
     void setUp() {
         likeCountRepository = new FakeDailyArticleCountRepository();
-        viewCountRepository = new FakeDailyArticleViewCountRepository();
+        viewCountRepository = new FakeDailyArticleCountRepository();
         commentCountRepository = new FakeDailyArticleCountRepository();
         hotArticleRepository = new FakeHotArticleRepository();
         calculator = new HotArticleScoreScoreCalculator(
@@ -59,7 +58,7 @@ class HotArticleScoreScoreCalculatorTest {
         likeCountRepository.increaseOrSave(articleId, now, Duration.ofDays(1)); // +3
         likeCountRepository.increaseOrSave(articleId, now, Duration.ofDays(1)); // +3
         commentCountRepository.increaseOrSave(articleId, now, Duration.ofDays(1)); // +2
-        viewCountRepository.save(articleId, 5L, now, Duration.ofDays(1)); // +5
+        viewCountRepository.increaseOrSave(articleId, 5L, now, Duration.ofDays(1)); // +5
 
         // when
         calculator.increaseArticleCommentCount(articleId, now);
