@@ -29,9 +29,9 @@ class HotArticleDeleter {
 
     void delete(Long articleId) {
         hotArticleRepository.delete(articleId);
-        dailyArticleLikeCountRepository.deleteById(articleId);
-        dailyArticleViewCountRepository.deleteById(articleId);
-        dailyArticleCommentCountRepository.deleteById(articleId);
+        dailyArticleLikeCountRepository.deleteByArticleId(articleId);
+        dailyArticleViewCountRepository.deleteByArticleId(articleId);
+        dailyArticleCommentCountRepository.deleteByArticleId(articleId);
     }
 
 }

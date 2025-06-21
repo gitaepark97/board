@@ -29,6 +29,7 @@ class CommentCreator {
     private final EventPublisher eventPublisher;
     private final UserValidator userValidator;
     private final ArticleValidator articleValidator;
+    private final TodayCommentCountCalculator todayCommentCountCalculator;
 
     @Transactional
     Comment create(Long articleId, Long userId, Long parentCommentId, String content) {
@@ -56,7 +57,8 @@ class CommentCreator {
         cachedArticleCommentCountRepository.delete(articleId);
 
         // 댓글 생성 이벤트 발행
-        eventPublisher.publishEvent(EventType.COMMENT_CREATED, new CommentCreatedEventPayload(articleId, newComment.createdAt()));
+        long todayCount = todayCommentCountCalculator.calculate(articleId);
+        eventPublisher.publishEvent(EventType.COMMENT_CREATED, new CommentCreatedEventPayload(articleId, todayCount, newComment.createdAt()));
 
         return newComment;
     }
@@ -66,5 +68,6 @@ class CommentCreator {
             throw new CommentNotFound();
         }
     }
+
 
 }

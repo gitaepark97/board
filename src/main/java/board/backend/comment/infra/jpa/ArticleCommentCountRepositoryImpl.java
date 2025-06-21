@@ -23,6 +23,14 @@ class ArticleCommentCountRepositoryImpl implements ArticleCommentCountRepository
     }
 
     @Override
+    public List<ArticleCommentCount> findAll() {
+        return articleCommentCountEntityRepository.findAll()
+            .stream()
+            .map(ArticleCommentCountEntity::toArticleCommentCount)
+            .toList();
+    }
+
+    @Override
     public List<ArticleCommentCount> findAllById(List<Long> articleIds) {
         return articleCommentCountEntityRepository.findAllById(articleIds)
             .stream()

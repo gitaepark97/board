@@ -39,9 +39,9 @@ class HotArticleDeleterTest {
         // given
         Long articleId = 1L;
         LocalDateTime now = LocalDateTime.of(2024, 1, 1, 12, 0);
-        dailyArticleLikeCountRepository.increaseOrSave(articleId, now, Duration.ofHours(1));
-        dailyArticleViewCountRepository.increaseOrSave(articleId, 10L, now, Duration.ofHours(1));
-        dailyArticleCommentCountRepository.increaseOrSave(articleId, now, Duration.ofHours(1));
+        dailyArticleLikeCountRepository.save(articleId, 1L, now, Duration.ofHours(1));
+        dailyArticleViewCountRepository.save(articleId, 10L, now, Duration.ofHours(1));
+        dailyArticleCommentCountRepository.save(articleId, 1L, now, Duration.ofHours(1));
         hotArticleRepository.save(articleId, now, 100L, 10L, Duration.ofHours(1));
 
         // when

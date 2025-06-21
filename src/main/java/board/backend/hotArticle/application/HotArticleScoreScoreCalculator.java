@@ -39,28 +39,18 @@ class HotArticleScoreScoreCalculator {
         this.timeCalculator = timeCalculator;
     }
 
-    void increaseArticleLikeCount(Long articleId, LocalDateTime time) {
-        dailyArticleLikeCountRepository.increaseOrSave(articleId, time, timeCalculator.calculateDurationToNoon(time));
+    void saveArticleLikeCount(Long articleId, Long likeCount, LocalDateTime time) {
+        dailyArticleLikeCountRepository.save(articleId, likeCount, time, timeCalculator.calculateDurationToNoon(time));
         calculateScore(articleId, time);
     }
 
-    void decreaseArticleLikeCount(Long articleId, LocalDateTime time) {
-        dailyArticleLikeCountRepository.decrease(articleId, time);
+    void saveArticleViewCount(Long articleId, Long viewCount, LocalDateTime time) {
+        dailyArticleViewCountRepository.save(articleId, viewCount, time, timeCalculator.calculateDurationToNoon(time));
         calculateScore(articleId, time);
     }
 
-    void increaseArticleViewCount(Long articleId, Long increasement, LocalDateTime time) {
-        dailyArticleViewCountRepository.increaseOrSave(articleId, increasement, time, timeCalculator.calculateDurationToNoon(time));
-        calculateScore(articleId, time);
-    }
-
-    void increaseArticleCommentCount(Long articleId, LocalDateTime time) {
-        dailyArticleCommentCountRepository.increaseOrSave(articleId, time, timeCalculator.calculateDurationToNoon(time));
-        calculateScore(articleId, time);
-    }
-
-    void decreaseArticleCommentCount(Long articleId, LocalDateTime time) {
-        dailyArticleCommentCountRepository.decrease(articleId, time);
+    void saveArticleCommentCount(Long articleId, Long commentCount, LocalDateTime time) {
+        dailyArticleCommentCountRepository.save(articleId, commentCount, time, timeCalculator.calculateDurationToNoon(time));
         calculateScore(articleId, time);
     }
 

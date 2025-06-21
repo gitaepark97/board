@@ -9,6 +9,8 @@ public interface ArticleViewCountRepository {
 
     Long findById(Long articleId);
 
+    List<ArticleViewCount> findAll();
+
     Map<Long, Long> findAllById(List<Long> articleIds);
 
     void deleteById(Long articleId);

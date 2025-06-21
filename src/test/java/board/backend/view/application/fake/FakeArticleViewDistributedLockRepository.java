@@ -25,9 +25,4 @@ public class FakeArticleViewDistributedLockRepository implements ArticleViewDist
         lockMap.remove(key);
     }
 
-    public boolean isLocked(Long articleId, String ip) {
-        String key = articleId + "::" + ip;
-        return lockMap.containsKey(key);
-    }
-
 }

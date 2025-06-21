@@ -14,5 +14,5 @@ class ArticleViewCreator {
     void createCount(Long articleId) {
         articleViewCountRepository.save(ArticleViewCount.init(articleId));
     }
-    
+
 }

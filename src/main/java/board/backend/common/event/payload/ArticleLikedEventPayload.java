@@ -4,8 +4,9 @@ import board.backend.common.event.EventPayload;
 
 import java.time.LocalDateTime;
 
-public record ArticleLikedEventPaylod(
+public record ArticleLikedEventPayload(
     Long articleId,
+    Long likeCount,
     LocalDateTime likedAt
 ) implements EventPayload {
 

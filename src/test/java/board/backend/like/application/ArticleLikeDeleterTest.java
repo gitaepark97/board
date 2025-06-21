@@ -1,6 +1,6 @@
 package board.backend.like.application;
 
-import board.backend.like.application.fake.FakeArticleLikeCountRepository;
+import board.backend.like.application.fake.FakeArticleCommentRepository;
 import board.backend.like.application.fake.FakeArticleLikeRepository;
 import board.backend.like.domain.ArticleLike;
 import board.backend.like.domain.ArticleLikeCount;
@@ -16,13 +16,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ArticleLikeDeleterTest {
 
     private FakeArticleLikeRepository articleLikeRepository;
-    private FakeArticleLikeCountRepository articleLikeCountRepository;
+    private FakeArticleCommentRepository articleLikeCountRepository;
     private ArticleLikeDeleter articleLikeDeleter;
 
     @BeforeEach
     void setUp() {
         articleLikeRepository = new FakeArticleLikeRepository();
-        articleLikeCountRepository = new FakeArticleLikeCountRepository();
+        articleLikeCountRepository = new FakeArticleCommentRepository();
         articleLikeDeleter = new ArticleLikeDeleter(articleLikeRepository, articleLikeCountRepository);
     }
 

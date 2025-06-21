@@ -4,6 +4,7 @@ import board.backend.article.application.ArticleValidator;
 import board.backend.article.application.fake.FakeArticleRepository;
 import board.backend.article.domain.Article;
 import board.backend.comment.application.fake.FakeArticleCommentCountRepository;
+import board.backend.comment.application.fake.FakeArticleCommentCountSnapshotRepository;
 import board.backend.comment.application.fake.FakeCommentRepository;
 import board.backend.comment.domain.ArticleCommentCount;
 import board.backend.comment.domain.Comment;
@@ -31,6 +32,7 @@ class CommentCreatorTest {
     private final Long id = 1L;
     private final LocalDateTime now = LocalDateTime.of(2024, 1, 1, 12, 0);
 
+    FakeTimeProvider timeProvider;
     private FakeCachedRepository<ArticleCommentCount, Long> cachedRepository;
     private FakeCommentRepository commentRepository;
     private FakeArticleCommentCountRepository commentCountRepository;
@@ -41,6 +43,7 @@ class CommentCreatorTest {
 
     @BeforeEach
     void setUp() {
+        timeProvider = new FakeTimeProvider(now);
         cachedRepository = new FakeCachedRepository<>();
         commentRepository = new FakeCommentRepository();
         commentCountRepository = new FakeArticleCommentCountRepository();
@@ -49,13 +52,14 @@ class CommentCreatorTest {
         articleRepository = new FakeArticleRepository();
         commentCreator = new CommentCreator(
             new FakeIdProvider(id),
-            new FakeTimeProvider(now),
+            timeProvider,
             cachedRepository,
             commentRepository,
             commentCountRepository,
             eventPublisher,
             new UserValidator(new FakeCachedRepository<>(), userRepository),
-            new ArticleValidator(new FakeCachedRepository<>(), articleRepository)
+            new ArticleValidator(new FakeCachedRepository<>(), articleRepository),
+            new TodayCommentCountCalculator(timeProvider, commentCountRepository, new FakeArticleCommentCountSnapshotRepository())
         );
     }
 
@@ -85,9 +89,13 @@ class CommentCreatorTest {
         assertThat(cachedRepository.findByKey(articleId)).isEmpty();
 
         // 이벤트 발행 확인
-        assertThat(eventPublisher.getPublishedEvents()).containsExactly(
-            new FakeEventPublisher.PublishedEvent(EventType.COMMENT_CREATED, new CommentCreatedEventPayload(articleId, comment.createdAt()))
-        );
+        assertThat(eventPublisher.getPublishedEvents())
+            .containsExactly(
+                new FakeEventPublisher.PublishedEvent(
+                    EventType.COMMENT_CREATED,
+                    new CommentCreatedEventPayload(articleId, 1L, timeProvider.now())
+                )
+            );
     }
 
     @Test
@@ -100,7 +108,7 @@ class CommentCreatorTest {
         userRepository.save(user);
         articleRepository.save(article);
         commentRepository.save(parentComment);
-        
+
         String content = "대댓글";
 
         // when

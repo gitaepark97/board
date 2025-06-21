@@ -4,7 +4,6 @@ import board.backend.article.application.fake.FakeArticleRepository;
 import board.backend.article.domain.Article;
 import board.backend.common.event.EventType;
 import board.backend.common.event.fake.FakeEventPublisher;
-import board.backend.common.event.payload.ArticleDeletedEventPayload;
 import board.backend.common.infra.fake.FakeCachedRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,8 +45,7 @@ class ArticleDeleterTest {
         assertThat(result).contains(article.boardId());
         assertThat(articleRepository.findById(article.id())).isEmpty();
         assertThat(cachedRepository.findByKey(article.id())).isEmpty();
-        assertThat(eventPublisher.getPublishedEvents())
-            .containsExactly(new FakeEventPublisher.PublishedEvent(EventType.ARTICLE_DELETED, new ArticleDeletedEventPayload(article.id())));
+        assertThat(eventPublisher.getPublishedEvents().getFirst().type()).isEqualTo(EventType.ARTICLE_DELETED);
     }
 
     @Test

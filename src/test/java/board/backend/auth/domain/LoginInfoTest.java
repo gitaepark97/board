@@ -27,8 +27,8 @@ class LoginInfoTest {
         // then
         assertThat(loginInfo.id()).isEqualTo(id);
         assertThat(loginInfo.userId()).isEqualTo(userId);
-        assertThat(loginInfo.loginMethod()).isEqualTo(LoginMethod.EMAIL);
-        assertThat(loginInfo.loginKey()).isEqualTo(email);
+        assertThat(loginInfo.method()).isEqualTo(LoginMethod.EMAIL);
+        assertThat(loginInfo.key()).isEqualTo(email);
         assertThat(loginInfo.password()).isEqualTo(password);
         assertThat(loginInfo.createdAt()).isEqualTo(now);
         assertThat(loginInfo.updatedAt()).isEqualTo(now);

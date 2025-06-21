@@ -17,6 +17,13 @@ public class FakeArticleViewCountRepository implements ArticleViewCountRepositor
     }
 
     @Override
+    public List<ArticleViewCount> findAll() {
+        return store.entrySet().stream()
+            .map(entry -> new ArticleViewCount(entry.getKey(), entry.getValue()))
+            .toList();
+    }
+
+    @Override
     public Map<Long, Long> findAllById(List<Long> articleIds) {
         Map<Long, Long> result = new HashMap<>();
         for (Long id : articleIds) {

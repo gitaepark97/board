@@ -16,7 +16,7 @@ class CommentCreatedEventHandler implements EventHandler<CommentCreatedEventPayl
     @Override
     public void handle(Event<CommentCreatedEventPayload> event) {
         CommentCreatedEventPayload payload = event.getPayload();
-        hotArticleScoreScoreCalculator.increaseArticleCommentCount(payload.articleId(), payload.createdAt());
+        hotArticleScoreScoreCalculator.saveArticleCommentCount(payload.articleId(), payload.commentCount(), payload.createdAt());
     }
 
     @Override

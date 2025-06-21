@@ -1,12 +1,13 @@
 package board.backend.hotArticle.infra.redis;
 
 import board.backend.hotArticle.application.port.DailyArticleCountRepository;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Set;
 
 
 abstract class DailyArticleCountRepositoryImpl implements DailyArticleCountRepository {
@@ -29,40 +30,22 @@ abstract class DailyArticleCountRepositoryImpl implements DailyArticleCountRepos
     }
 
     @Override
-    public void increaseOrSave(Long articleId, LocalDateTime time, Duration ttl) {
+    public void save(Long articleId, Long count, LocalDateTime time, Duration ttl) {
         String key = generateKey(articleId, time);
-        redisTemplate.opsForValue().increment(key);
-
-        boolean hasTtl = redisTemplate.getExpire(key) > 0;
-        if (!hasTtl) {
-            redisTemplate.expire(key, ttl);
-        }
+        redisTemplate.opsForValue().set(key, String.valueOf(count), ttl);
     }
 
     @Override
-    public void increaseOrSave(Long articleId, Long increasement, LocalDateTime time, Duration ttl) {
-        String key = generateKey(articleId, time);
-        redisTemplate.opsForValue().increment(key, increasement);
+    public void deleteByArticleId(Long articleId) {
+        String pattern = keyFormat.formatted(articleId, "*");
 
-        boolean hasTtl = redisTemplate.getExpire(key) > 0;
-        if (!hasTtl) {
-            redisTemplate.expire(key, ttl);
-        }
-    }
+        Cursor<byte[]> cursor = redisTemplate.getConnectionFactory()
+            .getConnection()
+            .scan(ScanOptions.scanOptions().match(pattern).build());
 
-    @Override
-    public void decrease(Long articleId, LocalDateTime now) {
-        String key = generateKey(articleId, now);
-
-        if (redisTemplate.hasKey(key)) {
-            redisTemplate.opsForValue().decrement(key);
-        }
-    }
-
-    @Override
-    public void deleteById(Long articleId) {
-        Set<String> keys = redisTemplate.keys(keyFormat.formatted(articleId, "*"));
-        for (String key : keys) {
+        while (cursor.hasNext()) {
+            byte[] keyBytes = cursor.next();
+            String key = new String(keyBytes);
             redisTemplate.delete(key);
         }
     }

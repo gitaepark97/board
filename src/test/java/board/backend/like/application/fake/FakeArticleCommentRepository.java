@@ -5,13 +5,18 @@ import board.backend.like.domain.ArticleLikeCount;
 
 import java.util.*;
 
-public class FakeArticleLikeCountRepository implements ArticleLikeCountRepository {
+public class FakeArticleCommentRepository implements ArticleLikeCountRepository {
 
     private final Map<Long, ArticleLikeCount> store = new HashMap<>();
 
     @Override
     public Optional<ArticleLikeCount> findById(Long articleId) {
         return Optional.ofNullable(store.get(articleId));
+    }
+
+    @Override
+    public List<ArticleLikeCount> findAll() {
+        return new ArrayList<>(store.values());
     }
 
     @Override
@@ -50,6 +55,10 @@ public class FakeArticleLikeCountRepository implements ArticleLikeCountRepositor
         if (existing != null && existing.likeCount() > 0) {
             store.put(articleId, new ArticleLikeCount(articleId, existing.likeCount() - 1));
         }
+    }
+
+    public void save(ArticleLikeCount articleLikeCount) {
+        store.put(articleLikeCount.articleId(), articleLikeCount);
     }
 
 }

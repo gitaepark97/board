@@ -9,6 +9,8 @@ public interface ArticleLikeCountRepository {
 
     Optional<ArticleLikeCount> findById(Long articleId);
 
+    List<ArticleLikeCount> findAll();
+
     List<ArticleLikeCount> findAllById(List<Long> articleIds);
 
     void deleteById(Long articleId);

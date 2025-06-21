@@ -16,7 +16,7 @@ class CommentDeletedEventHandler implements EventHandler<CommentDeletedEventPayl
     @Override
     public void handle(Event<CommentDeletedEventPayload> event) {
         CommentDeletedEventPayload payload = event.getPayload();
-        hotArticleScoreScoreCalculator.decreaseArticleCommentCount(payload.articleId(), payload.deletedAt());
+        hotArticleScoreScoreCalculator.saveArticleCommentCount(payload.articleId(), payload.articleId(), payload.deletedAt());
     }
 
     @Override

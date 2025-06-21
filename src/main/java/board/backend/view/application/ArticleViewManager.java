@@ -25,20 +25,33 @@ class ArticleViewManager {
     private final ArticleViewCountBackupRepository articleViewCountBackUpRepository;
     private final ArticleViewDistributedLockRepository articleViewDistributedLockRepository;
     private final EventPublisher eventPublisher;
+    private final TodayViewCountCalculator todayViewCountCalculator;
 
     void increaseCount(Long articleId, String ip) {
         if (!articleViewDistributedLockRepository.lock(articleId, ip, TTL)) {
             return;
         }
 
-        Long count = articleViewCountRepository.increase(articleId);
-        if (count % BACK_UP_BATCH_SIZE == 0) {
-            // 게시글 조회 수 백업
-            articleViewCountBackUpRepository.save(ArticleViewCount.create(articleId, count));
-
-            // 게시글 조회 이벤트 발행
-            eventPublisher.publishEvent(EventType.ARTICLE_VIEWED, new ArticleViewedEventPayload(articleId, BACK_UP_BATCH_SIZE, timeProvider.now()));
+        long currentCount = articleViewCountRepository.increase(articleId);
+        if (currentCount % BACK_UP_BATCH_SIZE != 0) {
+            return;
         }
+
+        backupViewCount(articleId, currentCount);
+        publishViewEvent(articleId, currentCount);
+    }
+
+    private void backupViewCount(Long articleId, Long currentCount) {
+        articleViewCountBackUpRepository.save(ArticleViewCount.create(articleId, currentCount));
+    }
+
+    private void publishViewEvent(Long articleId, Long currentCount) {
+        long todayCount = todayViewCountCalculator.calculate(articleId, currentCount);
+
+        eventPublisher.publishEvent(
+            EventType.ARTICLE_VIEWED,
+            new ArticleViewedEventPayload(articleId, todayCount, timeProvider.now())
+        );
     }
 
 }

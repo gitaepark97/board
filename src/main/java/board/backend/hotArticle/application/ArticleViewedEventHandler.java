@@ -16,7 +16,7 @@ class ArticleViewedEventHandler implements EventHandler<ArticleViewedEventPayloa
     @Override
     public void handle(Event<ArticleViewedEventPayload> event) {
         ArticleViewedEventPayload payload = event.getPayload();
-        hotArticleScoreScoreCalculator.increaseArticleViewCount(payload.articleId(), payload.increment(), payload.createdAt());
+        hotArticleScoreScoreCalculator.saveArticleViewCount(payload.articleId(), payload.viewCount(), payload.viewedAt());
     }
 
     @Override

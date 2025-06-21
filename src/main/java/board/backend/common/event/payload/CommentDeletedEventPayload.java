@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 public record CommentDeletedEventPayload(
     Long articleId,
+    Long commentCount,
     LocalDateTime deletedAt
 ) implements EventPayload {
 

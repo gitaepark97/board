@@ -5,11 +5,12 @@ import board.backend.article.application.fake.FakeArticleRepository;
 import board.backend.article.domain.Article;
 import board.backend.common.event.EventType;
 import board.backend.common.event.fake.FakeEventPublisher;
-import board.backend.common.event.payload.ArticleLikedEventPaylod;
+import board.backend.common.event.payload.ArticleLikedEventPayload;
 import board.backend.common.event.payload.ArticleUnlikedEventPayload;
 import board.backend.common.infra.fake.FakeCachedRepository;
 import board.backend.common.support.fake.FakeTimeProvider;
-import board.backend.like.application.fake.FakeArticleLikeCountRepository;
+import board.backend.like.application.fake.FakeArticleCommentRepository;
+import board.backend.like.application.fake.FakeArticleLikeCountSnapshotRepository;
 import board.backend.like.application.fake.FakeArticleLikeRepository;
 import board.backend.like.domain.ArticleLike;
 import board.backend.like.domain.ArticleLikeCount;
@@ -25,7 +26,7 @@ class ArticleLikeManagerTest {
 
     private FakeTimeProvider timeProvider;
     private FakeArticleLikeRepository articleLikeRepository;
-    private FakeArticleLikeCountRepository articleLikeCountRepository;
+    private FakeArticleCommentRepository articleLikeCountRepository;
     private FakeEventPublisher eventPublisher;
     private ArticleLikeManager articleLikeManager;
 
@@ -33,7 +34,7 @@ class ArticleLikeManagerTest {
     void setUp() {
         timeProvider = new FakeTimeProvider(LocalDateTime.of(2024, 1, 1, 12, 0));
         articleLikeRepository = new FakeArticleLikeRepository();
-        articleLikeCountRepository = new FakeArticleLikeCountRepository();
+        articleLikeCountRepository = new FakeArticleCommentRepository();
         eventPublisher = new FakeEventPublisher();
         FakeArticleRepository articleRepository = new FakeArticleRepository();
         articleLikeManager = new ArticleLikeManager(
@@ -41,7 +42,8 @@ class ArticleLikeManagerTest {
             articleLikeRepository,
             articleLikeCountRepository,
             eventPublisher,
-            new ArticleValidator(new FakeCachedRepository<>(), articleRepository)
+            new ArticleValidator(new FakeCachedRepository<>(), articleRepository),
+            new TodayLikeCountCalculator(timeProvider, articleLikeCountRepository, new FakeArticleLikeCountSnapshotRepository())
         );
 
         articleRepository.save(Article.create(1L, 1L, 1L, "제목", "내용", timeProvider.now()));
@@ -65,7 +67,7 @@ class ArticleLikeManagerTest {
             .containsExactly(
                 new FakeEventPublisher.PublishedEvent(
                     EventType.ARTICLE_LIKED,
-                    new ArticleLikedEventPaylod(articleId, timeProvider.now())
+                    new ArticleLikedEventPayload(articleId, 1L, timeProvider.now())
                 )
             );
     }
@@ -106,7 +108,7 @@ class ArticleLikeManagerTest {
             .containsExactly(
                 new FakeEventPublisher.PublishedEvent(
                     EventType.ARTICLE_UNLIKED,
-                    new ArticleUnlikedEventPayload(articleId, timeProvider.now())
+                    new ArticleUnlikedEventPayload(articleId, 0L, timeProvider.now())
                 )
             );
     }

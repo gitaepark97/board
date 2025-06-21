@@ -9,6 +9,8 @@ public interface ArticleCommentCountRepository {
 
     Optional<ArticleCommentCount> findById(Long articleId);
 
+    List<ArticleCommentCount> findAll();
+
     List<ArticleCommentCount> findAllById(List<Long> articleIds);
 
     void deleteById(Long articleId);

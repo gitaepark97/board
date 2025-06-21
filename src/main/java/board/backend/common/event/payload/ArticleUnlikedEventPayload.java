@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 public record ArticleUnlikedEventPayload(
     Long articleId,
+    Long likeCount,
     LocalDateTime unlikedAt
 ) implements EventPayload {
 

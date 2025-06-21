@@ -38,12 +38,12 @@ class HotArticleScoreScoreCalculatorTest {
 
     @Test
     @DisplayName("좋아요 수 증가 시 점수를 계산하고 핫 게시글로 저장한다")
-    void increaseArticleLikeCount_success_savesHotArticle() {
+    void saveArticleLikeCount_success_savesHotArticle() {
         // given
         Long articleId = 1L;
 
         // when
-        calculator.increaseArticleLikeCount(articleId, now);
+        calculator.saveArticleLikeCount(articleId, 1L, now);
 
         // then
         assertThat(hotArticleRepository.findById(articleId))
@@ -55,13 +55,12 @@ class HotArticleScoreScoreCalculatorTest {
     void calculateScore_success_combinesAllMetricsWithWeight() {
         // given
         Long articleId = 1L;
-        likeCountRepository.increaseOrSave(articleId, now, Duration.ofDays(1)); // +3
-        likeCountRepository.increaseOrSave(articleId, now, Duration.ofDays(1)); // +3
-        commentCountRepository.increaseOrSave(articleId, now, Duration.ofDays(1)); // +2
-        viewCountRepository.increaseOrSave(articleId, 5L, now, Duration.ofDays(1)); // +5
+        likeCountRepository.save(articleId, 2L, now, Duration.ofDays(1)); // +6
+        commentCountRepository.save(articleId, 1L, now, Duration.ofDays(1)); // +2
+        viewCountRepository.save(articleId, 5L, now, Duration.ofDays(1)); // +5
 
         // when
-        calculator.increaseArticleCommentCount(articleId, now);
+        calculator.saveArticleCommentCount(articleId, 2L, now);
 
         // then
         // 좋아요 2회 → 6, 댓글 2회 → 4, 조회수 5 → 5 → 총합 15

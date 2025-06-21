@@ -24,7 +24,7 @@ public class FakeLoginInfoRepository implements LoginInfoRepository {
 
     @Override
     public void save(LoginInfo loginInfo) {
-        store.put(new Key(loginInfo.loginMethod(), loginInfo.loginKey()), loginInfo);
+        store.put(new Key(loginInfo.method(), loginInfo.key()), loginInfo);
     }
 
     private record Key(LoginMethod method, String key) {

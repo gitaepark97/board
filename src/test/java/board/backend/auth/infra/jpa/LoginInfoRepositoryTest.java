@@ -27,7 +27,7 @@ class LoginInfoRepositoryTest extends TestJpaRepository {
         loginInfoRepository.save(loginInfo);
 
         // when
-        boolean result = loginInfoRepository.existsBy(LoginMethod.EMAIL, loginInfo.loginKey());
+        boolean result = loginInfoRepository.existsBy(LoginMethod.EMAIL, loginInfo.key());
 
         // then
         assertThat(result).isTrue();

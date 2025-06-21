@@ -1,6 +1,7 @@
 package board.backend.comment.application;
 
 import board.backend.comment.application.fake.FakeArticleCommentCountRepository;
+import board.backend.comment.application.fake.FakeArticleCommentCountSnapshotRepository;
 import board.backend.comment.application.fake.FakeCommentRepository;
 import board.backend.comment.domain.ArticleCommentCount;
 import board.backend.comment.domain.Comment;
@@ -41,7 +42,8 @@ class CommentDeleterTest {
             cachedRepository,
             commentRepository,
             commentCountRepository,
-            eventPublisher
+            eventPublisher,
+            new TodayCommentCountCalculator(timeProvider, commentCountRepository, new FakeArticleCommentCountSnapshotRepository())
         );
     }
 
@@ -58,9 +60,13 @@ class CommentDeleterTest {
         // then
         assertThat(result).contains(100L);
         assertThat(commentRepository.findById(comment.id())).isEmpty();
-        assertThat(eventPublisher.getPublishedEvents()).containsExactly(
-            new FakeEventPublisher.PublishedEvent(EventType.COMMENT_DELETED, new CommentDeletedEventPayload(100L, timeProvider.now()))
-        );
+        assertThat(eventPublisher.getPublishedEvents())
+            .containsExactly(
+                new FakeEventPublisher.PublishedEvent(
+                    EventType.COMMENT_DELETED,
+                    new CommentDeletedEventPayload(comment.articleId(), 0L, timeProvider.now())
+                )
+            );
     }
 
     @Test

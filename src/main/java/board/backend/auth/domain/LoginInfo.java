@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 public record LoginInfo(
     Long id,
     Long userId,
-    LoginMethod loginMethod,
-    String loginKey,
+    LoginMethod method,
+    String key,
     String password,
     LocalDateTime createdAt,
     LocalDateTime updatedAt
@@ -19,8 +19,8 @@ public record LoginInfo(
         return LoginInfo.builder()
             .id(id)
             .userId(userId)
-            .loginMethod(LoginMethod.EMAIL)
-            .loginKey(email)
+            .method(LoginMethod.EMAIL)
+            .key(email)
             .password(password)
             .createdAt(now)
             .updatedAt(now)

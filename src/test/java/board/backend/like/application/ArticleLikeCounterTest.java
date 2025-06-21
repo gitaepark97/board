@@ -1,7 +1,7 @@
 package board.backend.like.application;
 
 import board.backend.common.infra.fake.FakeCachedRepository;
-import board.backend.like.application.fake.FakeArticleLikeCountRepository;
+import board.backend.like.application.fake.FakeArticleCommentRepository;
 import board.backend.like.domain.ArticleLikeCount;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,13 +16,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ArticleLikeCounterTest {
 
     private FakeCachedRepository<ArticleLikeCount, Long> cachedRepository;
-    private FakeArticleLikeCountRepository articleLikeCountRepository;
+    private FakeArticleCommentRepository articleLikeCountRepository;
     private ArticleLikeCounter articleLikeCounter;
 
     @BeforeEach
     void setUp() {
         cachedRepository = new FakeCachedRepository<>();
-        articleLikeCountRepository = new FakeArticleLikeCountRepository();
+        articleLikeCountRepository = new FakeArticleCommentRepository();
         articleLikeCounter = new ArticleLikeCounter(cachedRepository, articleLikeCountRepository);
     }
 

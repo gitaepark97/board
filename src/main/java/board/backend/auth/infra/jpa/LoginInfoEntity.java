@@ -38,20 +38,20 @@ class LoginInfoEntity {
         return new LoginInfoEntity(
             loginInfo.id(),
             loginInfo.userId(),
-            loginInfo.loginMethod(),
-            loginInfo.loginKey(),
+            loginInfo.method(),
+            loginInfo.key(),
             loginInfo.password(),
             loginInfo.createdAt(),
             loginInfo.updatedAt()
         );
     }
-    
+
     LoginInfo toLoginInfo() {
         return LoginInfo.builder()
             .id(id)
             .userId(userId)
-            .loginMethod(loginMethod)
-            .loginKey(loginKey)
+            .method(loginMethod)
+            .key(loginKey)
             .password(password)
             .createdAt(createdAt)
             .updatedAt(updatedAt)

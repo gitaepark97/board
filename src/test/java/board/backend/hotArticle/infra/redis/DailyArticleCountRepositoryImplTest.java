@@ -26,7 +26,7 @@ class DailyArticleCountRepositoryImplTest extends TestRedisRepository {
     @DisplayName("기존 값이 존재하지 않으면 0을 반환한다")
     void read_whenExists() {
         // given
-        repository.increaseOrSave(articleId, now, ttl);
+        repository.save(articleId, 1L, now, ttl);
 
         // when
         Long result = repository.read(articleId, now);
@@ -46,86 +46,29 @@ class DailyArticleCountRepositoryImplTest extends TestRedisRepository {
     }
 
     @Test
-    @DisplayName("기존 값이 없으면 1로 저장된다")
-    void increaseOrSave_setsValue() {
+    @DisplayName("값이 저장되면 정상적으로 읽을 수 있다")
+    void save_success_storesValueCorrectly() {
         // when
-        repository.increaseOrSave(articleId, now, ttl);
+        repository.save(articleId, 1L, now, ttl);
 
         // then
-        assertThat(repository.read(articleId, now)).isEqualTo(1L);
-    }
-
-    @Test
-    @DisplayName("기존 값이 존재하면 1로 저장된다")
-    void increaseOrSave_increaseValue() {
-        // given
-        repository.increaseOrSave(articleId, now, ttl);
-
-        // when
-        repository.increaseOrSave(articleId, now, ttl);
-
-        // then
-        assertThat(repository.read(articleId, now)).isEqualTo(2L);
-    }
-
-    @Test
-    @DisplayName("기존 값이 없으면 1로 저장된다")
-    void increaseOrSave_withIncreasement_setsValue() {
-        // when
-        repository.increaseOrSave(articleId, 10L, now, ttl);
-
-        // then
-        assertThat(repository.read(articleId, now)).isEqualTo(10L);
-    }
-
-    @Test
-    @DisplayName("기존 값이 존재하면 1로 저장된다")
-    void increaseOrSave_withIncreasement_increaseValue() {
-        // given
-        repository.increaseOrSave(articleId, now, ttl);
-
-        // when
-        repository.increaseOrSave(articleId, 10L, now, ttl);
-
-        // then
-        assertThat(repository.read(articleId, now)).isEqualTo(11L);
-    }
-
-    @Test
-    @DisplayName("기존 값이 없으면 감소시킨다")
-    void decrease_doNothing() {
-        // when
-        repository.decrease(articleId, now);
-
-        // then
-        assertThat(repository.read(articleId, now)).isZero();
-    }
-
-    @Test
-    @DisplayName("기존 값이 존재하면 감소시킨다")
-    void decrease_reducesValue() {
-        // given
-        repository.increaseOrSave(articleId, now, ttl);
-        repository.increaseOrSave(articleId, now, ttl);
-
-        // when
-        repository.decrease(articleId, now);
-
-        // then
-        assertThat(repository.read(articleId, now)).isEqualTo(1L);
+        Long result = repository.read(articleId, now);
+        assertThat(result).isEqualTo(1L);
     }
 
     @Test
     @DisplayName("ID 기준으로 관련 key들이 삭제된다")
-    void deleteById_removesKeys() {
+    void deleteByArticleId_removesKeys() {
         // given
-        repository.increaseOrSave(articleId, now, ttl);
+        repository.save(articleId, 1L, now, ttl);
+        repository.save(articleId, 2L, now.minusHours(1), ttl);
 
         // when
-        repository.deleteById(articleId);
+        repository.deleteByArticleId(articleId);
 
         // then
         assertThat(repository.read(articleId, now)).isZero();
+        assertThat(repository.read(articleId, now.minusHours(1))).isZero();
     }
 
 }

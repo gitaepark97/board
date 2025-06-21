@@ -16,7 +16,7 @@ class ArticleUnlikedEventHandler implements EventHandler<ArticleUnlikedEventPayl
     @Override
     public void handle(Event<ArticleUnlikedEventPayload> event) {
         ArticleUnlikedEventPayload payload = event.getPayload();
-        hotArticleScoreScoreCalculator.decreaseArticleLikeCount(payload.articleId(), payload.unlikedAt());
+        hotArticleScoreScoreCalculator.saveArticleLikeCount(payload.articleId(), payload.likeCount(), payload.unlikedAt());
     }
 
     @Override

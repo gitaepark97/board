@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
@@ -23,11 +22,19 @@ class ArticleLikeCountRepositoryImpl implements ArticleLikeCountRepository {
     }
 
     @Override
+    public List<ArticleLikeCount> findAll() {
+        return articleLikeCountEntityRepository.findAll()
+            .stream()
+            .map(ArticleLikeCountEntity::toArticleLikeCount)
+            .toList();
+    }
+
+    @Override
     public List<ArticleLikeCount> findAllById(List<Long> articleIds) {
         return articleLikeCountEntityRepository.findAllById(articleIds)
             .stream()
             .map(ArticleLikeCountEntity::toArticleLikeCount)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @Override

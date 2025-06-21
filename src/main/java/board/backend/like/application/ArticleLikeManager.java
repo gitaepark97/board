@@ -3,7 +3,7 @@ package board.backend.like.application;
 import board.backend.article.application.ArticleValidator;
 import board.backend.common.event.EventPublisher;
 import board.backend.common.event.EventType;
-import board.backend.common.event.payload.ArticleLikedEventPaylod;
+import board.backend.common.event.payload.ArticleLikedEventPayload;
 import board.backend.common.event.payload.ArticleUnlikedEventPayload;
 import board.backend.common.support.TimeProvider;
 import board.backend.like.application.port.ArticleLikeCountRepository;
@@ -23,6 +23,7 @@ class ArticleLikeManager {
     private final ArticleLikeCountRepository articleLikeCountRepository;
     private final EventPublisher eventPublisher;
     private final ArticleValidator articleValidator;
+    private final TodayLikeCountCalculator todayLikeCountCalculator;
 
     @Transactional
     void like(Long articleId, Long userId) {
@@ -40,7 +41,8 @@ class ArticleLikeManager {
             articleLikeCountRepository.increaseOrSave(articleLikeCount);
 
             // 게시글 좋아요 생성 이벤트 발행
-            eventPublisher.publishEvent(EventType.ARTICLE_LIKED, new ArticleLikedEventPaylod(articleId, articleLike.createdAt()));
+            long todayCount = todayLikeCountCalculator.calculate(articleId);
+            eventPublisher.publishEvent(EventType.ARTICLE_LIKED, new ArticleLikedEventPayload(articleId, todayCount, articleLike.createdAt()));
         }
     }
 
@@ -53,8 +55,10 @@ class ArticleLikeManager {
             // 게시글 좋아요 수 감소
             articleLikeCountRepository.decrease(articleId);
 
+
             // 게시글 좋아요 삭제 이벤트 발행
-            eventPublisher.publishEvent(EventType.ARTICLE_UNLIKED, new ArticleUnlikedEventPayload(articleId, timeProvider.now()));
+            long todayCount = todayLikeCountCalculator.calculate(articleId);
+            eventPublisher.publishEvent(EventType.ARTICLE_UNLIKED, new ArticleUnlikedEventPayload(articleId, todayCount, timeProvider.now()));
         });
     }
 

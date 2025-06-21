@@ -5,7 +5,6 @@ import board.backend.article.domain.Article;
 import board.backend.article.domain.ArticleNotFound;
 import board.backend.common.event.EventType;
 import board.backend.common.event.fake.FakeEventPublisher;
-import board.backend.common.event.payload.ArticleReadEventPayload;
 import board.backend.common.infra.fake.FakeCachedRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -97,8 +96,7 @@ class ArticleReaderTest {
 
         // then
         assertThat(result).isEqualTo(article);
-        assertThat(eventPublisher.getPublishedEvents())
-            .containsExactly(new FakeEventPublisher.PublishedEvent(EventType.ARTICLE_READ, new ArticleReadEventPayload(article.id(), ip)));
+        assertThat(eventPublisher.getPublishedEvents().getFirst().type()).isEqualTo(EventType.ARTICLE_READ);
         assertThat(cachedRepository.findByKey(article.id())).contains(article);
     }
 

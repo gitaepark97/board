@@ -15,7 +15,7 @@ public enum EventType {
     ARTICLE_DELETED(ArticleDeletedEventPayload.class, Topic.BOARD_ARTICLE),
     COMMENT_CREATED(CommentCreatedEventPayload.class, Topic.BOARD_COMMENT),
     COMMENT_DELETED(CommentDeletedEventPayload.class, Topic.BOARD_COMMENT),
-    ARTICLE_LIKED(ArticleLikedEventPaylod.class, Topic.BOARD_LIKE),
+    ARTICLE_LIKED(ArticleLikedEventPayload.class, Topic.BOARD_LIKE),
     ARTICLE_UNLIKED(ArticleUnlikedEventPayload.class, Topic.BOARD_LIKE),
     ARTICLE_VIEWED(ArticleViewedEventPayload.class, Topic.BOARD_VIEW);
 

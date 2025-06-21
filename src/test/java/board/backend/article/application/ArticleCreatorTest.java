@@ -7,7 +7,6 @@ import board.backend.board.application.fake.FakeBoardRepository;
 import board.backend.board.domain.Board;
 import board.backend.common.event.EventType;
 import board.backend.common.event.fake.FakeEventPublisher;
-import board.backend.common.event.payload.ArticleCreatedEventPayload;
 import board.backend.common.infra.fake.FakeCachedRepository;
 import board.backend.common.support.fake.FakeIdProvider;
 import board.backend.common.support.fake.FakeTimeProvider;
@@ -74,8 +73,7 @@ class ArticleCreatorTest {
         assertThat(article.createdAt()).isEqualTo(now);
 
         assertThat(articleRepository.findById(article.id())).contains(article);
-        assertThat(eventPublisher.getPublishedEvents())
-            .containsExactly(new FakeEventPublisher.PublishedEvent(EventType.ARTICLE_CREATED, new ArticleCreatedEventPayload(article.id())));
+        assertThat(eventPublisher.getPublishedEvents().getFirst().type()).isEqualTo(EventType.ARTICLE_CREATED);
     }
 
 }

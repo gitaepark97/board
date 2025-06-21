@@ -26,6 +26,7 @@ class CommentDeleter {
     private final CommentRepository commentRepository;
     private final ArticleCommentCountRepository articleCommentCountRepository;
     private final EventPublisher eventPublisher;
+    private final TodayCommentCountCalculator todayCommentCountCalculator;
 
     @Transactional
     Optional<Long> delete(Long commentId, Long userId) {
@@ -42,6 +43,11 @@ class CommentDeleter {
                     return deletedComment.id();
                 } else {
                     delete(comment);
+
+                    // 댓글 삭제 이벤트 발행
+                    long todayCount = todayCommentCountCalculator.calculate(comment.articleId());
+                    eventPublisher.publishEvent(EventType.COMMENT_DELETED, new CommentDeletedEventPayload(comment.articleId(), todayCount, timeProvider.now()));
+
                     return comment.articleId();
                 }
             });
@@ -66,9 +72,6 @@ class CommentDeleter {
     private void delete(Comment comment) {
         // 게시글 댓글 수 캐시 삭제
         cachedArticleCommentCountRepository.delete(comment.articleId());
-
-        // 댓글 삭제 이벤트 발행
-        eventPublisher.publishEvent(EventType.COMMENT_DELETED, new CommentDeletedEventPayload(comment.articleId(), timeProvider.now()));
 
         commentRepository.delete(comment);
         articleCommentCountRepository.decrease(comment.articleId());

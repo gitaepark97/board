@@ -15,6 +15,11 @@ public class FakeArticleCommentCountRepository implements ArticleCommentCountRep
     }
 
     @Override
+    public List<ArticleCommentCount> findAll() {
+        return new ArrayList<>(store.values());
+    }
+
+    @Override
     public List<ArticleCommentCount> findAllById(List<Long> articleIds) {
         List<ArticleCommentCount> result = new ArrayList<>();
         for (Long id : articleIds) {
