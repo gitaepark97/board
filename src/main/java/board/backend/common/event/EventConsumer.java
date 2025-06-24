@@ -19,10 +19,7 @@ class EventConsumer {
     private final List<EventHandler> eventHandlers;
     private final ApplicationEventPublisher eventPublisher;
 
-    @Retryable(
-        maxAttempts = 3,
-        backoff = @Backoff(delay = 2000)
-    )
+    @Retryable(backoff = @Backoff(delay = 2000))
     @ApplicationModuleListener
     void handleEvent(Event<EventPayload> event) {
         eventHandlers.stream()

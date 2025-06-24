@@ -1,6 +1,6 @@
 package board.backend.view.infra.jpa;
 
-import board.backend.common.infra.ArticleCountSnapshotId;
+import board.backend.common.count.infra.ArticleCountSnapshotId;
 import board.backend.view.domain.ArticleViewCountSnapshot;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @IdClass(ArticleCountSnapshotId.class)
 @Entity
 @Table(name = "article_view_count_snapshot")
-public class ArticleViewCountSnapshotEntity {
+class ArticleViewCountSnapshotEntity {
 
     @Id
     private LocalDate snapshotDate;
@@ -26,20 +26,12 @@ public class ArticleViewCountSnapshotEntity {
     private Long articleId;
 
     private Long viewCount;
-
-    public static ArticleViewCountSnapshotEntity from(ArticleViewCountSnapshot snapshot) {
-        return new ArticleViewCountSnapshotEntity(
-            snapshot.date(),
-            snapshot.articleId(),
-            snapshot.viewCount()
-        );
-    }
-
-    public ArticleViewCountSnapshot toArticleViewCountSnapshot() {
+    
+    ArticleViewCountSnapshot toArticleViewCountSnapshot() {
         return ArticleViewCountSnapshot.builder()
             .date(snapshotDate)
             .articleId(articleId)
-            .viewCount(viewCount)
+            .count(viewCount)
             .build();
     }
 

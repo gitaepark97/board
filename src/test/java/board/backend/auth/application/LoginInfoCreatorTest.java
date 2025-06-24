@@ -5,7 +5,7 @@ import board.backend.auth.application.fake.FakePasswordEncoderProvider;
 import board.backend.auth.domain.LoginInfo;
 import board.backend.auth.domain.LoginInfoDuplicated;
 import board.backend.auth.domain.LoginMethod;
-import board.backend.common.infra.fake.FakeCachedRepository;
+import board.backend.common.cache.fake.FakeCachedRepository;
 import board.backend.common.support.fake.FakeIdProvider;
 import board.backend.common.support.fake.FakeTimeProvider;
 import board.backend.user.application.UserCreator;

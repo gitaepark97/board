@@ -24,7 +24,7 @@ public class FakeArticleViewCountBackupRepository implements ArticleViewCountBac
 
     @Override
     public void save(ArticleViewCount articleViewCount) {
-        store.put(articleViewCount.articleId(), articleViewCount);
+        store.put(articleViewCount.getArticleId(), articleViewCount);
     }
 
     @Override

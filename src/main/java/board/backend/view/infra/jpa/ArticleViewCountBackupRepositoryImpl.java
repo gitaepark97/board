@@ -30,7 +30,7 @@ class ArticleViewCountBackupRepositoryImpl implements ArticleViewCountBackupRepo
 
     @Override
     public void save(ArticleViewCount articleViewCount) {
-        articleViewCountEntityRepository.upsert(articleViewCount.articleId(), articleViewCount.viewCount());
+        articleViewCountEntityRepository.upsert(articleViewCount.getArticleId(), articleViewCount.getCount());
     }
 
     @Override

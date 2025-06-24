@@ -1,7 +1,7 @@
 package board.backend.comment.infra.jpa;
 
 import board.backend.comment.domain.ArticleCommentCountSnapshot;
-import board.backend.common.infra.ArticleCountSnapshotId;
+import board.backend.common.count.infra.ArticleCountSnapshotId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
@@ -29,9 +29,9 @@ public class ArticleCommentCountSnapshotEntity {
 
     public static ArticleCommentCountSnapshotEntity from(ArticleCommentCountSnapshot snapshot) {
         return new ArticleCommentCountSnapshotEntity(
-            snapshot.date(),
-            snapshot.articleId(),
-            snapshot.commentCount()
+            snapshot.getDate(),
+            snapshot.getArticleId(),
+            snapshot.getCount()
         );
     }
 
@@ -39,7 +39,7 @@ public class ArticleCommentCountSnapshotEntity {
         return ArticleCommentCountSnapshot.builder()
             .date(snapshotDate)
             .articleId(articleId)
-            .commentCount(commentCount)
+            .count(commentCount)
             .build();
     }
 

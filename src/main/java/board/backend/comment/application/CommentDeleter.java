@@ -4,10 +4,7 @@ import board.backend.comment.application.port.ArticleCommentCountRepository;
 import board.backend.comment.application.port.CommentRepository;
 import board.backend.comment.domain.ArticleCommentCount;
 import board.backend.comment.domain.Comment;
-import board.backend.common.event.EventPublisher;
-import board.backend.common.event.EventType;
-import board.backend.common.event.payload.CommentDeletedEventPayload;
-import board.backend.common.infra.CachedRepository;
+import board.backend.common.cache.infra.CachedRepository;
 import board.backend.common.support.TimeProvider;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +22,7 @@ class CommentDeleter {
     private final CachedRepository<ArticleCommentCount, Long> cachedArticleCommentCountRepository;
     private final CommentRepository commentRepository;
     private final ArticleCommentCountRepository articleCommentCountRepository;
-    private final EventPublisher eventPublisher;
-    private final TodayCommentCountCalculator todayCommentCountCalculator;
+    private final CommentEventPublisher commentEventPublisher;
 
     @Transactional
     Optional<Long> delete(Long commentId, Long userId) {
@@ -43,11 +39,6 @@ class CommentDeleter {
                     return deletedComment.id();
                 } else {
                     delete(comment);
-
-                    // 댓글 삭제 이벤트 발행
-                    long todayCount = todayCommentCountCalculator.calculate(comment.articleId());
-                    eventPublisher.publishEvent(EventType.COMMENT_DELETED, new CommentDeletedEventPayload(comment.articleId(), todayCount, timeProvider.now()));
-
                     return comment.articleId();
                 }
             });
@@ -75,6 +66,12 @@ class CommentDeleter {
 
         commentRepository.delete(comment);
         articleCommentCountRepository.decrease(comment.articleId());
+
+        if (timeProvider.isToday(comment.createdAt())) {
+            // 댓글 삭제 이벤트 발행
+            commentEventPublisher.publishEvent(comment);
+        }
+
         if (!comment.isRoot()) {
             // 부모 댓글 삭제
             commentRepository.findById(comment.parentId())

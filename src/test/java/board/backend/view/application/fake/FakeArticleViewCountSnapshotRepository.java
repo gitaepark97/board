@@ -1,6 +1,6 @@
 package board.backend.view.application.fake;
 
-import board.backend.common.application.port.ArticleCountSnapshotRepository;
+import board.backend.common.count.application.port.ArticleCountSnapshotRepository;
 import board.backend.view.domain.ArticleViewCountSnapshot;
 
 import java.time.LocalDate;
@@ -22,8 +22,8 @@ public class FakeArticleViewCountSnapshotRepository implements ArticleCountSnaps
     public void saveAll(List<ArticleViewCountSnapshot> snapshots) {
         for (ArticleViewCountSnapshot snapshot : snapshots) {
             store
-                .computeIfAbsent(snapshot.date(), k -> new HashMap<>())
-                .put(snapshot.articleId(), snapshot);
+                .computeIfAbsent(snapshot.getDate(), k -> new HashMap<>())
+                .put(snapshot.getArticleId(), snapshot);
         }
     }
 

@@ -2,7 +2,7 @@ package board.backend.security;
 
 import board.backend.auth.application.TokenManager;
 import board.backend.auth.application.fake.FakeTokenProvider;
-import board.backend.common.infra.fake.FakeCachedRepository;
+import board.backend.common.cache.fake.FakeCachedRepository;
 import board.backend.user.application.UserValidator;
 import board.backend.user.application.fake.FakeUserRepository;
 import board.backend.user.domain.User;

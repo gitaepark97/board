@@ -3,7 +3,7 @@ package board.backend.comment.application;
 import board.backend.comment.application.dto.CommentWithWriter;
 import board.backend.comment.application.fake.FakeCommentRepository;
 import board.backend.comment.domain.Comment;
-import board.backend.common.infra.fake.FakeCachedRepository;
+import board.backend.common.cache.fake.FakeCachedRepository;
 import board.backend.user.application.UserReader;
 import board.backend.user.application.fake.FakeUserRepository;
 import board.backend.user.domain.User;

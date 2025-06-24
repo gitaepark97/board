@@ -1,50 +1,25 @@
 package board.backend.view.application.fake;
 
+import board.backend.common.count.application.fake.FakeArticleCountRepository;
 import board.backend.view.application.port.ArticleViewCountRepository;
 import board.backend.view.domain.ArticleViewCount;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public class FakeArticleViewCountRepository implements ArticleViewCountRepository {
-
-    private final Map<Long, Long> store = new HashMap<>();
-
-    @Override
-    public Long findById(Long articleId) {
-        return store.getOrDefault(articleId, 0L);
-    }
-
-    @Override
-    public List<ArticleViewCount> findAll() {
-        return store.entrySet().stream()
-            .map(entry -> new ArticleViewCount(entry.getKey(), entry.getValue()))
-            .toList();
-    }
-
-    @Override
-    public Map<Long, Long> findAllById(List<Long> articleIds) {
-        Map<Long, Long> result = new HashMap<>();
-        for (Long id : articleIds) {
-            result.put(id, store.getOrDefault(id, 0L));
-        }
-        return result;
-    }
-
-    @Override
-    public void deleteById(Long articleId) {
-        store.remove(articleId);
-    }
+public class FakeArticleViewCountRepository extends FakeArticleCountRepository<ArticleViewCount> implements ArticleViewCountRepository {
 
     @Override
     public Long increase(Long articleId) {
-        return store.merge(articleId, 1L, Long::sum);
-    }
+        ArticleViewCount existing = store.get(articleId);
 
-    @Override
-    public void save(ArticleViewCount articleViewCount) {
-        store.put(articleViewCount.articleId(), articleViewCount.viewCount());
+        if (existing == null) {
+            store.put(articleId, ArticleViewCount.builder().articleId(articleId).count(1L).build());
+        } else {
+            store.put(articleId, ArticleViewCount.builder()
+                .articleId(articleId)
+                .count(existing.getCount() + 1)
+                .build());
+        }
+
+        return store.get(articleId).getCount();
     }
 
 }

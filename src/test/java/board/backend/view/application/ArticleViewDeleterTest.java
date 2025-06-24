@@ -26,16 +26,16 @@ class ArticleViewDeleterTest {
     @DisplayName("게시글 ID로 조회 수 및 백업 데이터를 삭제할 수 있다")
     void deleteArticle_success_whenArticleExists_deletesBothRepositories() {
         // given
-        ArticleViewCount count = new ArticleViewCount(1L, 10L);
+        ArticleViewCount count = ArticleViewCount.builder().articleId(1L).count(10L).build();
         viewCountRepository.save(count);
         backupRepository.save(count);
 
         // when
-        articleViewDeleter.deleteArticle(count.articleId());
+        articleViewDeleter.deleteArticle(count.getArticleId());
 
         // then
-        assertThat(viewCountRepository.findById(count.articleId())).isEqualTo(0L);
-        assertThat(backupRepository.findById(count.articleId())).isEmpty();
+        assertThat(viewCountRepository.findById(count.getArticleId())).isEmpty();
+        assertThat(backupRepository.findById(count.getArticleId())).isEmpty();
     }
 
 }

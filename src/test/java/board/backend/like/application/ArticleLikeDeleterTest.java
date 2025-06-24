@@ -1,9 +1,8 @@
 package board.backend.like.application;
 
-import board.backend.like.application.fake.FakeArticleCommentRepository;
+import board.backend.like.application.fake.FakeArticleLikeCountRepository;
 import board.backend.like.application.fake.FakeArticleLikeRepository;
 import board.backend.like.domain.ArticleLike;
-import board.backend.like.domain.ArticleLikeCount;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,13 +15,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ArticleLikeDeleterTest {
 
     private FakeArticleLikeRepository articleLikeRepository;
-    private FakeArticleCommentRepository articleLikeCountRepository;
+    private FakeArticleLikeCountRepository articleLikeCountRepository;
     private ArticleLikeDeleter articleLikeDeleter;
 
     @BeforeEach
     void setUp() {
         articleLikeRepository = new FakeArticleLikeRepository();
-        articleLikeCountRepository = new FakeArticleCommentRepository();
+        articleLikeCountRepository = new FakeArticleLikeCountRepository();
         articleLikeDeleter = new ArticleLikeDeleter(articleLikeRepository, articleLikeCountRepository);
     }
 
@@ -35,7 +34,7 @@ class ArticleLikeDeleterTest {
         ArticleLike like2 = new ArticleLike(1L, 20L, LocalDateTime.now());
         articleLikeRepository.save(like1);
         articleLikeRepository.save(like2);
-        articleLikeCountRepository.increaseOrSave(new ArticleLikeCount(articleId, 2L));
+        articleLikeCountRepository.increase(articleId);
 
         // when
         articleLikeDeleter.deleteArticle(articleId);

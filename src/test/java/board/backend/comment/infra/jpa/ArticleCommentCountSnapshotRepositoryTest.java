@@ -1,8 +1,8 @@
 package board.backend.comment.infra.jpa;
 
 import board.backend.comment.domain.ArticleCommentCountSnapshot;
-import board.backend.common.application.port.ArticleCountSnapshotRepository;
-import board.backend.common.infra.TestJpaRepository;
+import board.backend.common.config.TestJpaRepository;
+import board.backend.common.count.application.port.ArticleCountSnapshotRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,20 +26,28 @@ class ArticleCommentCountSnapshotRepositoryTest extends TestJpaRepository {
     @DisplayName("스냅샷들을 배치로 저장할 수 있다")
     void saveAll_success() {
         // given
-        ArticleCommentCountSnapshot snapshot1 = new ArticleCommentCountSnapshot(date, 1L, 100L);
-        ArticleCommentCountSnapshot snapshot2 = new ArticleCommentCountSnapshot(date, 2L, 200L);
+        ArticleCommentCountSnapshot snapshot1 = ArticleCommentCountSnapshot.builder()
+            .date(date)
+            .articleId(1L)
+            .count(100L)
+            .build();
+        ArticleCommentCountSnapshot snapshot2 = ArticleCommentCountSnapshot.builder()
+            .date(date)
+            .articleId(2L)
+            .count(200L)
+            .build();
         List<ArticleCommentCountSnapshot> snapshots = List.of(snapshot1, snapshot2);
 
         // when
         articleCountSnapshotRepository.saveAll(snapshots);
 
         // then
-        var saved1 = articleCountSnapshotRepository.findByDateAndArticleId(date, snapshot1.articleId())
+        var saved1 = articleCountSnapshotRepository.findByDateAndArticleId(date, snapshot1.getArticleId())
             .orElseThrow();
-        assertThat(saved1.commentCount()).isEqualTo(snapshot1.commentCount());
-        var saved2 = articleCountSnapshotRepository.findByDateAndArticleId(date, snapshot2.articleId())
+        assertThat(saved1.getCount()).isEqualTo(snapshot1.getCount());
+        var saved2 = articleCountSnapshotRepository.findByDateAndArticleId(date, snapshot2.getArticleId())
             .orElseThrow();
-        assertThat(saved2.commentCount()).isEqualTo(snapshot2.commentCount());
+        assertThat(saved2.getCount()).isEqualTo(snapshot2.getCount());
 
     }
 

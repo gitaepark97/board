@@ -1,7 +1,7 @@
 package board.backend.like.infra.jpa;
 
-import board.backend.common.application.port.ArticleCountSnapshotRepository;
-import board.backend.common.infra.TestJpaRepository;
+import board.backend.common.config.TestJpaRepository;
+import board.backend.common.count.application.port.ArticleCountSnapshotRepository;
 import board.backend.like.domain.ArticleLikeCountSnapshot;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,20 +26,28 @@ class ArticleLikeCountSnapshotRepositoryTest extends TestJpaRepository {
     @DisplayName("스냅샷들을 배치로 저장할 수 있다")
     void saveAll_success() {
         // given
-        ArticleLikeCountSnapshot snapshot1 = new ArticleLikeCountSnapshot(date, 1L, 100L);
-        ArticleLikeCountSnapshot snapshot2 = new ArticleLikeCountSnapshot(date, 2L, 200L);
+        ArticleLikeCountSnapshot snapshot1 = ArticleLikeCountSnapshot.builder()
+            .date(date)
+            .articleId(1L)
+            .count(100L)
+            .build();
+        ArticleLikeCountSnapshot snapshot2 = ArticleLikeCountSnapshot.builder()
+            .date(date)
+            .articleId(2L)
+            .count(200L)
+            .build();
         List<ArticleLikeCountSnapshot> snapshots = List.of(snapshot1, snapshot2);
 
         // when
         articleLikeCountSnapshotRepository.saveAll(snapshots);
 
         // then
-        var saved1 = articleLikeCountSnapshotRepository.findByDateAndArticleId(date, snapshot1.articleId())
+        var saved1 = articleLikeCountSnapshotRepository.findByDateAndArticleId(date, snapshot1.getArticleId())
             .orElseThrow();
-        assertThat(saved1.likeCount()).isEqualTo(snapshot1.likeCount());
-        var saved2 = articleLikeCountSnapshotRepository.findByDateAndArticleId(date, snapshot2.articleId())
+        assertThat(saved1.getCount()).isEqualTo(snapshot1.getCount());
+        var saved2 = articleLikeCountSnapshotRepository.findByDateAndArticleId(date, snapshot2.getArticleId())
             .orElseThrow();
-        assertThat(saved2.likeCount()).isEqualTo(snapshot2.likeCount());
+        assertThat(saved2.getCount()).isEqualTo(snapshot2.getCount());
 
     }
 

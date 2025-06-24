@@ -1,21 +1,20 @@
 package board.backend.like.domain;
 
-import lombok.Builder;
+import board.backend.common.count.domain.ArticleCountSnapshot;
+import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
-@Builder
-public record ArticleLikeCountSnapshot(
-    LocalDate date,
-    Long articleId,
-    Long likeCount
-) {
+@Getter
+@SuperBuilder
+public class ArticleLikeCountSnapshot extends ArticleCountSnapshot {
 
-    public static ArticleLikeCountSnapshot create(LocalDate date, Long articleId, Long likeCount) {
+    static ArticleLikeCountSnapshot create(LocalDate date, Long articleId, Long count) {
         return ArticleLikeCountSnapshot.builder()
             .date(date)
             .articleId(articleId)
-            .likeCount(likeCount)
+            .count(count)
             .build();
     }
 

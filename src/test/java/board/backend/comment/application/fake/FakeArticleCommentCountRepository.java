@@ -2,49 +2,21 @@ package board.backend.comment.application.fake;
 
 import board.backend.comment.application.port.ArticleCommentCountRepository;
 import board.backend.comment.domain.ArticleCommentCount;
+import board.backend.common.count.application.fake.FakeArticleCountRepository;
 
-import java.util.*;
-
-public class FakeArticleCommentCountRepository implements ArticleCommentCountRepository {
-
-    private final Map<Long, ArticleCommentCount> store = new HashMap<>();
+public class FakeArticleCommentCountRepository extends FakeArticleCountRepository<ArticleCommentCount> implements ArticleCommentCountRepository {
 
     @Override
-    public Optional<ArticleCommentCount> findById(Long articleId) {
-        return Optional.ofNullable(store.get(articleId));
-    }
-
-    @Override
-    public List<ArticleCommentCount> findAll() {
-        return new ArrayList<>(store.values());
-    }
-
-    @Override
-    public List<ArticleCommentCount> findAllById(List<Long> articleIds) {
-        List<ArticleCommentCount> result = new ArrayList<>();
-        for (Long id : articleIds) {
-            ArticleCommentCount count = store.get(id);
-            if (count != null) {
-                result.add(count);
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public void deleteById(Long articleId) {
-        store.remove(articleId);
-    }
-
-    @Override
-    public void increaseOrSave(ArticleCommentCount articleCommentCount) {
-        Long articleId = articleCommentCount.articleId();
+    public void increase(Long articleId) {
         ArticleCommentCount existing = store.get(articleId);
 
         if (existing == null) {
-            store.put(articleId, new ArticleCommentCount(articleId, 1L));
+            store.put(articleId, ArticleCommentCount.builder().articleId(articleId).count(1L).build());
         } else {
-            store.put(articleId, new ArticleCommentCount(articleId, existing.commentCount() + 1));
+            store.put(articleId, ArticleCommentCount.builder()
+                .articleId(articleId)
+                .count(existing.getCount() + 1)
+                .build());
         }
     }
 
@@ -52,12 +24,11 @@ public class FakeArticleCommentCountRepository implements ArticleCommentCountRep
     public void decrease(Long articleId) {
         ArticleCommentCount existing = store.get(articleId);
         if (existing != null) {
-            store.put(articleId, new ArticleCommentCount(articleId, existing.commentCount() - 1));
+            store.put(articleId, ArticleCommentCount.builder()
+                .articleId(articleId)
+                .count(existing.getCount() - 1)
+                .build());
         }
-    }
-
-    public void save(ArticleCommentCount articleCommentCount) {
-        store.put(articleCommentCount.articleId(), articleCommentCount);
     }
 
 }

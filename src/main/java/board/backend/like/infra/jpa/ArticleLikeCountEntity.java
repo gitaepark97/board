@@ -19,17 +19,10 @@ class ArticleLikeCountEntity {
 
     private Long likeCount;
 
-    static ArticleLikeCountEntity from(ArticleLikeCount articleLikeCount) {
-        return new ArticleLikeCountEntity(
-            articleLikeCount.articleId(),
-            articleLikeCount.likeCount()
-        );
-    }
-
     ArticleLikeCount toArticleLikeCount() {
         return ArticleLikeCount.builder()
             .articleId(articleId)
-            .likeCount(likeCount)
+            .count(likeCount)
             .build();
     }
 

@@ -4,15 +4,13 @@ import board.backend.article.application.ArticleValidator;
 import board.backend.article.application.fake.FakeArticleRepository;
 import board.backend.article.domain.Article;
 import board.backend.comment.application.fake.FakeArticleCommentCountRepository;
-import board.backend.comment.application.fake.FakeArticleCommentCountSnapshotRepository;
 import board.backend.comment.application.fake.FakeCommentRepository;
 import board.backend.comment.domain.ArticleCommentCount;
 import board.backend.comment.domain.Comment;
 import board.backend.comment.domain.CommentNotFound;
-import board.backend.common.event.EventType;
+import board.backend.common.cache.fake.FakeCachedRepository;
+import board.backend.common.count.application.fake.FakeArticleCountSnapshotRepository;
 import board.backend.common.event.fake.FakeEventPublisher;
-import board.backend.common.event.payload.CommentCreatedEventPayload;
-import board.backend.common.infra.fake.FakeCachedRepository;
 import board.backend.common.support.fake.FakeIdProvider;
 import board.backend.common.support.fake.FakeTimeProvider;
 import board.backend.user.application.UserValidator;
@@ -36,7 +34,6 @@ class CommentCreatorTest {
     private FakeCachedRepository<ArticleCommentCount, Long> cachedRepository;
     private FakeCommentRepository commentRepository;
     private FakeArticleCommentCountRepository commentCountRepository;
-    private FakeEventPublisher eventPublisher;
     private FakeUserRepository userRepository;
     private FakeArticleRepository articleRepository;
     private CommentCreator commentCreator;
@@ -47,7 +44,7 @@ class CommentCreatorTest {
         cachedRepository = new FakeCachedRepository<>();
         commentRepository = new FakeCommentRepository();
         commentCountRepository = new FakeArticleCommentCountRepository();
-        eventPublisher = new FakeEventPublisher();
+        FakeEventPublisher eventPublisher = new FakeEventPublisher();
         userRepository = new FakeUserRepository();
         articleRepository = new FakeArticleRepository();
         commentCreator = new CommentCreator(
@@ -56,10 +53,17 @@ class CommentCreatorTest {
             cachedRepository,
             commentRepository,
             commentCountRepository,
-            eventPublisher,
             new UserValidator(new FakeCachedRepository<>(), userRepository),
             new ArticleValidator(new FakeCachedRepository<>(), articleRepository),
-            new TodayCommentCountCalculator(timeProvider, commentCountRepository, new FakeArticleCommentCountSnapshotRepository())
+            new CommentEventPublisher(
+                timeProvider,
+                commentCountRepository,
+                eventPublisher,
+                new TodayCommentCountCalculator(
+                    timeProvider,
+                    new FakeArticleCountSnapshotRepository<>()
+                )
+            )
         );
     }
 
@@ -85,17 +89,10 @@ class CommentCreatorTest {
         assertThat(commentRepository.findById(comment.id())).contains(comment);
 
         // 댓글 수 증가했는지 확인
-        assertThat(commentCountRepository.findById(articleId)).contains(new ArticleCommentCount(articleId, 1L));
+        var commentCount = commentCountRepository.findById(comment.id());
+        assertThat(commentCount).isPresent();
+        assertThat(commentCount.get().getCount()).isEqualTo(1);
         assertThat(cachedRepository.findByKey(articleId)).isEmpty();
-
-        // 이벤트 발행 확인
-        assertThat(eventPublisher.getPublishedEvents())
-            .containsExactly(
-                new FakeEventPublisher.PublishedEvent(
-                    EventType.COMMENT_CREATED,
-                    new CommentCreatedEventPayload(articleId, 1L, timeProvider.now())
-                )
-            );
     }
 
     @Test

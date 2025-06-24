@@ -1,6 +1,6 @@
 package board.backend.like.infra.redis;
 
-import board.backend.common.infra.AbstractRedisCachedRepository;
+import board.backend.common.cache.infra.AbstractRedisCachedRepository;
 import board.backend.like.domain.ArticleLikeCount;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Qualifier;

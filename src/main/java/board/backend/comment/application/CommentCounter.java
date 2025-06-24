@@ -2,7 +2,7 @@ package board.backend.comment.application;
 
 import board.backend.comment.application.port.ArticleCommentCountRepository;
 import board.backend.comment.domain.ArticleCommentCount;
-import board.backend.common.infra.CachedRepository;
+import board.backend.common.cache.infra.CachedRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.modulith.NamedInterface;
 import org.springframework.stereotype.Component;
@@ -27,14 +27,14 @@ public class CommentCounter {
             .or(() -> articleCommentCountRepository.findById(articleId)
                 .map(articleCommentCount -> {
                     cachedArticleCommentCountRepository.save(
-                        articleCommentCount.articleId(),
+                        articleCommentCount.getArticleId(),
                         articleCommentCount,
                         COMMENT_COUNT_CACHE_TTL
                     );
                     return articleCommentCount;
                 })
             )
-            .map(ArticleCommentCount::commentCount)
+            .map(ArticleCommentCount::getCount)
             .orElse(0L);
     }
 
@@ -43,7 +43,7 @@ public class CommentCounter {
         List<ArticleCommentCount> cached = cachedArticleCommentCountRepository.findAllByKey(articleIds);
 
         Map<Long, Long> map = cached.stream()
-            .collect(Collectors.toMap(ArticleCommentCount::articleId, ArticleCommentCount::commentCount));
+            .collect(Collectors.toMap(ArticleCommentCount::getArticleId, ArticleCommentCount::getCount));
 
         // 캐시 미스만 조회
         List<Long> missed = articleIds.stream()
@@ -54,10 +54,10 @@ public class CommentCounter {
             List<ArticleCommentCount> uncached = articleCommentCountRepository.findAllById(missed);
 
             // 캐시에 저장
-            uncached.forEach(articleCommentCount -> cachedArticleCommentCountRepository.save(articleCommentCount.articleId(), articleCommentCount, COMMENT_COUNT_CACHE_TTL));
-
-            // 합쳐서 반환
-            uncached.forEach(articleCommentCount -> map.put(articleCommentCount.articleId(), articleCommentCount.commentCount()));
+            uncached.forEach(articleCommentCount -> {
+                cachedArticleCommentCountRepository.save(articleCommentCount.getArticleId(), articleCommentCount, COMMENT_COUNT_CACHE_TTL);
+                map.put(articleCommentCount.getArticleId(), articleCommentCount.getCount());
+            });
         }
 
         return map;

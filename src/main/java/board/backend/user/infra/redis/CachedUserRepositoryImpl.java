@@ -1,6 +1,6 @@
 package board.backend.user.infra.redis;
 
-import board.backend.common.infra.AbstractRedisCachedRepository;
+import board.backend.common.cache.infra.AbstractRedisCachedRepository;
 import board.backend.user.domain.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Qualifier;

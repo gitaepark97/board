@@ -1,7 +1,7 @@
 package board.backend.view.infra.jpa;
 
-import board.backend.common.application.port.ArticleCountSnapshotRepository;
-import board.backend.common.infra.TestJpaRepository;
+import board.backend.common.config.TestJpaRepository;
+import board.backend.common.count.application.port.ArticleCountSnapshotRepository;
 import board.backend.view.domain.ArticleViewCountSnapshot;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,20 +26,28 @@ class ArticleViewCountSnapshotRepositoryTest extends TestJpaRepository {
     @DisplayName("스냅샷들을 배치로 저장할 수 있다")
     void saveAll_success() {
         // given
-        ArticleViewCountSnapshot snapshot1 = new ArticleViewCountSnapshot(date, 1L, 100L);
-        ArticleViewCountSnapshot snapshot2 = new ArticleViewCountSnapshot(date, 2L, 200L);
+        ArticleViewCountSnapshot snapshot1 = ArticleViewCountSnapshot.builder()
+            .date(date)
+            .articleId(1L)
+            .count(100L)
+            .build();
+        ArticleViewCountSnapshot snapshot2 = ArticleViewCountSnapshot.builder()
+            .date(date)
+            .articleId(2L)
+            .count(200L)
+            .build();
         List<ArticleViewCountSnapshot> snapshots = List.of(snapshot1, snapshot2);
 
         // when
         articleCountSnapshotRepository.saveAll(snapshots);
 
         // then
-        var saved1 = articleCountSnapshotRepository.findByDateAndArticleId(date, snapshot1.articleId())
+        var saved1 = articleCountSnapshotRepository.findByDateAndArticleId(date, snapshot1.getArticleId())
             .orElseThrow();
-        assertThat(saved1.viewCount()).isEqualTo(snapshot1.viewCount());
-        var saved2 = articleCountSnapshotRepository.findByDateAndArticleId(date, snapshot2.articleId())
+        assertThat(saved1.getCount()).isEqualTo(snapshot1.getCount());
+        var saved2 = articleCountSnapshotRepository.findByDateAndArticleId(date, snapshot2.getArticleId())
             .orElseThrow();
-        assertThat(saved2.viewCount()).isEqualTo(snapshot2.viewCount());
+        assertThat(saved2.getCount()).isEqualTo(snapshot2.getCount());
 
     }
 

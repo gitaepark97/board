@@ -3,14 +3,13 @@ package board.backend.like.application;
 import board.backend.article.application.ArticleValidator;
 import board.backend.article.application.fake.FakeArticleRepository;
 import board.backend.article.domain.Article;
+import board.backend.common.cache.fake.FakeCachedRepository;
+import board.backend.common.count.application.fake.FakeArticleCountSnapshotRepository;
 import board.backend.common.event.EventType;
 import board.backend.common.event.fake.FakeEventPublisher;
-import board.backend.common.event.payload.ArticleLikedEventPayload;
-import board.backend.common.event.payload.ArticleUnlikedEventPayload;
-import board.backend.common.infra.fake.FakeCachedRepository;
+import board.backend.common.event.payload.ArticleLikeCountChangedEventPayload;
 import board.backend.common.support.fake.FakeTimeProvider;
-import board.backend.like.application.fake.FakeArticleCommentRepository;
-import board.backend.like.application.fake.FakeArticleLikeCountSnapshotRepository;
+import board.backend.like.application.fake.FakeArticleLikeCountRepository;
 import board.backend.like.application.fake.FakeArticleLikeRepository;
 import board.backend.like.domain.ArticleLike;
 import board.backend.like.domain.ArticleLikeCount;
@@ -24,17 +23,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ArticleLikeManagerTest {
 
+    private final LocalDateTime now = LocalDateTime.of(2024, 1, 1, 12, 0);
+
     private FakeTimeProvider timeProvider;
     private FakeArticleLikeRepository articleLikeRepository;
-    private FakeArticleCommentRepository articleLikeCountRepository;
+    private FakeArticleLikeCountRepository articleLikeCountRepository;
     private FakeEventPublisher eventPublisher;
     private ArticleLikeManager articleLikeManager;
 
     @BeforeEach
     void setUp() {
-        timeProvider = new FakeTimeProvider(LocalDateTime.of(2024, 1, 1, 12, 0));
+        timeProvider = new FakeTimeProvider(now);
         articleLikeRepository = new FakeArticleLikeRepository();
-        articleLikeCountRepository = new FakeArticleCommentRepository();
+        articleLikeCountRepository = new FakeArticleLikeCountRepository();
         eventPublisher = new FakeEventPublisher();
         FakeArticleRepository articleRepository = new FakeArticleRepository();
         articleLikeManager = new ArticleLikeManager(
@@ -43,7 +44,7 @@ class ArticleLikeManagerTest {
             articleLikeCountRepository,
             eventPublisher,
             new ArticleValidator(new FakeCachedRepository<>(), articleRepository),
-            new TodayLikeCountCalculator(timeProvider, articleLikeCountRepository, new FakeArticleLikeCountSnapshotRepository())
+            new TodayLikeCountCalculatorImpl(timeProvider, new FakeArticleCountSnapshotRepository<>())
         );
 
         articleRepository.save(Article.create(1L, 1L, 1L, "제목", "내용", timeProvider.now()));
@@ -62,12 +63,12 @@ class ArticleLikeManagerTest {
         // then
         assertThat(articleLikeRepository.existsByArticleIdAndUserId(articleId, userId)).isTrue();
         assertThat(articleLikeCountRepository.findById(articleId)).isPresent()
-            .get().extracting(ArticleLikeCount::likeCount).isEqualTo(1L);
+            .get().extracting(ArticleLikeCount::getCount).isEqualTo(1L);
         assertThat(eventPublisher.getPublishedEvents())
             .containsExactly(
                 new FakeEventPublisher.PublishedEvent(
-                    EventType.ARTICLE_LIKED,
-                    new ArticleLikedEventPayload(articleId, 1L, timeProvider.now())
+                    EventType.ARTICLE_LIKE_COUNT_CHANGED,
+                    new ArticleLikeCountChangedEventPayload(articleId, 1L, timeProvider.now())
                 )
             );
     }
@@ -88,14 +89,14 @@ class ArticleLikeManagerTest {
     }
 
     @Test
-    @DisplayName("좋아요가 존재하면 삭제하고 수를 감소시키며 이벤트를 발행한다")
-    void unlike_success_whenExists_removesLikeDecrementsAndPublishesEvent() {
+    @DisplayName("오늘 생성된 좋아요가 존재하면 삭제하고 수를 감소시키며 이벤트를 발행한다")
+    void unlike_success_whenExistsAndCreatedToday_removesLikeDecrementsAndPublishesEvent() {
         // given
         Long articleId = 1L;
-        ArticleLike articleLike = ArticleLike.create(articleId, 10L, LocalDateTime.now());
+        ArticleLike articleLike = ArticleLike.create(articleId, 10L, now);
         ArticleLikeCount count = ArticleLikeCount.init(articleId);
         articleLikeRepository.save(articleLike);
-        articleLikeCountRepository.increaseOrSave(count);
+        articleLikeCountRepository.increase(articleId);
 
         // when
         articleLikeManager.unlike(articleId, articleLike.userId());
@@ -103,14 +104,34 @@ class ArticleLikeManagerTest {
         // then
         assertThat(articleLikeRepository.existsByArticleIdAndUserId(articleId, articleLike.userId())).isFalse();
         assertThat(articleLikeCountRepository.findById(articleId)).isPresent()
-            .get().extracting(ArticleLikeCount::likeCount).isEqualTo(0L);
+            .get().extracting(ArticleLikeCount::getCount).isEqualTo(0L);
         assertThat(eventPublisher.getPublishedEvents())
             .containsExactly(
                 new FakeEventPublisher.PublishedEvent(
-                    EventType.ARTICLE_UNLIKED,
-                    new ArticleUnlikedEventPayload(articleId, 0L, timeProvider.now())
+                    EventType.ARTICLE_LIKE_COUNT_CHANGED,
+                    new ArticleLikeCountChangedEventPayload(articleId, 0L, timeProvider.now())
                 )
             );
+    }
+
+    @Test
+    @DisplayName("오늘 생성되지 않은 좋아요가 존재하면 삭제하고 수를 감소시킨다")
+    void unlike_success_whenExistsAndNotCreatedToday_removesLikeDecrements() {
+        // given
+        Long articleId = 1L;
+        ArticleLike articleLike = ArticleLike.create(articleId, 10L, LocalDateTime.now());
+        ArticleLikeCount count = ArticleLikeCount.init(articleId);
+        articleLikeRepository.save(articleLike);
+        articleLikeCountRepository.increase(articleId);
+
+        // when
+        articleLikeManager.unlike(articleId, articleLike.userId());
+
+        // then
+        assertThat(articleLikeRepository.existsByArticleIdAndUserId(articleId, articleLike.userId())).isFalse();
+        assertThat(articleLikeCountRepository.findById(articleId)).isPresent()
+            .get().extracting(ArticleLikeCount::getCount).isEqualTo(0L);
+        assertThat(eventPublisher.getPublishedEvents()).isEmpty();
     }
 
     @Test

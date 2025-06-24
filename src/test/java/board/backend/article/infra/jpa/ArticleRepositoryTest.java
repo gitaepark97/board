@@ -2,7 +2,7 @@ package board.backend.article.infra.jpa;
 
 import board.backend.article.application.port.ArticleRepository;
 import board.backend.article.domain.Article;
-import board.backend.common.infra.TestJpaRepository;
+import board.backend.common.config.TestJpaRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

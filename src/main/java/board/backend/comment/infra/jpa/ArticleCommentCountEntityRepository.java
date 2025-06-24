@@ -12,9 +12,9 @@ interface ArticleCommentCountEntityRepository extends JpaRepository<ArticleComme
     @Transactional
     @Query(value = """
         INSERT INTO article_comment_count (article_id, comment_count)
-        VALUES (:articleId, :commentCount)
+        VALUES (:articleId, 1)
         ON DUPLICATE KEY UPDATE comment_count = comment_count + 1
         """, nativeQuery = true)
-    void increaseOrSave(@Param("articleId") Long articleId, @Param("commentCount") Long commentCount);
+    void increaseOrSave(@Param("articleId") Long articleId);
 
 }

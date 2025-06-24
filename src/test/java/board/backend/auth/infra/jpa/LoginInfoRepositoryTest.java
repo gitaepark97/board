@@ -3,7 +3,7 @@ package board.backend.auth.infra.jpa;
 import board.backend.auth.application.port.LoginInfoRepository;
 import board.backend.auth.domain.LoginInfo;
 import board.backend.auth.domain.LoginMethod;
-import board.backend.common.infra.TestJpaRepository;
+import board.backend.common.config.TestJpaRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package board.backend.hotArticle.infra.redis;
 
-import board.backend.common.infra.TestRedisRepository;
+import board.backend.common.config.TestRedisRepository;
 import board.backend.hotArticle.application.port.HotArticleRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ class HotArticleRepositoryTest extends TestRedisRepository {
 
     @Autowired
     private HotArticleRepository repository;
-    
+
     @Test
     @DisplayName("저장된 게시글을 날짜 기준으로 점수순 정렬하여 조회한다")
     void readAll_success_returnsSortedArticles() {

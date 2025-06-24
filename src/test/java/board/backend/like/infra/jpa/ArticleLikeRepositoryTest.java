@@ -1,6 +1,6 @@
 package board.backend.like.infra.jpa;
 
-import board.backend.common.infra.TestJpaRepository;
+import board.backend.common.config.TestJpaRepository;
 import board.backend.like.application.port.ArticleLikeRepository;
 import board.backend.like.domain.ArticleLike;
 import org.junit.jupiter.api.DisplayName;

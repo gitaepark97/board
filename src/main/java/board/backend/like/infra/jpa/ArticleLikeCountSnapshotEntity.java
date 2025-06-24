@@ -1,6 +1,6 @@
 package board.backend.like.infra.jpa;
 
-import board.backend.common.infra.ArticleCountSnapshotId;
+import board.backend.common.count.infra.ArticleCountSnapshotId;
 import board.backend.like.domain.ArticleLikeCountSnapshot;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -29,9 +29,9 @@ public class ArticleLikeCountSnapshotEntity {
 
     public static ArticleLikeCountSnapshotEntity from(ArticleLikeCountSnapshot snapshot) {
         return new ArticleLikeCountSnapshotEntity(
-            snapshot.date(),
-            snapshot.articleId(),
-            snapshot.likeCount()
+            snapshot.getDate(),
+            snapshot.getArticleId(),
+            snapshot.getCount()
         );
     }
 
@@ -39,7 +39,7 @@ public class ArticleLikeCountSnapshotEntity {
         return ArticleLikeCountSnapshot.builder()
             .date(snapshotDate)
             .articleId(articleId)
-            .likeCount(likeCount)
+            .count(likeCount)
             .build();
     }
 

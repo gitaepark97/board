@@ -6,10 +6,7 @@ import board.backend.comment.application.port.CommentRepository;
 import board.backend.comment.domain.ArticleCommentCount;
 import board.backend.comment.domain.Comment;
 import board.backend.comment.domain.CommentNotFound;
-import board.backend.common.event.EventPublisher;
-import board.backend.common.event.EventType;
-import board.backend.common.event.payload.CommentCreatedEventPayload;
-import board.backend.common.infra.CachedRepository;
+import board.backend.common.cache.infra.CachedRepository;
 import board.backend.common.support.IdProvider;
 import board.backend.common.support.TimeProvider;
 import board.backend.user.application.UserValidator;
@@ -26,10 +23,9 @@ class CommentCreator {
     private final CachedRepository<ArticleCommentCount, Long> cachedArticleCommentCountRepository;
     private final CommentRepository commentRepository;
     private final ArticleCommentCountRepository articleCommentCountRepository;
-    private final EventPublisher eventPublisher;
     private final UserValidator userValidator;
     private final ArticleValidator articleValidator;
-    private final TodayCommentCountCalculator todayCommentCountCalculator;
+    private final CommentEventPublisher commentEventPublisher;
 
     @Transactional
     Comment create(Long articleId, Long userId, Long parentCommentId, String content) {
@@ -50,15 +46,13 @@ class CommentCreator {
         commentRepository.save(newComment);
 
         // 게시글 댓글 수 증가
-        ArticleCommentCount articleCommentCount = ArticleCommentCount.init(articleId);
-        articleCommentCountRepository.increaseOrSave(articleCommentCount);
+        articleCommentCountRepository.increase(articleId);
 
         // 게시글 댓글 수 캐시 삭제
         cachedArticleCommentCountRepository.delete(articleId);
 
         // 댓글 생성 이벤트 발행
-        long todayCount = todayCommentCountCalculator.calculate(articleId);
-        eventPublisher.publishEvent(EventType.COMMENT_CREATED, new CommentCreatedEventPayload(articleId, todayCount, newComment.createdAt()));
+        commentEventPublisher.publishEvent(newComment);
 
         return newComment;
     }
@@ -68,6 +62,5 @@ class CommentCreator {
             throw new CommentNotFound();
         }
     }
-
 
 }

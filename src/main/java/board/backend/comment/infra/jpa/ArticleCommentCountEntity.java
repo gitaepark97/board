@@ -21,15 +21,15 @@ public class ArticleCommentCountEntity {
 
     static ArticleCommentCountEntity from(ArticleCommentCount articleCommentCount) {
         return new ArticleCommentCountEntity(
-            articleCommentCount.articleId(),
-            articleCommentCount.commentCount()
+            articleCommentCount.getArticleId(),
+            articleCommentCount.getCount()
         );
     }
 
     ArticleCommentCount toArticleCommentCount() {
         return ArticleCommentCount.builder()
             .articleId(articleId)
-            .commentCount(commentCount)
+            .count(commentCount)
             .build();
     }
 

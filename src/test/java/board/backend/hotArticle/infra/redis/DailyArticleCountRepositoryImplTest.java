@@ -1,6 +1,6 @@
 package board.backend.hotArticle.infra.redis;
 
-import board.backend.common.infra.TestRedisRepository;
+import board.backend.common.config.TestRedisRepository;
 import board.backend.hotArticle.application.port.DailyArticleCountRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

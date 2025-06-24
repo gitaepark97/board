@@ -12,9 +12,9 @@ interface ArticleLikeCountEntityRepository extends JpaRepository<ArticleLikeCoun
     @Transactional
     @Query(value = """
         INSERT INTO article_like_count (article_id, like_count)
-        VALUES (:articleId, :likeCount)
+        VALUES (:articleId, 1)
         ON DUPLICATE KEY UPDATE like_count = like_count + 1
         """, nativeQuery = true)
-    void increaseOrSave(@Param("articleId") Long articleId, @Param("likeCount") Long likeCount);
+    void increaseOrSave(@Param("articleId") Long articleId);
 
 }

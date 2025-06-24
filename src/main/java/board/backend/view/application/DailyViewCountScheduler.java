@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 class DailyViewCountScheduler {
 
-    private final ViewCountSnapshotCreator viewCountSnapshotCreator;
+    private final ArticleViewCountSnapshotCreator viewCountSnapshotCreator;
 
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
     void createSnapshots() {

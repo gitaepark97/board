@@ -3,8 +3,8 @@ package board.backend.like.application;
 import board.backend.article.application.ArticleValidator;
 import board.backend.common.event.EventPublisher;
 import board.backend.common.event.EventType;
-import board.backend.common.event.payload.ArticleLikedEventPayload;
-import board.backend.common.event.payload.ArticleUnlikedEventPayload;
+import board.backend.common.event.payload.ArticleLikeCountChangedEventPayload;
+import board.backend.common.exception.InternalServerError;
 import board.backend.common.support.TimeProvider;
 import board.backend.like.application.port.ArticleLikeCountRepository;
 import board.backend.like.application.port.ArticleLikeRepository;
@@ -23,7 +23,7 @@ class ArticleLikeManager {
     private final ArticleLikeCountRepository articleLikeCountRepository;
     private final EventPublisher eventPublisher;
     private final ArticleValidator articleValidator;
-    private final TodayLikeCountCalculator todayLikeCountCalculator;
+    private final TodayLikeCountCalculatorImpl todayLikeCountCalculator;
 
     @Transactional
     void like(Long articleId, Long userId) {
@@ -37,12 +37,10 @@ class ArticleLikeManager {
             articleLikeRepository.save(articleLike);
 
             // 게시글 좋아요 수 증가
-            ArticleLikeCount articleLikeCount = ArticleLikeCount.init(articleId);
-            articleLikeCountRepository.increaseOrSave(articleLikeCount);
+            articleLikeCountRepository.increase(articleId);
 
             // 게시글 좋아요 생성 이벤트 발행
-            long todayCount = todayLikeCountCalculator.calculate(articleId);
-            eventPublisher.publishEvent(EventType.ARTICLE_LIKED, new ArticleLikedEventPayload(articleId, todayCount, articleLike.createdAt()));
+            publishEvent(articleLike);
         }
     }
 
@@ -55,11 +53,17 @@ class ArticleLikeManager {
             // 게시글 좋아요 수 감소
             articleLikeCountRepository.decrease(articleId);
 
-
-            // 게시글 좋아요 삭제 이벤트 발행
-            long todayCount = todayLikeCountCalculator.calculate(articleId);
-            eventPublisher.publishEvent(EventType.ARTICLE_UNLIKED, new ArticleUnlikedEventPayload(articleId, todayCount, timeProvider.now()));
+            if (timeProvider.isToday(articleLike.createdAt())) {
+                publishEvent(articleLike);
+            }
         });
+    }
+
+    private void publishEvent(ArticleLike articleLike) {
+        ArticleLikeCount articleLikeCount = articleLikeCountRepository.findById(articleLike.articleId())
+            .orElseThrow(InternalServerError::new);
+        long todayCount = todayLikeCountCalculator.calculate(articleLikeCount);
+        eventPublisher.publishEvent(EventType.ARTICLE_LIKE_COUNT_CHANGED, new ArticleLikeCountChangedEventPayload(articleLike.articleId(), todayCount, articleLike.createdAt()));
     }
 
 }

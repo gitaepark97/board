@@ -17,8 +17,8 @@ class ArticleViewCountTest {
         ArticleViewCount viewCount = ArticleViewCount.init(articleId);
 
         // then
-        assertThat(viewCount.articleId()).isEqualTo(articleId);
-        assertThat(viewCount.viewCount()).isEqualTo(0L);
+        assertThat(viewCount.getArticleId()).isEqualTo(articleId);
+        assertThat(viewCount.getCount()).isEqualTo(0L);
     }
 
     @Test
@@ -32,8 +32,8 @@ class ArticleViewCountTest {
         ArticleViewCount viewCount = ArticleViewCount.create(articleId, count);
 
         // then
-        assertThat(viewCount.articleId()).isEqualTo(articleId);
-        assertThat(viewCount.viewCount()).isEqualTo(count);
+        assertThat(viewCount.getArticleId()).isEqualTo(articleId);
+        assertThat(viewCount.getCount()).isEqualTo(count);
     }
 
 }

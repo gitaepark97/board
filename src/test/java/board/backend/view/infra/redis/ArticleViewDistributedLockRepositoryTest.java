@@ -1,6 +1,6 @@
 package board.backend.view.infra.redis;
 
-import board.backend.common.infra.TestRedisRepository;
+import board.backend.common.config.TestRedisRepository;
 import board.backend.view.application.port.ArticleViewDistributedLockRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;

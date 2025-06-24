@@ -2,7 +2,7 @@ package board.backend.view.application;
 
 import board.backend.common.event.EventPublisher;
 import board.backend.common.event.EventType;
-import board.backend.common.event.payload.ArticleViewedEventPayload;
+import board.backend.common.event.payload.ArticleViewCountChangedEventPayload;
 import board.backend.common.support.TimeProvider;
 import board.backend.view.application.port.ArticleViewCountBackupRepository;
 import board.backend.view.application.port.ArticleViewCountRepository;
@@ -25,7 +25,7 @@ class ArticleViewManager {
     private final ArticleViewCountBackupRepository articleViewCountBackUpRepository;
     private final ArticleViewDistributedLockRepository articleViewDistributedLockRepository;
     private final EventPublisher eventPublisher;
-    private final TodayViewCountCalculator todayViewCountCalculator;
+    private final TodayViewCountCalculatorImpl todayViewCountCalculator;
 
     void increaseCount(Long articleId, String ip) {
         if (!articleViewDistributedLockRepository.lock(articleId, ip, TTL)) {
@@ -37,20 +37,21 @@ class ArticleViewManager {
             return;
         }
 
-        backupViewCount(articleId, currentCount);
-        publishViewEvent(articleId, currentCount);
+        ArticleViewCount articleViewCount = ArticleViewCount.create(articleId, currentCount);
+        backupViewCount(articleViewCount);
+        publishViewEvent(articleViewCount);
     }
 
-    private void backupViewCount(Long articleId, Long currentCount) {
-        articleViewCountBackUpRepository.save(ArticleViewCount.create(articleId, currentCount));
+    private void backupViewCount(ArticleViewCount articleViewCount) {
+        articleViewCountBackUpRepository.save(articleViewCount);
     }
 
-    private void publishViewEvent(Long articleId, Long currentCount) {
-        long todayCount = todayViewCountCalculator.calculate(articleId, currentCount);
+    private void publishViewEvent(ArticleViewCount articleViewCount) {
+        long todayCount = todayViewCountCalculator.calculate(articleViewCount);
 
         eventPublisher.publishEvent(
-            EventType.ARTICLE_VIEWED,
-            new ArticleViewedEventPayload(articleId, todayCount, timeProvider.now())
+            EventType.ARTICLE_VIEW_COUNT_CHANGED,
+            new ArticleViewCountChangedEventPayload(articleViewCount.getArticleId(), todayCount, timeProvider.now())
         );
     }
 

@@ -1,6 +1,8 @@
 package board.backend.common.web.response;
 
 import board.backend.common.exception.ApplicationException;
+import board.backend.common.exception.BadRequest;
+import board.backend.common.exception.InternalServerError;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.core.MethodParameter;
@@ -54,7 +56,7 @@ class ApiResponseHandler implements ResponseBodyAdvice<Object> {
 
     @ExceptionHandler(Exception.class)
     ApiResponse<?> handleException(Exception e) {
-        return ApiResponse.of(new ApplicationException(500, "서버 내부 오류입니다."));
+        return ApiResponse.of(new InternalServerError());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -66,17 +68,17 @@ class ApiResponseHandler implements ResponseBodyAdvice<Object> {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return ApiResponse.of(new ApplicationException(400, "잘못된 입력입니다."), errors);
+        return ApiResponse.of(new BadRequest(), errors);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     ApiResponse<?> handleException(HttpMessageNotReadableException e) {
-        return ApiResponse.of(new ApplicationException(400, "잘못된 입력입니다."));
+        return ApiResponse.of(new BadRequest());
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     ApiResponse<?> handleException(MissingServletRequestParameterException e) {
-        return ApiResponse.of(new ApplicationException(400, "잘못된 입력입니다."));
+        return ApiResponse.of(new BadRequest());
     }
 
     @ExceptionHandler(ApplicationException.class)

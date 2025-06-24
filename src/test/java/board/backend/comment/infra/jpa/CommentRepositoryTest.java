@@ -2,7 +2,7 @@ package board.backend.comment.infra.jpa;
 
 import board.backend.comment.application.port.CommentRepository;
 import board.backend.comment.domain.Comment;
-import board.backend.common.infra.TestJpaRepository;
+import board.backend.common.config.TestJpaRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

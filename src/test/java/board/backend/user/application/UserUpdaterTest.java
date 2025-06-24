@@ -1,6 +1,6 @@
 package board.backend.user.application;
 
-import board.backend.common.infra.fake.FakeCachedRepository;
+import board.backend.common.cache.fake.FakeCachedRepository;
 import board.backend.common.support.fake.FakeTimeProvider;
 import board.backend.user.application.fake.FakeUserRepository;
 import board.backend.user.domain.User;

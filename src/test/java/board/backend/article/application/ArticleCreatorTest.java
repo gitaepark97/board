@@ -5,9 +5,7 @@ import board.backend.article.domain.Article;
 import board.backend.board.application.BoardValidator;
 import board.backend.board.application.fake.FakeBoardRepository;
 import board.backend.board.domain.Board;
-import board.backend.common.event.EventType;
-import board.backend.common.event.fake.FakeEventPublisher;
-import board.backend.common.infra.fake.FakeCachedRepository;
+import board.backend.common.cache.fake.FakeCachedRepository;
 import board.backend.common.support.fake.FakeIdProvider;
 import board.backend.common.support.fake.FakeTimeProvider;
 import board.backend.user.application.UserValidator;
@@ -27,7 +25,6 @@ class ArticleCreatorTest {
     private final LocalDateTime now = LocalDateTime.of(2024, 1, 1, 12, 0);
 
     private FakeArticleRepository articleRepository;
-    private FakeEventPublisher eventPublisher;
     private FakeUserRepository userRepository;
     private FakeBoardRepository boardRepository;
     private ArticleCreator articleCreator;
@@ -35,7 +32,6 @@ class ArticleCreatorTest {
     @BeforeEach
     void setUp() {
         articleRepository = new FakeArticleRepository();
-        eventPublisher = new FakeEventPublisher();
         userRepository = new FakeUserRepository();
         boardRepository = new FakeBoardRepository();
         UserValidator userValidator = new UserValidator(new FakeCachedRepository<>(), userRepository);
@@ -44,7 +40,6 @@ class ArticleCreatorTest {
             new FakeIdProvider(id),
             new FakeTimeProvider(now),
             articleRepository,
-            eventPublisher,
             userValidator,
             boardValidator
         );
@@ -73,7 +68,6 @@ class ArticleCreatorTest {
         assertThat(article.createdAt()).isEqualTo(now);
 
         assertThat(articleRepository.findById(article.id())).contains(article);
-        assertThat(eventPublisher.getPublishedEvents().getFirst().type()).isEqualTo(EventType.ARTICLE_CREATED);
     }
 
 }

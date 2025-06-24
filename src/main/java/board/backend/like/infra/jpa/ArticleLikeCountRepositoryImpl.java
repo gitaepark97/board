@@ -43,8 +43,8 @@ class ArticleLikeCountRepositoryImpl implements ArticleLikeCountRepository {
     }
 
     @Override
-    public void increaseOrSave(ArticleLikeCount articleLikeCount) {
-        articleLikeCountEntityRepository.increaseOrSave(articleLikeCount.articleId(), articleLikeCount.likeCount());
+    public void increase(Long articleId) {
+        articleLikeCountEntityRepository.increaseOrSave(articleId);
     }
 
     @Override

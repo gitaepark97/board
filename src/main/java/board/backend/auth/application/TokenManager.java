@@ -17,7 +17,7 @@ import java.util.Optional;
 @Component
 public class TokenManager {
 
-    private static final Duration ACCESS_TOKEN_DURATION = Duration.ofHours(1);
+    private static final Duration ACCESS_TOKEN_DURATION = Duration.ofHours(5);
 
     private final TokenProvider tokenProvider;
     private final UserValidator userValidator;

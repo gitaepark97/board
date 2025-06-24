@@ -1,6 +1,6 @@
 package board.backend.like.application;
 
-import board.backend.common.infra.CachedRepository;
+import board.backend.common.cache.infra.CachedRepository;
 import board.backend.like.application.port.ArticleLikeCountRepository;
 import board.backend.like.domain.ArticleLikeCount;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +24,15 @@ public class ArticleLikeCounter {
 
     public Long count(Long articleId) {
         return cachedArticleLikeCountRepository.findByKey(articleId)
-            .or(() -> articleLikeCountRepository.findById(articleId))
-            .map(ArticleLikeCount::likeCount)
+            .or(() -> articleLikeCountRepository.findById(articleId).map(articleLikeCount -> {
+                cachedArticleLikeCountRepository.save(
+                    articleLikeCount.getArticleId(),
+                    articleLikeCount,
+                    ARTICLE_LIKE_CACHE_TTL
+                );
+                return articleLikeCount;
+            }))
+            .map(ArticleLikeCount::getCount)
             .orElse(0L);
     }
 
@@ -34,7 +41,7 @@ public class ArticleLikeCounter {
         List<ArticleLikeCount> cached = cachedArticleLikeCountRepository.findAllByKey(articleIds);
 
         Map<Long, Long> map = cached.stream()
-            .collect(Collectors.toMap(ArticleLikeCount::articleId, ArticleLikeCount::likeCount));
+            .collect(Collectors.toMap(ArticleLikeCount::getArticleId, ArticleLikeCount::getCount));
 
         // 캐시 미스만 조회
         List<Long> missed = articleIds.stream()
@@ -45,10 +52,10 @@ public class ArticleLikeCounter {
             List<ArticleLikeCount> uncached = articleLikeCountRepository.findAllById(missed);
 
             // 캐시에 저장
-            uncached.forEach(articleLikeCount -> cachedArticleLikeCountRepository.save(articleLikeCount.articleId(), articleLikeCount, ARTICLE_LIKE_CACHE_TTL));
-
-            // 합쳐서 반환
-            uncached.forEach(articleLikeCount -> map.put(articleLikeCount.articleId(), articleLikeCount.likeCount()));
+            uncached.forEach(articleLikeCount -> {
+                cachedArticleLikeCountRepository.save(articleLikeCount.getArticleId(), articleLikeCount, ARTICLE_LIKE_CACHE_TTL);
+                map.put(articleLikeCount.getArticleId(), articleLikeCount.getCount());
+            });
         }
 
         return map;

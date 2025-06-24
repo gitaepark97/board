@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
@@ -22,16 +22,14 @@ class ArticleViewCountRepositoryImpl implements ArticleViewCountRepository {
     private final StringRedisTemplate redisTemplate;
 
     @Override
-    public Long findById(Long articleId) {
+    public Optional<ArticleViewCount> findById(Long articleId) {
         String key = generateKey(articleId);
         String value = redisTemplate.opsForValue().get(key);
         if (value == null) {
-            // 이미 생성된 게시물 존재
-            redisTemplate.opsForValue().set(key, "0");
-            return 0L;
+            return Optional.empty();
         }
 
-        return Long.parseLong(value);
+        return Optional.of(ArticleViewCount.create(articleId, Long.parseLong(value)));
     }
 
     @Override
@@ -57,32 +55,32 @@ class ArticleViewCountRepositoryImpl implements ArticleViewCountRepository {
                 String key = keys.get(i);
                 Long articleId = extractArticleIdFromKey(key);
                 Long count = Long.parseLong(values.get(i));
-                return new ArticleViewCount(articleId, count);
+                return ArticleViewCount.create(articleId, count);
             })
             .toList();
     }
 
     @Override
-    public Map<Long, Long> findAllById(List<Long> articleIds) {
+    public List<ArticleViewCount> findAllById(List<Long> articleIds) {
         List<String> keys = articleIds.stream()
             .map(this::generateKey)
             .toList();
 
         List<String> values = redisTemplate.opsForValue().multiGet(keys);
         if (values == null) {
-            return Map.of();
+            return List.of();
         }
 
         return IntStream.range(0, articleIds.size())
-            .boxed()
-            .collect(Collectors.toMap(
-                articleIds::get,
-                i -> {
-                    String value = values.get(i);
-                    // 이미 생성된 게시물 존재
-                    return value == null ? 0L : Long.parseLong(value);
-                }
-            ));
+            .mapToObj(i -> {
+                String value = values.get(i);
+                if (value == null) return null;
+                Long articleId = articleIds.get(i);
+                long viewCount = Long.parseLong(value);
+                return ArticleViewCount.create(articleId, viewCount);
+            })
+            .filter(Objects::nonNull)
+            .toList();
     }
 
     @Override
@@ -95,12 +93,6 @@ class ArticleViewCountRepositoryImpl implements ArticleViewCountRepository {
     public Long increase(Long articleId) {
         String key = generateKey(articleId);
         return redisTemplate.opsForValue().increment(key);
-    }
-
-    @Override
-    public void save(ArticleViewCount articleViewCount) {
-        String key = generateKey(articleViewCount.articleId());
-        redisTemplate.opsForValue().set(key, String.valueOf(articleViewCount.viewCount()));
     }
 
     private String generateKey(Long articleId) {

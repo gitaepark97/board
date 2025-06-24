@@ -1,6 +1,6 @@
 package board.backend.user.infra.jpa;
 
-import board.backend.common.infra.TestJpaRepository;
+import board.backend.common.config.TestJpaRepository;
 import board.backend.user.application.port.UserRepository;
 import board.backend.user.domain.User;
 import org.junit.jupiter.api.BeforeEach;

@@ -2,10 +2,10 @@ package board.backend.article.application;
 
 import board.backend.article.application.port.ArticleRepository;
 import board.backend.article.domain.Article;
+import board.backend.common.cache.infra.CachedRepository;
 import board.backend.common.event.EventPublisher;
 import board.backend.common.event.EventType;
 import board.backend.common.event.payload.ArticleDeletedEventPayload;
-import board.backend.common.infra.CachedRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

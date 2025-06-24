@@ -44,8 +44,8 @@ class ArticleCommentCountRepositoryImpl implements ArticleCommentCountRepository
     }
 
     @Override
-    public void increaseOrSave(ArticleCommentCount articleCommentCount) {
-        articleCommentCountEntityRepository.increaseOrSave(articleCommentCount.articleId(), articleCommentCount.commentCount());
+    public void increase(Long articleId) {
+        articleCommentCountEntityRepository.increaseOrSave(articleId);
     }
 
     @Override

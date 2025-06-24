@@ -26,35 +26,35 @@ class ArticleViewCounterTest {
     @DisplayName("게시글 ID로 조회 수를 조회할 수 있다")
     void count_success_whenArticleExists_returnsViewCount() {
         // given
-        ArticleViewCount articleViewCount = new ArticleViewCount(1L, 123L);
+        ArticleViewCount articleViewCount = ArticleViewCount.builder().articleId(1L).count(123L).build();
         articleViewCountRepository.save(articleViewCount);
 
         // when
-        Long count = articleViewCounter.count(articleViewCount.articleId());
+        Long count = articleViewCounter.count(articleViewCount.getArticleId());
 
         // then
-        assertThat(count).isEqualTo(articleViewCount.viewCount());
+        assertThat(count).isEqualTo(articleViewCount.getCount());
     }
 
     @Test
     @DisplayName("여러 게시글 ID로 조회 수를 조회할 수 있다")
     void count_success_whenMultipleArticles_returnsViewCountMap() {
         // given
-        ArticleViewCount articleViewCount1 = new ArticleViewCount(1L, 10L);
-        ArticleViewCount articleViewCount2 = new ArticleViewCount(2L, 20L);
-        ArticleViewCount articleViewCount3 = new ArticleViewCount(3L, 30L);
+        ArticleViewCount articleViewCount1 = ArticleViewCount.builder().articleId(1L).count(10L).build();
+        ArticleViewCount articleViewCount2 = ArticleViewCount.builder().articleId(2L).count(20L).build();
+        ArticleViewCount articleViewCount3 = ArticleViewCount.builder().articleId(3L).count(30L).build();
         articleViewCountRepository.save(articleViewCount1);
         articleViewCountRepository.save(articleViewCount2);
         articleViewCountRepository.save(articleViewCount3);
 
         // when
-        Map<Long, Long> result = articleViewCounter.count(List.of(articleViewCount1.articleId(), articleViewCount2.articleId(), articleViewCount3.articleId()));
+        Map<Long, Long> result = articleViewCounter.count(List.of(articleViewCount1.getArticleId(), articleViewCount2.getArticleId(), articleViewCount3.getArticleId()));
 
         // then
         assertThat(result).containsExactlyInAnyOrderEntriesOf(Map.of(
-            articleViewCount1.articleId(), articleViewCount1.viewCount(),
-            articleViewCount2.articleId(), articleViewCount2.viewCount(),
-            articleViewCount3.articleId(), articleViewCount3.viewCount()
+            articleViewCount1.getArticleId(), articleViewCount1.getCount(),
+            articleViewCount2.getArticleId(), articleViewCount2.getCount(),
+            articleViewCount3.getArticleId(), articleViewCount3.getCount()
         ));
     }
 
@@ -72,15 +72,15 @@ class ArticleViewCounterTest {
     @DisplayName("조회 수가 없는 게시글은 0으로 채운다")
     void count_success_whenSomeMissing_returnsZeroForMissing() {
         // given
-        ArticleViewCount count1 = new ArticleViewCount(1L, 100L);
+        ArticleViewCount count1 = ArticleViewCount.builder().articleId(1L).count(100L).build();
         Long notExistId = 2L;
         articleViewCountRepository.save(count1);
 
         // when
-        Map<Long, Long> result = articleViewCounter.count(List.of(count1.articleId(), notExistId));
+        Map<Long, Long> result = articleViewCounter.count(List.of(count1.getArticleId(), notExistId));
 
         // then
-        assertThat(result.get(count1.articleId())).isEqualTo(count1.viewCount());
+        assertThat(result.get(count1.getArticleId())).isEqualTo(count1.getCount());
         assertThat(result.get(notExistId)).isEqualTo(0L);
     }
 

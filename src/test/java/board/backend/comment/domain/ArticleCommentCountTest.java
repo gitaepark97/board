@@ -17,8 +17,8 @@ class ArticleCommentCountTest {
         ArticleCommentCount commentCount = ArticleCommentCount.init(articleId);
 
         // then
-        assertThat(commentCount.articleId()).isEqualTo(articleId);
-        assertThat(commentCount.commentCount()).isEqualTo(1L);
+        assertThat(commentCount.getArticleId()).isEqualTo(articleId);
+        assertThat(commentCount.getCount()).isEqualTo(1L);
     }
 
 }

@@ -3,7 +3,7 @@ package board.backend.auth.application;
 import board.backend.auth.application.dto.Token;
 import board.backend.auth.application.fake.FakeTokenProvider;
 import board.backend.auth.domain.Session;
-import board.backend.common.infra.fake.FakeCachedRepository;
+import board.backend.common.cache.fake.FakeCachedRepository;
 import board.backend.user.application.UserValidator;
 import board.backend.user.application.fake.FakeUserRepository;
 import board.backend.user.domain.User;

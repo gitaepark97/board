@@ -1,21 +1,20 @@
 package board.backend.view.domain;
 
-import lombok.Builder;
+import board.backend.common.count.domain.ArticleCountSnapshot;
+import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
-@Builder
-public record ArticleViewCountSnapshot(
-    LocalDate date,
-    Long articleId,
-    Long viewCount
-) {
+@Getter
+@SuperBuilder
+public class ArticleViewCountSnapshot extends ArticleCountSnapshot {
 
-    public static ArticleViewCountSnapshot create(LocalDate date, Long articleId, Long viewCount) {
+    static ArticleViewCountSnapshot create(LocalDate date, Long articleId, Long count) {
         return ArticleViewCountSnapshot.builder()
             .date(date)
             .articleId(articleId)
-            .viewCount(viewCount)
+            .count(count)
             .build();
     }
 

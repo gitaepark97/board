@@ -10,17 +10,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public enum EventType {
 
-    ARTICLE_CREATED(ArticleCreatedEventPayload.class, Topic.BOARD_ARTICLE),
-    ARTICLE_READ(ArticleReadEventPayload.class, Topic.BOARD_ARTICLE),
-    ARTICLE_DELETED(ArticleDeletedEventPayload.class, Topic.BOARD_ARTICLE),
-    COMMENT_CREATED(CommentCreatedEventPayload.class, Topic.BOARD_COMMENT),
-    COMMENT_DELETED(CommentDeletedEventPayload.class, Topic.BOARD_COMMENT),
-    ARTICLE_LIKED(ArticleLikedEventPayload.class, Topic.BOARD_LIKE),
-    ARTICLE_UNLIKED(ArticleUnlikedEventPayload.class, Topic.BOARD_LIKE),
-    ARTICLE_VIEWED(ArticleViewedEventPayload.class, Topic.BOARD_VIEW);
+    ARTICLE_READ(ArticleReadEventPayload.class),
+    ARTICLE_DELETED(ArticleDeletedEventPayload.class),
+    ARTICLE_COMMENT_COUNT_CHANGED(ArticleCommentCountChangedEventPayload.class),
+    ARTICLE_LIKE_COUNT_CHANGED(ArticleLikeCountChangedEventPayload.class),
+    ARTICLE_VIEW_COUNT_CHANGED(ArticleViewCountChangedEventPayload.class);
 
     private final Class<? extends EventPayload> payloadClass;
-    private final String topic;
 
     public static EventType from(String type) {
         try {
@@ -29,15 +25,6 @@ public enum EventType {
             log.error("[EventType.from] type={}", type, e);
             return null;
         }
-    }
-
-    public static class Topic {
-
-        public static final String BOARD_ARTICLE = "board-article";
-        public static final String BOARD_COMMENT = "board-comment";
-        public static final String BOARD_LIKE = "board-like";
-        public static final String BOARD_VIEW = "board-view";
-
     }
 
 }

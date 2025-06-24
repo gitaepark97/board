@@ -1,6 +1,6 @@
 package board.backend.user.application;
 
-import board.backend.common.infra.CachedRepository;
+import board.backend.common.cache.infra.CachedRepository;
 import board.backend.common.support.TimeProvider;
 import board.backend.user.application.port.UserRepository;
 import board.backend.user.domain.User;

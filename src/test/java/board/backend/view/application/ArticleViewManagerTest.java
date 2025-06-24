@@ -2,7 +2,7 @@ package board.backend.view.application;
 
 import board.backend.common.event.EventType;
 import board.backend.common.event.fake.FakeEventPublisher;
-import board.backend.common.event.payload.ArticleViewedEventPayload;
+import board.backend.common.event.payload.ArticleViewCountChangedEventPayload;
 import board.backend.common.support.fake.FakeTimeProvider;
 import board.backend.view.application.fake.FakeArticleViewCountBackupRepository;
 import board.backend.view.application.fake.FakeArticleViewCountRepository;
@@ -43,7 +43,7 @@ class ArticleViewManagerTest {
             articleViewCountBackupRepository,
             articleViewDistributedLockRepository,
             eventPublisher,
-            new TodayViewCountCalculator(timeProvider, articleViewCountSnapshotRepository)
+            new TodayViewCountCalculatorImpl(timeProvider, articleViewCountSnapshotRepository)
         );
     }
 
@@ -57,7 +57,7 @@ class ArticleViewManagerTest {
         articleViewManager.increaseCount(articleId, ip);
 
         // then
-        assertThat(articleViewCountRepository.findById(articleId)).isEqualTo(0L);
+        assertThat(articleViewCountRepository.findById(articleId)).isEmpty();
         assertThat(articleViewCountBackupRepository.findById(articleId)).isEmpty();
         assertThat(eventPublisher.getPublishedEvents()).isEmpty();
     }
@@ -69,7 +69,9 @@ class ArticleViewManagerTest {
         articleViewManager.increaseCount(articleId, ip);
 
         // then
-        assertThat(articleViewCountRepository.findById(articleId)).isEqualTo(1L);
+        var result = articleViewCountRepository.findById(articleId);
+        assertThat(result).isPresent();
+        assertThat(result.get().getCount()).isEqualTo(1L);
     }
 
     @Test
@@ -95,12 +97,12 @@ class ArticleViewManagerTest {
         // then
         var articleViewCount = articleViewCountBackupRepository.findById(articleId);
         assertThat(articleViewCount).isPresent();
-        assertThat(articleViewCount.get().viewCount()).isEqualTo(10);
+        assertThat(articleViewCount.get().getCount()).isEqualTo(10);
         assertThat(eventPublisher.getPublishedEvents())
             .containsExactly(
                 new FakeEventPublisher.PublishedEvent(
-                    EventType.ARTICLE_VIEWED,
-                    new ArticleViewedEventPayload(articleId, 10L, timeProvider.now())
+                    EventType.ARTICLE_VIEW_COUNT_CHANGED,
+                    new ArticleViewCountChangedEventPayload(articleId, 10L, timeProvider.now())
                 )
             );
 

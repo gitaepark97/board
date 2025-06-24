@@ -2,9 +2,9 @@ package board.backend.article.application;
 
 import board.backend.article.application.fake.FakeArticleRepository;
 import board.backend.article.domain.Article;
+import board.backend.common.cache.fake.FakeCachedRepository;
 import board.backend.common.event.EventType;
 import board.backend.common.event.fake.FakeEventPublisher;
-import board.backend.common.infra.fake.FakeCachedRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

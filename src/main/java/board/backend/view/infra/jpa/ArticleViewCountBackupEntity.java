@@ -22,7 +22,7 @@ class ArticleViewCountBackupEntity {
     ArticleViewCount toArticleViewCount() {
         return ArticleViewCount.builder()
             .articleId(articleId)
-            .viewCount(viewCount)
+            .count(viewCount)
             .build();
     }
 

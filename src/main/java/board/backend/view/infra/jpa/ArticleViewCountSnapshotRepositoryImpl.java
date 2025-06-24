@@ -1,6 +1,6 @@
 package board.backend.view.infra.jpa;
 
-import board.backend.common.application.port.ArticleCountSnapshotRepository;
+import board.backend.common.count.application.port.ArticleCountSnapshotRepository;
 import board.backend.view.domain.ArticleViewCountSnapshot;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -31,9 +31,9 @@ class ArticleViewCountSnapshotRepositoryImpl implements ArticleCountSnapshotRepo
             snapshots,
             snapshots.size(),
             (ps, snapshot) -> {
-                ps.setDate(1, Date.valueOf(snapshot.date()));
-                ps.setLong(2, snapshot.articleId());
-                ps.setLong(3, snapshot.viewCount());
+                ps.setDate(1, Date.valueOf(snapshot.getDate()));
+                ps.setLong(2, snapshot.getArticleId());
+                ps.setLong(3, snapshot.getCount());
             }
         );
     }
